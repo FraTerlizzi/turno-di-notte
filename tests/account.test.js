@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { normalize, merge, isEmpty, sameProgress, load, store, readQueue, writeQueue, attemptRow, GUEST_KEY, userKey } from '../src/account/progress.js';
 import { studentRows, topMistakes, studentAttempts } from '../src/account/report.js';
 import { CASES, EVENTS } from '../src/data/index.js';
@@ -92,5 +92,53 @@ describe('area tutor', () => {
     expect(list.map((a) => a.kind)).toEqual(['event', 'case']);
     expect(list[1].wrongs[0].q).toBe(c3.steps[1].q);
     expect(list[0].title).toBe(EVENTS.find((e) => e.id === 'e1').title);
+  });
+});
+
+describe("redazione dell'editor", () => {
+  // session.js senza Supabase configurato: nessun client, nessuna chiamata di rete
+  let session;
+  beforeAll(async () => {
+    vi.stubEnv('VITE_SUPABASE_URL', '');
+    vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', '');
+    vi.stubGlobal('location', { hash: '', origin: 'http://localhost' });
+    vi.stubGlobal('navigator', { onLine: true });
+    session = await import('../src/account/session.js');
+  });
+  afterAll(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
+
+  it('senza configurazione gli account restano spenti e nessuno ha un ruolo', () => {
+    expect(session.enabled).toBe(false);
+    expect(session.sb).toBe(null);
+    expect(session.state.role).toBe(null);
+  });
+
+  it('roleFrom accetta solo admin e autore', () => {
+    expect(session.roleFrom({ role: 'admin' })).toBe('admin');
+    expect(session.roleFrom({ role: 'autore' })).toBe('autore');
+    expect(session.roleFrom({ role: 'Admin' })).toBe(null);
+    expect(session.roleFrom({ role: 'tutor' })).toBe(null);
+    expect(session.roleFrom(null)).toBe(null);
+    expect(session.roleFrom(undefined)).toBe(null);
+  });
+
+  it('gli errori del database diventano messaggi in italiano', () => {
+    const { explain } = session;
+    expect(explain({ message: 'Utente non trovato' })).toMatch(/registrarsi/);
+    expect(explain({ message: 'Serve almeno un amministratore' })).toMatch(/almeno un amministratore/);
+    expect(explain({ message: 'Riservato agli amministratori' })).toBe('Operazione riservata agli amministratori.');
+    expect(explain({ message: 'Riservato alla redazione' })).toBe('Operazione riservata ad autori e amministratori.');
+    expect(explain({ message: 'Per rimandare una bozza serve una nota' })).toMatch(/scrivi una nota/);
+    expect(explain({ message: 'La bozza non è in revisione' })).toMatch(/non è in revisione/);
+    expect(explain({ message: 'Solo una bozza può essere inviata in revisione' })).toMatch(/già stata inviata/);
+    expect(explain({ message: 'Puoi inviare solo le tue bozze' })).toMatch(/scritto tu/);
+    expect(explain({ message: 'Puoi salvare versioni solo delle tue bozze' })).toMatch(/scritto tu/);
+    expect(explain({ message: 'Bozza non trovata' })).toMatch(/eliminata/);
+    expect(explain({ message: 'new row for relation "case_drafts" violates check constraint "case_drafts_title_check"' })).toMatch(/titolo/);
+    expect(explain({ message: 'new row violates row-level security policy for table "case_drafts"' })).toBe('Non hai i permessi per questa operazione.');
+    expect(explain({ message: 'permission denied for table editors' })).toBe('Non hai i permessi per questa operazione.');
+    // i messaggi che c'erano già non cambiano
+    expect(explain({ message: 'Codice non valido' })).toMatch(/Codice gruppo/);
+    expect(explain({ message: 'Invalid login credentials' })).toBe('Email o password non corretti.');
   });
 });

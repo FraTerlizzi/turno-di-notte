@@ -31,7 +31,7 @@ Gli account usano [Supabase](https://supabase.com). Se non è configurato, il gi
 ### Configurare Supabase (una volta)
 
 1. Crea un progetto su supabase.com. Regione: **Central EU (Frankfurt)**, così i dati restano nell'Unione europea.
-2. **SQL Editor** → nuova query → incolla tutto `supabase/migrations/20261027190000_account_e_tutor.sql` → *Run*.
+2. **SQL Editor** → nuova query → incolla tutto `supabase/migrations/20261027190000_account_e_tutor.sql` → *Run*. Poi, in una nuova query, fai lo stesso con `supabase/migrations/20261028090000_editor.sql` (ruoli e bozze dell'editor dei casi, vedi sotto). Le migrazioni vanno eseguite una volta sola e in ordine di data.
 3. **Authentication → URL Configuration**
    - *Site URL*: `https://fraterlizzi.github.io/turno-di-notte/`
    - *Redirect URLs*: aggiungi `https://fraterlizzi.github.io/turno-di-notte/**` e `http://localhost:5173/**`
@@ -42,9 +42,21 @@ Gli account usano [Supabase](https://supabase.com). Se non è configurato, il gi
    - in locale, in un file `.env.local` (vedi `.env.example`);
    - su GitHub, come variabili del repository `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` (Settings → Secrets and variables → Actions → *Variables*). Al push successivo il sito pubblicato avrà gli account.
 
+### Editor dei casi: redazione e bozze
+
+I casi e i capitoli si preparano online come **bozze**, visibili solo alla redazione (tabella `editors`):
+
+- **autore**: crea bozze, modifica le proprie finché sono in stato *bozza* e le invia in revisione;
+- **amministratore**: modifica qualsiasi bozza, la approva o la rimanda all'autore con una nota, la elimina e decide chi fa parte della redazione.
+
+Ciclo di una bozza: *bozza* → *in-revisione* → *approvato* (oppure di nuovo *bozza*, con la nota dell'amministratore) → *pubblicato*. Ogni modifica al contenuto salva una versione nella cronologia (`case_versions`, `chapter_versions`), che nessuno può cambiare; se ne possono aggiungere con una nota (`save_version`). Le operazioni con regole proprie passano da funzioni del database: `submit_draft`, `review_draft`, `save_version`, `add_editor`, `remove_editor`, `list_editors`.
+
+**Diventare il primo amministratore** (una volta sola): registrati nel gioco e conferma l'email, poi nel **SQL Editor** esegui la riga commentata in fondo a `supabase/migrations/20261028090000_editor.sql`, senza `-- ` iniziale e con la tua email. Gli altri membri li aggiunge un amministratore dall'editor (funzione `add_editor`), con la loro email: devono essersi già registrati nel gioco. Il ruolo si legge all'accesso (`state.role` in `src/account/session.js`): dopo una nomina la persona deve ricaricare la pagina. Deve restare sempre almeno un amministratore; se l'ultimo elimina il proprio account, rinominane uno con la stessa riga.
+
 ### Sicurezza e privacy
 
-- Le regole di accesso sono nel database (Row Level Security): ogni giocatore legge e scrive solo i propri dati; il tutor legge solo quelli dei membri dei suoi gruppi. La chiave publishable da sola non dà accesso a nulla.
+- Le regole di accesso sono nel database (Row Level Security): ogni giocatore legge e scrive solo i propri dati; il tutor legge solo quelli dei membri dei suoi gruppi; bozze e versioni dell'editor le vede solo la redazione. La chiave publishable da sola non dà accesso a nulla.
+- Nella redazione si compare con il nome da giocatore: l'email serve all'amministratore solo per aggiungere qualcuno e non viene mai mostrata.
 - Ogni utente può uscire da un gruppo ed eliminare l'account dal Profilo: la cancellazione è immediata e comprende progressi e partite.
 - Prima di aprire le iscrizioni va completata l'informativa privacy (`index.html`, sezione `privacy`) con nome e contatto del titolare.
 

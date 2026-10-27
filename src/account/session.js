@@ -16,7 +16,8 @@ const ls = (() => { try { return window.localStorage; } catch { return null; } }
 const mem = new Map();
 const storage = ls || { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v), removeItem: (k) => mem.delete(k) };
 
-export const state = { user: null, profile: null, recovery: enabled && RECOVERY_LANDING, syncing: false, lastSync: null, syncError: null };
+// role: ruolo nella redazione dell'editor dei casi ('admin' | 'autore'), null per chi non ne fa parte
+export const state = { user: null, profile: null, role: null, recovery: enabled && RECOVERY_LANDING, syncing: false, lastSync: null, syncError: null };
 const listeners = new Set();
 export function onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); }
 const emit = () => listeners.forEach((fn) => { try { fn(state); } catch (e) { console.error(e); } });
@@ -36,8 +37,27 @@ export function explain(err) {
   if (/rate limit|too many/i.test(m)) return 'Troppi tentativi ravvicinati. Aspetta qualche minuto e riprova.';
   if (/codice non valido/i.test(m)) return 'Codice gruppo non valido. Controllalo con il tuo tutor.';
   if (/same.*password|different from the old/i.test(m)) return 'La nuova password deve essere diversa da quella attuale.';
+  if (/accesso richiesto/i.test(m)) return 'Devi prima accedere con il tuo account.';
+  // editor dei casi: messaggi delle funzioni in supabase/migrations/20261028090000_editor.sql
+  if (/utente non trovato/i.test(m)) return 'Nessun account con questa email: la persona deve prima registrarsi nel gioco.';
+  if (/almeno un amministratore/i.test(m)) return 'Deve restare almeno un amministratore: prima nominane un altro.';
+  if (/non fa parte della redazione/i.test(m)) return 'Questa persona non fa parte della redazione.';
+  if (/riservato agli amministratori/i.test(m)) return 'Operazione riservata agli amministratori.';
+  if (/riservato alla redazione/i.test(m)) return 'Operazione riservata ad autori e amministratori.';
+  if (/ruolo non valido/i.test(m)) return 'Ruolo non valido: scegli amministratore o autore.';
+  if (/bozza non trovata/i.test(m)) return 'Bozza non trovata: forse è stata eliminata.';
+  if (/serve una nota/i.test(m)) return 'Per rimandare la bozza all\'autore scrivi una nota.';
+  if (/non è in revisione/i.test(m)) return 'Questa bozza non è in revisione: forse l\'ha già gestita un altro amministratore.';
+  if (/solo una bozza può essere inviata/i.test(m)) return 'Questa bozza è già stata inviata in revisione.';
+  if (/solo (le|delle) tue bozze/i.test(m)) return 'Puoi farlo solo con le bozze che hai scritto tu.';
+  if (/_title_check/i.test(m)) return 'Il titolo deve avere da 1 a 120 caratteri.';
+  if (/_data_check/i.test(m)) return 'Il contenuto della bozza non è valido o è troppo grande.';
+  if (/row-level security|permission denied/i.test(m)) return 'Non hai i permessi per questa operazione.';
   return 'Qualcosa è andato storto: ' + m;
 }
+
+// ruolo letto dalla tabella editors: valgono solo i due previsti, qualsiasi altra cosa (o nessuna riga) è null
+export const roleFrom = (row) => (row?.role === 'admin' || row?.role === 'autore' ? row.role : null);
 
 const check = ({ data, error }) => { if (error) throw error; return data; };
 
@@ -173,12 +193,18 @@ export const flush = () => sync();
 
 async function enterUser(user) {
   state.user = user;
+  state.role = null;
   const uid = user.id;
   // gioca subito con la copia locale, poi la allinea a quella online
   game.useProgress(userKey(uid), load(storage, userKey(uid)));
   try {
-    const { data } = await sb.from('profiles').select('id, display_name').eq('id', uid).maybeSingle();
+    // ruolo nella redazione: se la tabella manca o la lettura fallisce si resta senza ruolo, il gioco non cambia
+    const [{ data }, { data: editor }] = await Promise.all([
+      sb.from('profiles').select('id, display_name').eq('id', uid).maybeSingle(),
+      sb.from('editors').select('role').eq('user_id', uid).maybeSingle(),
+    ]);
     state.profile = data || { id: uid, display_name: user.user_metadata?.display_name || 'Giocatore' };
+    state.role = roleFrom(editor);
     const merged = await pull();
     if (state.user?.id === uid) game.useProgress(userKey(uid), merged);
     await sync();
@@ -191,7 +217,7 @@ async function enterUser(user) {
 
 function leaveUser() {
   clearTimeout(pushTimer);
-  state.user = null; state.profile = null; lastPushed = null; state.syncError = null;
+  state.user = null; state.profile = null; state.role = null; lastPushed = null; state.syncError = null;
   game.useProgress(GUEST_KEY, load(storage, GUEST_KEY));
   emit();
 }
