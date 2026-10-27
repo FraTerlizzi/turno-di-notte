@@ -10,7 +10,23 @@
 </head>
 <body>
 <noscript><p style="padding:16px">L'editor ha bisogno di JavaScript.</p></noscript>
-<div class="wrap edwrap" id="app"><p class="hint">Caricamento…</p></div>
+<div class="wrap edwrap" id="app"><p class="hint" id="bootMsg">Caricamento…</p></div>
+<script>
+  // se l'editor non parte (pagina aperta come file dal disco, script non scaricato) lo si dice invece di restare su "Caricamento…"
+  (function () {
+    var help = function (why) {
+      var el = document.getElementById('bootMsg');
+      if (!el) return;
+      el.outerHTML = '<div style="max-width:640px;padding:16px;border:2px solid #ffc24a;color:#eef0ff;background:#181f4a;font-family:system-ui,sans-serif;line-height:1.5">' +
+        '<b>L\'editor non riesce a partire.</b><p>' + why + '</p>' +
+        '<p>Aprilo in uno di questi due modi:</p><ul>' +
+        '<li>dal sito pubblicato: <code>https://fraterlizzi.github.io/turno-di-notte/editor/</code></li>' +
+        '<li>sul tuo PC: nella cartella del progetto esegui <code>npm run dev</code> e apri <code>http://localhost:5173/editor/</code></li></ul></div>';
+    };
+    if (location.protocol === 'file:') help('La pagina è stata aperta come file dal disco (doppio clic): così il browser non può caricare il programma.');
+    else setTimeout(function () { help('Il programma dell\'editor non si è caricato: controlla la connessione e ricarica la pagina.'); }, 10000);
+  })();
+</script>
 <script type="module" src="/src/editor/main.js"></script>
 </body>
 </html>

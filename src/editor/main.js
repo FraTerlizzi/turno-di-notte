@@ -32,6 +32,7 @@ let leaveGuard = null; // salvataggio in sospeso quando si cambia pagina
 /* ---------------------------------------------------------------- avvio e accesso */
 
 async function boot() {
+  app.innerHTML = '<p class="hint">Collegamento all\'account…</p>'; // il programma è partito: via l'avviso d'emergenza di index.html
   if (!S.enabled) { app.innerHTML = page('Editor non disponibile', '<p>Gli account non sono configurati in questa installazione (mancano le chiavi di Supabase).</p>'); return; }
   // si ridisegna solo quando cambia chi è collegato o il suo ruolo, non a ogni rinnovo della sessione
   let current = null;
@@ -414,4 +415,6 @@ async function teamPage() {
   }; });
 }
 
-boot();
+boot().catch((err) => {
+  app.innerHTML = page('L\'editor non è partito', `<p class="msg bad">${esc(S.explain(err))}</p><p><button class="btn" onclick="location.reload()">Riprova</button></p>`);
+});
