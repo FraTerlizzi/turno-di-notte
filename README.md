@@ -53,6 +53,30 @@ Ciclo di una bozza: *bozza* → *in-revisione* → *approvato* (oppure di nuovo 
 
 **Diventare il primo amministratore** (una volta sola): registrati nel gioco e conferma l'email, poi nel **SQL Editor** esegui la riga commentata in fondo a `supabase/migrations/20261028090000_editor.sql`, senza `-- ` iniziale e con la tua email. Gli altri membri li aggiunge un amministratore dall'editor (funzione `add_editor`), con la loro email: devono essersi già registrati nel gioco. Il ruolo si legge all'accesso (`state.role` in `src/account/session.js`): dopo una nomina la persona deve ricaricare la pagina. Deve restare sempre almeno un amministratore; se l'ultimo elimina il proprio account, rinominane uno con la stessa riga.
 
+### Usare l'editor
+
+L'editor è all'indirizzo **`/editor/`** del sito (es. `https://fraterlizzi.github.io/turno-di-notte/editor/`): non è collegato dal gioco e non va nella cache offline dei giocatori. Si entra con l'account del gioco; chi non è nella redazione vede "accesso riservato".
+
+- **Casi e bozze**: "Nuovo caso" (con il primo numero libero), "Modifica" su un caso pubblicato (crea una bozza: il gioco cambia solo dopo la pubblicazione), "Duplica" per partire da un caso esistente.
+- **Modulo a schede**: generale, scheda clinica, paziente e monitor, ABCDE, tappe, fonti e note. A destra i **controlli** dal vivo (errori e avvisi: un clic porta al campo) e le **versioni** (cosa è cambiato, ripristino).
+- **▶ Anteprima**: il caso si gioca nel gioco vero, anche da una tappa scelta ("Prova da qui"); in anteprima non si salvano progressi né partite.
+- **Salvataggio**: copia continua su questo dispositivo, salvataggio online un minuto dopo l'ultima modifica o con "Salva". Ogni salvataggio online è una versione.
+- **Revisione**: l'autore invia in revisione (solo se non ci sono errori), l'amministratore approva o rimanda con una nota.
+- **Capitoli**: proposta dell'elenco dei capitoli (titoli, stato *aperto* / *in arrivo* / *bozza*, ordine dei casi, capitoli nuovi), con lo stesso ciclo di revisione.
+- **Note per lo sviluppo**: in ogni caso si annota cosa servirebbe nel gioco (scena, tipo di paziente, lente) che oggi non c'è.
+
+### Pubblicare i casi approvati
+
+I casi approvati diventano file in `content/` con una Pull Request, così ogni cambiamento resta nella cronologia di GitHub.
+
+1. Una volta sola, su GitHub:
+   - **Settings → Secrets and variables → Actions → Secrets**: nuovo secret `SUPABASE_SECRET_KEY` con la chiave *secret* del progetto Supabase (Project Settings → API Keys). È l'unico posto in cui va messa.
+   - **Settings → Actions → General → Workflow permissions**: attiva *Allow GitHub Actions to create and approve pull requests*.
+2. Ogni volta: **Actions → Pubblica i casi approvati → Run workflow**. La workflow scrive i file, esegue tutti i controlli e apre una Pull Request con l'elenco dei casi; se qualcosa non va, la pubblicazione si ferma e il resoconto dice cosa correggere.
+3. Controlla la Pull Request e uniscila: il sito si aggiorna e le bozze passano a *pubblicato*.
+
+In alternativa, "Scarica il file" nell'editor produce il file del caso da aggiungere a mano in `content/cases/`.
+
 ### Sicurezza e privacy
 
 - Le regole di accesso sono nel database (Row Level Security): ogni giocatore legge e scrive solo i propri dati; il tutor legge solo quelli dei membri dei suoi gruppi; bozze e versioni dell'editor le vede solo la redazione. La chiave publishable da sola non dà accesso a nulla.
@@ -75,10 +99,20 @@ npm run preview    # prova la build di produzione (con service worker)
 
 ```
 index.html              pagina e markup delle schermate
+editor/index.html       pagina dell'editor dei casi
 public/icon.svg         icona sorgente: le PNG per PWA e iOS vengono generate in build
+content/
+  cases/NNN-slug.json   un file per caso, con tutto dentro (lo stesso formato che scrive l'editor)
+  chapters.json         capitoli e stagioni: stato e ordine dei casi
 src/
-  main.js               avvio: font, stili, motore, account, service worker
+  main.js               avvio: font, stili, motore, account, anteprima, service worker
   game.js               motore: scena, monitor, audio, glossario, Neuro, eventi
+  content/              dai file dei casi al motore
+    compile.js          file del caso → forma del motore (tappa ABCDE generata, valori del monitor)
+    catalog.js          cosa il motore sa mostrare: lenti e parametri, ritmi, aspetto, tipi di tappa
+    validate.js         controlli usati da test ed editor
+    export.js           dalle bozze approvate ai nuovi file
+  editor/               editor dei casi (modulo, bozze, anteprima, capitoli, redazione)
   account/              account e area tutor
     session.js          accesso, sincronizzazione dei progressi, coda offline delle partite
     progress.js         fusione dei progressi tra dispositivi (pura, testata)
@@ -86,23 +120,24 @@ src/
     tutor.js            gruppi e dati degli studenti
     ui.js               schermate: accesso, profilo, area tutor
   styles/               stili del gioco e delle schermate account
-  data/                 contenuti, separati dal codice
-    cases.js            i 12 casi clinici e la mappa delle stagioni
-    abcde.js            valutazione ABCDE di ogni caso
-    physiology.js       "Fisiologia al volo", una voce per tappa
+  data/                 parti del gioco che non sono casi
+    index.js            carica e compila i casi da content/
+    abcde.js            parti comuni della tappa ABCDE
     glossary.js         glossario
     events.js           eventi fuori turno
-    costumes.js         costumi e colori dei pazienti
-    index.js            assembla i dati prima dell'avvio
+    costumes.js         costumi e colori di riserva dei pazienti
+scripts/                pubblicazione dei casi approvati, conversione iniziale (storica)
 supabase/migrations/    schema del database e regole di accesso
-tests/                  controlli sui contenuti e sulla logica degli account
+tests/                  controlli su contenuti, editor, pubblicazione e account
 legacy/                 il file HTML originale, per confronto
 ```
 
 ### Aggiungere o modificare un caso
 
-I casi sono in `src/data/cases.js`; la spiegazione di fisiologia di ogni tappa è in `src/data/physiology.js`, **nello stesso ordine delle tappe** (la tappa ABCDE viene aggiunta in automatico e non conta). `npm test` segnala gli errori più comuni: tappe senza risposta giusta, opzioni senza feedback, voci di fisiologia in più, collegamenti del glossario rotti.
+Il modo previsto è l'editor. A mano: ogni caso è un file in `content/cases/` (nome `NNN-slug.json`) e va inserito in un capitolo in `content/chapters.json`; la tappa ABCDE si genera dai dati `abcde` del caso. `npm test` esegue sugli stessi file i controlli dell'editor.
+
+Nuove lenti, ritmi o aspetti del paziente richiedono codice nel motore (`src/game.js`) e una voce nel catalogo (`src/content/catalog.js`): da quel momento l'editor li offre da solo.
 
 ## Pubblicazione
 
-Ogni push su `main` passa da GitHub Actions (`.github/workflows/ci.yml`): lint, test, build e pubblicazione su GitHub Pages. Le pull request eseguono gli stessi controlli senza pubblicare.
+Ogni push su `main` passa da GitHub Actions (`.github/workflows/ci.yml`): lint, test, build e pubblicazione su GitHub Pages. Le pull request eseguono gli stessi controlli senza pubblicare. I casi dell'editor arrivano su `main` con la workflow `publish-content.yml` (vedi sopra).

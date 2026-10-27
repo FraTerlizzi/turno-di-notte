@@ -3,6 +3,7 @@ dist/
 dev-dist/
 coverage/
 *.log
+publish-report.md
 .env
 .env.*
 !.env.example
