@@ -14,11 +14,13 @@ let PAT_MODE='bed',NURSE_TGT=null;
 export const gameEvents=new EventTarget();
 let prog={best:{},xp:0},progKey='turno-notte';
 try{const s=localStorage.getItem(progKey);if(s)prog=JSON.parse(s)}catch(e){}
-function save(){try{localStorage.setItem(progKey,JSON.stringify(prog))}catch(e){}gameEvents.dispatchEvent(new CustomEvent('progress',{detail:prog}))}
+// anteprima dall'editor: si gioca il caso in prova senza salvare progressi né registrare partite
+let PREVIEW=false;
+function save(){if(PREVIEW)return;try{localStorage.setItem(progKey,JSON.stringify(prog))}catch(e){}gameEvents.dispatchEvent(new CustomEvent('progress',{detail:prog}))}
 // cambia giocatore: progressi e chiave di salvataggio locale
 export function useProgress(key,data){progKey=key;prog={best:{},xp:0,...data};prog.best=prog.best||{};renderHome();renderCostumeBtn()}
 export function getProgress(){return prog}
-const emitAttempt=d=>gameEvents.dispatchEvent(new CustomEvent('attempt',{detail:{...d,at:new Date().toISOString()}}));
+const emitAttempt=d=>PREVIEW||gameEvents.dispatchEvent(new CustomEvent('attempt',{detail:{...d,at:new Date().toISOString()}}));
 
 /* ===== Stato animato ===== */
 const CUR={vit:{},pat:{},phys:{}}, TGT={vit:{},pat:{},phys:{}};
@@ -1316,5 +1318,14 @@ function drawRandom(){const pool=CASES.map((c,i)=>i).filter(i=>CASES[i].diff!=='
   const i=src[Math.floor(Math.random()*src.length)];lastDraw=i;startCase(i,true)}
 $('btnRandom').onclick=drawRandom;$('btnReroll').onclick=drawRandom;
 renderAudioBtns();renderNowPlaying();renderCostumeBtn();renderHome();
+/* anteprima: gioca un caso già compilato (src/content/compile.js) dall'inizio o da una tappa;
+   il caso resta fuori dai capitoli e dalla home */
+function playPreview(c,fromStep){
+  PREVIEW=true;
+  const old=CASES.findIndex(x=>x.__preview);if(old>=0)CASES.splice(old,1);
+  CASES.push({...c,__preview:true});startCase(CASES.length-1);
+  $('gLevel').textContent='Anteprima · '+(c.area||'')+' · '+(c.diff||'');$('hBrand').textContent='TURNO DI NOTTE · ANTEPRIMA';
+  if(fromStep>0&&fromStep<curCase.steps.length){stepI=fromStep;renderStep()}
+}
 // l'avvio (caso a sorpresa, oppure prima la schermata di accesso) lo decide main.js
-export { show, renderHome, drawRandom, startCase, startEvent };
+export { show, renderHome, drawRandom, startCase, startEvent, playPreview };

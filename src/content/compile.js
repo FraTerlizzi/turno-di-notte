@@ -50,7 +50,8 @@ export function hudValue(h, st) {
 export function compileCase(file) {
   const c = clone(file);
   const steps = c.steps.map((s) => ({ ...s }));
-  if (c.abcde && !steps[0]?.abcde) {
+  // senza lettera prioritaria (caso ancora in scrittura) la tappa ABCDE non si può costruire: l'anteprima parte dalla tappa 1
+  if (c.abcde && ORDER.includes(c.abcde.first) && !steps[0]?.abcde) {
     const s0 = steps[0];
     const step = abcdeStep(c.abcde, s0);
     if (s0 && s0.seq) delete s0.seq;

@@ -6,7 +6,11 @@ const NIGHT = '#141a3f';
 export default defineConfig({
   // GitHub Pages pubblica in /<nome-repo>/: la workflow passa BASE_PATH, in locale resta '/'
   base: process.env.BASE_PATH || '/',
-  build: { target: 'es2022' },
+  build: {
+    target: 'es2022',
+    // due pagine: il gioco e l'editor dei casi (riservato alla redazione)
+    rollupOptions: { input: { main: 'index.html', editor: 'editor/index.html' } },
+  },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
@@ -28,6 +32,9 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // l'editor non va nella cache offline dei giocatori, e il service worker non deve intercettarne la pagina
+        globIgnores: ['editor/**', 'assets/editor-*'],
+        navigateFallbackDenylist: [/\/editor\//],
         cleanupOutdatedCaches: true,
       },
     }),

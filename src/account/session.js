@@ -117,6 +117,7 @@ export async function leaveGroup(groupId) {
 /* ---------------------------------------------------------------- progressi */
 
 let game = null;          // { useProgress, getProgress } dal motore
+let syncProgress = true;  // false nella pagina dell'editor: lì non c'è il gioco
 let pushTimer = null;
 let lastPushed = null;
 
@@ -173,7 +174,7 @@ async function flushAttempts() {
 }
 
 export async function sync() {
-  if (!state.user) return;
+  if (!state.user || !syncProgress) return;
   state.syncing = true; emit();
   try {
     await push();
@@ -196,7 +197,7 @@ async function enterUser(user) {
   state.role = null;
   const uid = user.id;
   // gioca subito con la copia locale, poi la allinea a quella online
-  game.useProgress(userKey(uid), load(storage, userKey(uid)));
+  if (syncProgress) game.useProgress(userKey(uid), load(storage, userKey(uid)));
   try {
     // ruolo nella redazione: se la tabella manca o la lettura fallisce si resta senza ruolo, il gioco non cambia
     const [{ data }, { data: editor }] = await Promise.all([
@@ -205,9 +206,11 @@ async function enterUser(user) {
     ]);
     state.profile = data || { id: uid, display_name: user.user_metadata?.display_name || 'Giocatore' };
     state.role = roleFrom(editor);
-    const merged = await pull();
-    if (state.user?.id === uid) game.useProgress(userKey(uid), merged);
-    await sync();
+    if (syncProgress) {
+      const merged = await pull();
+      if (state.user?.id === uid) game.useProgress(userKey(uid), merged);
+      await sync();
+    }
   } catch (e) {
     state.profile = state.profile || { id: uid, display_name: user.user_metadata?.display_name || 'Giocatore' };
     state.syncError = explain(e);
@@ -218,19 +221,24 @@ async function enterUser(user) {
 function leaveUser() {
   clearTimeout(pushTimer);
   state.user = null; state.profile = null; state.role = null; lastPushed = null; state.syncError = null;
-  game.useProgress(GUEST_KEY, load(storage, GUEST_KEY));
+  if (syncProgress) game.useProgress(GUEST_KEY, load(storage, GUEST_KEY));
   emit();
 }
 
-/* collega il motore e ripristina la sessione salvata; restituisce true se c'è un utente collegato */
-export async function init(engine) {
+/* collega il motore e ripristina la sessione salvata; restituisce true se c'è un utente collegato.
+   Con { progress: false } (pagina dell'editor, senza gioco) gestisce solo accesso e ruolo:
+   i progressi non vengono né letti né inviati, così non si rischia di sovrascriverli. */
+export async function init(engine, { progress = true } = {}) {
   game = engine;
+  syncProgress = progress && Boolean(engine);
   if (!enabled) return false;
 
-  engine.gameEvents.addEventListener('progress', () => { if (state.user) schedulePush(); });
-  engine.gameEvents.addEventListener('attempt', (e) => queueAttempt(e.detail));
-  window.addEventListener('online', () => sync().catch(() => {}));
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sync().catch(() => {}); });
+  if (syncProgress) {
+    engine.gameEvents.addEventListener('progress', () => { if (state.user) schedulePush(); });
+    engine.gameEvents.addEventListener('attempt', (e) => queueAttempt(e.detail));
+    window.addEventListener('online', () => sync().catch(() => {}));
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sync().catch(() => {}); });
+  }
 
   const { data } = await sb.auth.getSession();
   if (data.session?.user) await enterUser(data.session.user);
