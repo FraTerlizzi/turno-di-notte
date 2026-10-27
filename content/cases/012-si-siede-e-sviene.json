@@ -1,0 +1,378 @@
+{
+  "id": 12,
+  "slug": "si-siede-e-sviene",
+  "title": "Si siede e sviene",
+  "diff": "Difficile",
+  "area": "Cardiologia",
+  "pt": "Sig.ra Rosa C., 82 anni · Medicina interna, letto 15",
+  "hook": "Perché è svenuta appena seduta?",
+  "intro": "Mattino, ore 9. La paziente sta meglio e vuole alzarsi.",
+  "look": {
+    "gown": "#5a7fd8",
+    "hair": "#d8d8d8"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Edema polmonare acuto ieri sera."
+    ],
+    [
+      "Terapia di ieri",
+      "Furosemide 40 mg EV due volte: diuresi 2000 mL nella notte. Stamattina polmoni liberi."
+    ],
+    [
+      "Anamnesi",
+      "Ipertensione, dislipidemia. Da qualche mese si stanca salendo le scale e una volta ha avuto un capogiro facendo la spesa."
+    ],
+    [
+      "In cartella",
+      "Soffio sistolico, mai approfondito con un ecocardiogramma."
+    ],
+    [
+      "Terapia al bisogno",
+      "Nitroglicerina sublinguale per dolore toracico."
+    ],
+    [
+      "Prescrizione",
+      "Furosemide 40 mg EV anche alle 14."
+    ],
+    [
+      "Parametri alle 8",
+      "PA 110/64 · FC 88 · SpO₂ 95% · FR 18 · T 36,6°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 88,
+      "sys": 110,
+      "dia": 64,
+      "spo2": 95,
+      "rr": 18,
+      "temp": 36.6,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 0,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "heart",
+      "stenosis": 0.85,
+      "preload": 0.42,
+      "backflow": 0.1,
+      "contract": 0.8
+    }
+  },
+  "hud": [
+    {
+      "label": "PA sistolica",
+      "source": "vit.sys",
+      "unit": "mmHg",
+      "lo": 90,
+      "hi": 180
+    },
+    {
+      "label": "Riempimento",
+      "source": "phys.preload",
+      "unit": "%",
+      "lo": 30,
+      "hi": 101,
+      "scale": 100,
+      "bar": true
+    }
+  ],
+  "abcde": {
+    "bad": "C",
+    "first": "C",
+    "A": "Parla normalmente: vie aeree pervie.",
+    "B": "FR 18, SpO₂ 95%, polmoni liberi.",
+    "C": "FC 88, PA 110/64 (ieri 160/90). Diuresi 2000 mL nella notte. In cartella un soffio sistolico mai approfondito.",
+    "D": "Vigile, orientata. Glicemia 104 mg/dL.",
+    "E": "T 36,6°C. Vuole alzarsi per andare in bagno.",
+    "why": "Dopo 2 litri di diuresi la pressione è scesa molto rispetto a ieri, e c'è un soffio mai indagato: in C c'è il punto debole della paziente, quello da tenere d'occhio."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "Ausculti il cuore con attenzione.",
+      "q": "Quale soffio ti fa pensare a una stenosi aortica?",
+      "opts": [
+        {
+          "t": "Sistolico eiettivo, rude, al 2° spazio intercostale destro, irradiato alle carotidi",
+          "ok": 1,
+          "fb": "Il focolaio aortico è al 2° spazio destro, e il flusso turbolento risale lungo le carotidi."
+        },
+        {
+          "t": "Olosistolico all'apice, irradiato all'ascella",
+          "fb": "È il soffio dell'insufficienza mitralica."
+        },
+        {
+          "t": "Diastolico in decrescendo al margine sternale sinistro, meglio udibile con la paziente inclinata in avanti",
+          "fb": "È il soffio dell'insufficienza aortica."
+        },
+        {
+          "t": "Diastolico a rullo all'apice, con schiocco di apertura",
+          "fb": "È il quadro della stenosi mitralica."
+        }
+      ],
+      "learn": "Dispnea da sforzo e capogiri sono sintomi tipici della stenosi aortica: andavano approfonditi.",
+      "phy": [
+        "La valvola aortica stretta obbliga il ventricolo a spingere fortissimo per far passare il sangue. Il sangue turbolento che passa nel restringimento fa un rumore, il soffio, che si sente in alto a destra dello sterno e risale verso il collo.",
+        "È come il fischio dell'acqua che esce da un tubo schiacciato: più è stretto, più il getto è forte e rumoroso. Lo stetoscopio ascolta proprio quel fischio."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "La paziente vuole andare in bagno.",
+      "seq": [
+        {
+          "d": 1.4,
+          "cap": "Si mette seduta sul bordo del letto",
+          "s": {
+            "pat": {
+              "pose": 2
+            }
+          }
+        },
+        {
+          "d": 1.6,
+          "cap": "Il ventricolo si riempie meno",
+          "s": {
+            "phys": {
+              "preload": 0.18
+            },
+            "vit": {
+              "hr": 112,
+              "sys": 84,
+              "dia": 50
+            }
+          }
+        },
+        {
+          "d": 1.7,
+          "cap": "Perde coscienza",
+          "s": {
+            "vit": {
+              "hr": 120,
+              "sys": 70,
+              "dia": 42
+            },
+            "pat": {
+              "collapsed": 1,
+              "eyes": 0,
+              "skin": "grey"
+            }
+          }
+        }
+      ],
+      "q": "Perde coscienza da seduta, ha un polso debole e rapido, respira. Cosa fai subito?",
+      "win": "Si risveglia",
+      "opts": [
+        {
+          "t": "La distendo supina, sollevo le gambe, controllo respiro e polso carotideo, chiamo aiuto e avvio il monitoraggio",
+          "ok": 1,
+          "fb": "Distenderla e sollevare le gambe riporta sangue al cuore: il ventricolo si riempie e la gittata risale."
+        },
+        {
+          "t": "La sostengo seduta e le do qualche sorso d'acqua zuccherata",
+          "fb": "Lo zucchero ha senso in un'ipoglicemia, ma da seduta il cuore resta poco riempito. Ed è incosciente: niente per bocca.",
+          "s": {
+            "vit": {
+              "sys": 62,
+              "dia": 36
+            }
+          },
+          "end": "Resta incosciente: PA 62"
+        },
+        {
+          "t": "Le somministro la nitroglicerina sublinguale prescritta al bisogno, pensando a un'angina",
+          "fb": "Nella stenosi aortica l'angina è frequente, ma la nitroglicerina dilata le vene e riduce ancora il precarico. Con una valvola stretta la pressione crolla.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "sys": 40,
+              "dia": 20,
+              "hr": 130
+            },
+            "phys": {
+              "preload": 0.05
+            }
+          },
+          "end": "Collasso cardiocircolatorio"
+        },
+        {
+          "t": "Controllo prima la glicemia capillare, per escludere un'ipoglicemia",
+          "fb": "La glicemia si controlla in ogni perdita di coscienza, ma dopo averla distesa: la causa più probabile qui è emodinamica.",
+          "s": {
+            "vit": {
+              "sys": 66,
+              "dia": 38
+            }
+          },
+          "end": "Il cervello resta poco perfuso"
+        }
+      ],
+      "out": {
+        "pat": {
+          "pose": 0,
+          "collapsed": 0,
+          "eyes": 1,
+          "skin": "pale"
+        },
+        "phys": {
+          "preload": 0.5
+        },
+        "vit": {
+          "hr": 98,
+          "sys": 98,
+          "dia": 58
+        }
+      },
+      "learn": "Dopo pochi secondi riprende coscienza: il cervello aveva ricevuto troppo poco sangue.",
+      "phy": [
+        "Il ventricolo ispessito e la valvola stretta possono mandare fuori sangue solo se il ventricolo è ben riempito. Dopo 2 litri di diuretico e il passaggio da sdraiata a seduta, il riempimento crolla: esce troppo poco sangue e il cervello si spegne per qualche secondo.",
+        "È come una siringa con l'ago sottile: se è piena, spingendo esce comunque un getto. Se nella siringa c'è poco liquido, puoi spingere quanto vuoi, esce poco. Sdraiarla e alzarle le gambe riempie di nuovo la siringa."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Ore 13:45. PA 98/58, FC 98. Si sente debole. Alle 14 c'è la furosemide 40 mg EV.",
+      "q": "Cosa fai con la furosemide delle 14?",
+      "win": "Medico avvisato, diuretico sospeso",
+      "opts": [
+        {
+          "t": "Non la somministro e segnalo subito al medico la sincope, l'ipotensione e il soffio, perché rivaluti la terapia",
+          "ok": 1,
+          "fb": "Un evento nuovo cambia il quadro: serve una rivalutazione medica prima di un altro diuretico."
+        },
+        {
+          "t": "La somministro: l'edema è stato grave e la terapia è prescritta",
+          "fb": "L'edema era reale, ma ora la paziente è asciutta e ipotesa. Un altro diuretico svuota il ventricolo.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "sys": 68,
+              "dia": 38,
+              "hr": 124
+            },
+            "pat": {
+              "collapsed": 1,
+              "eyes": 0,
+              "skin": "grey"
+            },
+            "phys": {
+              "preload": 0.12
+            }
+          },
+          "end": "Nuova sincope"
+        },
+        {
+          "t": "Dimezzo la dose di mia iniziativa, per prudenza",
+          "fb": "La dose la decide il medico. Anche metà dose riduce il precarico.",
+          "s": {
+            "vit": {
+              "sys": 84,
+              "dia": 50
+            },
+            "phys": {
+              "preload": 0.3
+            }
+          },
+          "end": "PA 84/50"
+        },
+        {
+          "t": "La somministro e preparo in parallelo un bolo di fisiologica",
+          "fb": "Togliere e dare liquidi insieme non ha senso: serve una decisione medica chiara.",
+          "s": {
+            "vit": {
+              "sys": 86
+            }
+          },
+          "end": "Terapia contraddittoria"
+        }
+      ],
+      "learn": "La furosemide era giusta per l'edema. Togliere molto liquido senza conoscere la valvola no: se c'è un soffio, prima si capisce qual è la valvola.",
+      "phy": [
+        "Un altro diuretico toglierebbe altro liquido proprio quando il ventricolo ha bisogno di essere riempito. La terapia giusta per l'edema di ieri è diventata rischiosa oggi.",
+        "È come continuare a svuotare la barca dall'acqua anche quando è già asciutta: prima serviva, ora la fai solo inclinare. La valutazione va rifatta con il quadro nuovo."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Guarda il ventricolo e il loop pressione-volume nella lente.",
+      "q": "Perché in questa paziente la gittata dipende così tanto dal riempimento?",
+      "opts": [
+        {
+          "t": "La valvola stretta è un ostacolo fisso all'uscita e il ventricolo ispessito è rigido: con poco riempimento non può aumentare la gittata",
+          "ok": 1,
+          "fb": "Un cuore normale compensa un calo di precarico. Qui no."
+        },
+        {
+          "t": "La valvola non si chiude bene e il sangue torna indietro nel ventricolo",
+          "fb": "È il meccanismo dell'insufficienza aortica."
+        },
+        {
+          "t": "Il ventricolo è dilatato e la frazione d'eiezione è ridotta",
+          "fb": "È il quadro di una cardiomiopatia dilatativa. Qui la frazione d'eiezione è conservata."
+        },
+        {
+          "t": "L'atrio destro non si contrae per la fibrillazione atriale",
+          "fb": "La perdita della contrazione atriale peggiora la stenosi aortica, ma la paziente è in ritmo sinusale."
+        }
+      ],
+      "learn": "Nel loop pressione-volume il picco di pressione ventricolare supera di molto quella aortica: è il gradiente attraverso la valvola.",
+      "phy": [
+        "Un cuore sano, se riceve meno sangue, compensa spingendo più forte e più in fretta. Qui la valvola è un collo di bottiglia fisso e il ventricolo è rigido: non ha margini, la gittata segue direttamente il riempimento.",
+        "È come un'auto con il freno a mano tirato: anche premendo l'acceleratore non va più veloce. Il freno è la valvola, e l'unico modo per andare avanti è avere il serbatoio pieno."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "L'ecocardiogramma conferma una stenosi aortica severa.",
+      "physMode": {
+        "mode": "heart",
+        "stenosis": 0.05,
+        "preload": 0.55,
+        "backflow": 0,
+        "contract": 0.8
+      },
+      "q": "Quale elemento rende indicata la sostituzione della valvola?",
+      "win": "Valvola sostituita",
+      "kn": 1,
+      "opts": [
+        {
+          "t": "La presenza di sintomi (sincope, dispnea da sforzo, angina) in una stenosi severa",
+          "ok": 1,
+          "fb": "Una volta comparsi i sintomi, la prognosi senza intervento peggiora molto."
+        },
+        {
+          "t": "Un soffio molto intenso, anche senza sintomi",
+          "fb": "L'intensità del soffio non dice quanto è grave la stenosi: quando la gittata cala, il soffio può addirittura attenuarsi."
+        },
+        {
+          "t": "Palpitazioni occasionali",
+          "fb": "Non sono il criterio che guida l'indicazione."
+        },
+        {
+          "t": "Edema malleolare serale",
+          "fb": "È poco specifico."
+        }
+      ],
+      "learn": "La sostituzione, percutanea (TAVI) o chirurgica, viene decisa dall'Heart Team. Nell'animazione la valvola è stata sostituita e il gradiente scompare.",
+      "phy": [
+        "Finché la stenosi non dà sintomi il ventricolo riesce a compensare. Quando compaiono sincope, dispnea o angina, vuol dire che i compensi sono finiti, e la valvola va sostituita.",
+        "È come un ponte con una crepa: lo tieni sotto osservazione finché regge, ma quando inizia a oscillare sotto il peso delle auto non si può più aspettare. La TAVI cambia la valvola passando da un'arteria della gamba."
+      ]
+    }
+  ],
+  "src": [
+    "2025 ESC/EACTS Guidelines for the management of valvular heart disease",
+    "Caso ispirato a un reel didattico del Dr. Reza Shahnazar (@rezashahnazar), rielaborato"
+  ],
+  "notes": ""
+}

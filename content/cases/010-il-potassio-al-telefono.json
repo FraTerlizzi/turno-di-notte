@@ -1,0 +1,340 @@
+{
+  "id": 10,
+  "slug": "il-potassio-al-telefono",
+  "title": "Il potassio al telefono",
+  "diff": "Difficile",
+  "area": "Nefrologia",
+  "pt": "Sig. Ettore G., 72 anni · Nefrologia, letto 4",
+  "hook": "Perché il calcio, se non abbassa il potassio?",
+  "intro": "Alle 14 il laboratorio ti chiama per un valore critico.",
+  "look": {
+    "gown": "#7a6fd1",
+    "hair": "#a0a0a0"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Insufficienza renale cronica in emodialisi (lunedì, mercoledì, venerdì). Ricoverato per l'accesso vascolare malfunzionante."
+    ],
+    [
+      "Ultima dialisi",
+      "Saltata venerdì per il malfunzionamento della fistola. Oggi è lunedì."
+    ],
+    [
+      "Terapia",
+      "Ramipril. Bisoprololo. Sostituto del sale a base di potassio, portato da casa."
+    ],
+    [
+      "Sintomi",
+      "Debolezza alle gambe, formicolii, si sente stanco."
+    ],
+    [
+      "Parametri alle 13",
+      "PA 150/88 · FC 64 · SpO₂ 96% · FR 16 · T 36,6°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 64,
+      "sys": 150,
+      "dia": 88,
+      "spo2": 96,
+      "rr": 16,
+      "temp": 36.6,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "myocyte",
+      "k": 5,
+      "calcium": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "Potassio",
+      "source": "phys.k",
+      "unit": "mmol/L",
+      "lo": 3.5,
+      "hi": 5.5,
+      "decimals": 1
+    },
+    {
+      "label": "Freq. cardiaca",
+      "source": "vit.hr",
+      "unit": "bpm",
+      "lo": 50,
+      "hi": 110
+    }
+  ],
+  "abcde": {
+    "bad": "CDE",
+    "first": "C",
+    "A": "Parla normalmente: vie aeree pervie.",
+    "B": "FR 16, SpO₂ 96% in aria.",
+    "C": "FC 56, PA 150/88, al monitor onde T alte e appuntite.",
+    "D": "Vigile e orientato, debolezza alle gambe e formicolii. Glicemia 92 mg/dL.",
+    "E": "T 36,6°C. Fistola al braccio sinistro senza fremito. Sostituto del sale sul comodino.",
+    "why": "A e B sono a posto. In C c'è un ritmo lento con onde T appuntite: è il segnale elettrico più pericoloso del caso."
+  },
+  "steps": [
+    {
+      "tag": "Decisione",
+      "text": "Il laboratorio ti telefona.",
+      "seq": [
+        {
+          "d": 1.3,
+          "cap": "Il potassio extracellulare sale",
+          "s": {
+            "phys": {
+              "k": 7.1
+            }
+          }
+        },
+        {
+          "d": 1.8,
+          "cap": "Onde T alte e appuntite",
+          "s": {
+            "vit": {
+              "ecg": "peakedT",
+              "hr": 56
+            }
+          }
+        }
+      ],
+      "q": "K⁺ 7,1 mmol/L, con la nota \"campione lievemente emolizzato\". Al monitor vedi onde T alte e appuntite, FC 56. Cosa fai?",
+      "win": "Valore trattato come vero",
+      "opts": [
+        {
+          "t": "Considero il valore vero: ECG a 12 derivazioni, monitoraggio continuo, chiamo subito il medico e si ripete il prelievo senza ritardare il trattamento",
+          "ok": 1,
+          "fb": "L'emolisi può alzare falsamente il potassio, ma le onde T appuntite dicono che il problema è reale."
+        },
+        {
+          "t": "Lo considero falsato dall'emolisi e programmo un nuovo prelievo per domattina",
+          "fb": "L'emolisi del campione è una causa reale di falso aumento, ma qui l'ECG conferma il problema. Nella notte compare una fibrillazione ventricolare.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "phys": {
+              "k": 8.2
+            },
+            "vit": {
+              "ecg": "vf",
+              "hr": 220
+            }
+          },
+          "end": "Fibrillazione ventricolare"
+        },
+        {
+          "t": "Ripeto subito il prelievo e aspetto il risultato prima di avvisare il medico",
+          "fb": "Ripetere è corretto, ma va fatto mentre si avvisa e si monitora. Nell'attesa il QRS si allarga.",
+          "s": {
+            "phys": {
+              "k": 7.6
+            },
+            "vit": {
+              "hr": 48
+            }
+          },
+          "end": "QRS che si allarga"
+        },
+        {
+          "t": "Gli tolgo il sostituto del sale dal comodino e lo annoto in consegna",
+          "fb": "Giusto toglierlo, ed è una causa probabile, ma ora la priorità è il cuore.",
+          "s": {
+            "phys": {
+              "k": 7.4
+            },
+            "vit": {
+              "hr": 50
+            }
+          },
+          "end": "Il potassio sale ancora"
+        }
+      ],
+      "learn": "I sostituti del sale contengono cloruro di potassio: sono pericolosi in insufficienza renale e con farmaci come il ramipril.",
+      "phy": [
+        "Il rene che non funziona e la dialisi saltata non eliminano il potassio, che si accumula nel sangue. Il potassio regola l'elettricità di nervi e cuore: troppo alto la rende instabile, e le onde T appuntite all'ECG ne sono il primo segno.",
+        "È come la tensione di casa che sale oltre il normale: le lampadine sfarfallano prima di bruciarsi. Formicolii e debolezza alle gambe sono lo sfarfallio."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Il medico prescrive calcio gluconato 10%, 30 mL EV in 5-10 minuti.",
+      "q": "Qual è lo scopo del calcio in questa situazione?",
+      "opts": [
+        {
+          "t": "Stabilizza la membrana delle cellule cardiache e riduce il rischio di aritmie, senza abbassare il potassio",
+          "ok": 1,
+          "fb": "Protegge il cuore in pochi minuti, ma per poco tempo."
+        },
+        {
+          "t": "Sposta il potassio dentro le cellule",
+          "fb": "È l'effetto di insulina-glucosio e del salbutamolo."
+        },
+        {
+          "t": "Lega il potassio nell'intestino e ne favorisce l'eliminazione con le feci",
+          "fb": "È l'effetto delle resine leganti, come il patiromer."
+        },
+        {
+          "t": "Aumenta l'eliminazione renale del potassio",
+          "fb": "È l'effetto dei diuretici dell'ansa, utile solo se il rene funziona."
+        }
+      ],
+      "out": {
+        "phys": {
+          "calcium": 0.9
+        },
+        "vit": {
+          "hr": 62
+        }
+      },
+      "learn": "Il calcio va dato in una vena di buon calibro: se stravasa può danneggiare i tessuti.",
+      "phy": [
+        "Il calcio non abbassa il potassio: rende la membrana del cuore meno sensibile al disturbo elettrico. Compra tempo, in attesa che le altre terapie spostino ed eliminino il potassio.",
+        "È come mettere un salvavita su un impianto elettrico difettoso: non ripara il guasto, ma impedisce che faccia danni mentre arriva l'elettricista."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Viene prescritta insulina rapida 10 U in 25 g di glucosio EV in 15 minuti. Il paziente non è diabetico, glicemia di partenza 92 mg/dL.",
+      "q": "Cosa sorvegli dopo l'infusione?",
+      "win": "Nessuna ipoglicemia",
+      "opts": [
+        {
+          "t": "Glicemia capillare ripetutamente, per almeno 6 ore, e potassio dopo 1-2 ore",
+          "ok": 1,
+          "fb": "Nei pazienti renali l'insulina dura di più e l'ipoglicemia può arrivare tardi. Il potassio va ricontrollato per vedere l'effetto."
+        },
+        {
+          "t": "Glicemia solo a fine infusione, quando l'effetto è massimo",
+          "fb": "L'ipoglicemia può comparire anche 2-4 ore dopo. Alle 18 il paziente è sudato e confuso.",
+          "s": {
+            "pat": {
+              "sweat": 1,
+              "eyes": 0
+            }
+          },
+          "end": "Ipoglicemia tardiva"
+        },
+        {
+          "t": "Potassio dopo 24 ore, per vedere l'effetto completo",
+          "fb": "L'effetto dell'insulina sul potassio dura poche ore: va ricontrollato molto prima.",
+          "s": {
+            "phys": {
+              "k": 6.9
+            },
+            "vit": {
+              "ecg": "peakedT"
+            }
+          },
+          "end": "Il potassio risale"
+        },
+        {
+          "t": "Nulla di specifico: insulina e glucosio insieme si bilanciano",
+          "fb": "Il glucosio serve proprio a limitare l'ipoglicemia, che resta però un rischio frequente.",
+          "s": {
+            "pat": {
+              "sweat": 1,
+              "eyes": 0
+            }
+          },
+          "end": "Ipoglicemia"
+        }
+      ],
+      "out": {
+        "vit": {
+          "ecg": "sinus",
+          "hr": 70
+        },
+        "phys": {
+          "k": 5.6,
+          "calcium": 0.4
+        }
+      },
+      "learn": "Spostare il K⁺: insulina-glucosio, salbutamolo. Eliminarlo: dialisi, resine leganti, diuretici. Qui la soluzione definitiva è la dialisi.",
+      "phy": [
+        "L'insulina fa entrare il potassio nelle cellule, ma fa entrare anche il glucosio. Nei pazienti con il rene che lavora poco l'insulina resta in circolo più a lungo, e l'ipoglicemia può arrivare anche ore dopo.",
+        "È come spingere con la scopa la polvere sotto il tappeto: la stanza sembra pulita, ma si porta via anche le briciole che servivano (lo zucchero). La vera pulizia, cioè l'eliminazione del potassio, è la dialisi."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Torniamo alla cellula cardiaca.",
+      "physMode": {
+        "mode": "myocyte",
+        "k": 7.1,
+        "calcium": 0
+      },
+      "q": "Perché un K⁺ extracellulare alto è pericoloso per il cuore?",
+      "opts": [
+        {
+          "t": "Il potenziale di riposo diventa meno negativo, molti canali del sodio si inattivano e la conduzione dell'impulso rallenta",
+          "ok": 1,
+          "fb": "Le cellule sono parzialmente depolarizzate e meno eccitabili."
+        },
+        {
+          "t": "Il potenziale di riposo diventa più negativo e le cellule non raggiungono la soglia",
+          "fb": "È ciò che succede nell'ipokaliemia. Con K⁺ alto il potenziale si avvicina allo zero."
+        },
+        {
+          "t": "Il potassio entra in eccesso nelle cellule e le fa contrarre troppo",
+          "fb": "La forza della contrazione dipende soprattutto dal calcio."
+        },
+        {
+          "t": "Il potassio provoca uno spasmo delle coronarie",
+          "fb": "È un problema elettrico, non di flusso coronarico."
+        }
+      ],
+      "learn": "La pompa Na⁺/K⁺-ATPasi tiene il K⁺ alto dentro (circa 140 mmol/L) e basso fuori (3,5-5 mmol/L).",
+      "phy": [
+        "Le cellule del cuore hanno una carica negativa a riposo, mantenuta dal potassio. Quando fuori ce n'è troppo, la carica si riduce: le cellule restano a metà strada, si attivano male e l'impulso viaggia lento e irregolare.",
+        "È come una molla già mezza compressa: non può più scattare con tutta la forza. Il cuore così batte in modo disordinato, fino a fermarsi."
+      ]
+    },
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "Immagina che il potassio continui a salire senza trattamento.",
+      "q": "Quale sequenza di alterazioni ECG ti aspetti?",
+      "opts": [
+        {
+          "t": "Onde T appuntite → onde P appiattite e PR allungato → QRS larghi → onda sinusoidale → fibrillazione ventricolare o asistolia",
+          "ok": 1,
+          "fb": "È la progressione classica, anche se non sempre segue quest'ordine."
+        },
+        {
+          "t": "Sopraslivellamento del tratto ST → onde Q patologiche",
+          "fb": "È l'evoluzione di un infarto."
+        },
+        {
+          "t": "Onde T appiattite → comparsa di onde U → QT apparentemente lungo",
+          "fb": "È il quadro dell'ipokaliemia."
+        },
+        {
+          "t": "QT accorciato",
+          "fb": "È tipico dell'ipercalcemia."
+        }
+      ],
+      "learn": "L'ECG non è sensibile: un paziente può avere un K⁺ molto alto con ECG quasi normale.",
+      "phy": [
+        "Man mano che il potassio sale, l'elettricità del cuore si deteriora per tappe: prima la fase di recupero (onde T), poi gli atri (onde P), poi la conduzione nei ventricoli (QRS larghi), fino al caos.",
+        "È come un'orchestra che perde il direttore: prima stonano i fiati, poi gli archi vanno fuori tempo, alla fine ognuno suona per conto suo."
+      ]
+    }
+  ],
+  "src": [
+    "UK Kidney Association, Clinical Practice Guidelines: Treatment of acute hyperkalaemia in adults (2023)",
+    "Resuscitation Council UK, Advanced Life Support: alterazioni elettrolitiche"
+  ],
+  "notes": ""
+}

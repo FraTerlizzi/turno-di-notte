@@ -1,0 +1,400 @@
+{
+  "id": 11,
+  "slug": "l-alito-che-sa-di-frutta",
+  "title": "L'alito che sa di frutta",
+  "diff": "Difficile",
+  "area": "Endocrinologia",
+  "pt": "Giulia F., 19 anni, 58 kg · Medicina d'urgenza, letto 6",
+  "hook": "Perché non partire subito con l'insulina?",
+  "intro": "Arriva accompagnata dalla madre. È pallida e stanca, risponde lentamente.",
+  "look": {
+    "gown": "#d07a9a",
+    "hair": "#2a1a10"
+  },
+  "scheda": [
+    [
+      "Motivo dell'accesso",
+      "Vomito e dolore addominale da 2 giorni."
+    ],
+    [
+      "Anamnesi",
+      "Diabete tipo 1 da 8 anni, schema basal-bolus con penne."
+    ],
+    [
+      "Cosa è successo",
+      "Gastroenterite: mangiava poco e per paura di ipoglicemie ha smesso sia la rapida sia la basale da 36 ore."
+    ],
+    [
+      "Esami",
+      "Glicemia 480 mg/dL · chetonemia 5,2 mmol/L · pH 7,10 · HCO₃⁻ 9 mmol/L · K⁺ 3,0 mmol/L"
+    ],
+    [
+      "Parametri",
+      "PA 98/58 · FC 124 · FR 30 · SpO₂ 98% · T 37,4°C · mucose secche"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 124,
+      "sys": 98,
+      "dia": 58,
+      "spo2": 98,
+      "rr": 30,
+      "temp": 37.4,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "pale",
+      "eyes": 1,
+      "sweat": 0
+    },
+    "phys": {
+      "mode": "glucose",
+      "glu": 480,
+      "insulin": 0,
+      "ketones": 0.9,
+      "kshift": 0.7
+    }
+  },
+  "hud": [
+    {
+      "label": "Glicemia",
+      "source": "phys.glu",
+      "unit": "mg/dL",
+      "lo": 70,
+      "hi": 250
+    },
+    {
+      "label": "Respiri/min",
+      "source": "vit.rr",
+      "unit": "",
+      "lo": 10,
+      "hi": 24
+    }
+  ],
+  "abcde": {
+    "bad": "BCDE",
+    "first": "C",
+    "A": "Parla lentamente: vie aeree pervie.",
+    "B": "FR 30, respiro profondo e regolare, SpO₂ 98%, alito dolciastro.",
+    "C": "FC 124, PA 98/58, mucose secche, riempimento capillare 3 secondi.",
+    "D": "Rallentata ma orientata. Glicemia 480 mg/dL, chetonemia 5,2 mmol/L.",
+    "E": "T 37,4°C. Addome dolente in modo diffuso.",
+    "why": "Il respiro in B è alterato ma è un compenso, con saturazione normale: non serve ossigeno. Il primo problema da trattare è in C, la disidratazione con ipotensione: per questo i liquidi vengono prima dell'insulina."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "Respira in modo profondo, veloce e regolare. L'alito ha un odore dolciastro, come di frutta matura.",
+      "q": "Quale respiro stai osservando, e perché si presenta così?",
+      "opts": [
+        {
+          "t": "Respiro di Kussmaul: elimina CO₂ per compensare un'acidosi metabolica",
+          "ok": 1,
+          "fb": "I chetoni sono acidi. Respirando di più si elimina CO₂ e il pH risale un po'."
+        },
+        {
+          "t": "Respiro di Cheyne-Stokes: atti crescenti e decrescenti alternati a pause, per alterazione dei centri respiratori",
+          "fb": "La descrizione è corretta, ma il Cheyne-Stokes ha pause di apnea. Qui il respiro è regolare."
+        },
+        {
+          "t": "Tachipnea superficiale antalgica da dolore addominale",
+          "fb": "Esiste, ma il respiro di Giulia è profondo, non superficiale."
+        },
+        {
+          "t": "Iperventilazione da attacco di panico, con parestesie alle mani",
+          "fb": "L'iperventilazione d'ansia esiste e dà parestesie, ma qui c'è un'acidosi grave documentata."
+        }
+      ],
+      "learn": "L'odore di frutta è l'acetone, uno dei corpi chetonici, eliminato con il respiro.",
+      "phy": [
+        "Senza insulina il glucosio non entra nelle cellule, che allora bruciano i grassi. Il fegato trasforma i grassi in chetoni, che sono acidi. Il sangue si acidifica e il corpo cerca di liberarsi dell'acidità respirando profondamente e velocemente.",
+        "È come una stufa che, senza legna, inizia a bruciare i mobili: scalda, ma fa fumo nero. Il respiro profondo è come aprire tutte le finestre per far uscire il fumo."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Il medico imposta il protocollo per la chetoacidosi. Prima di tutto c'è una priorità.",
+      "q": "Qual è la prima terapia che ti aspetti di avviare?",
+      "win": "Il volume si ripristina",
+      "opts": [
+        {
+          "t": "Fisiologica 0,9% EV in bolo (ad esempio 1000 mL in un'ora) come prescritto, con potassio controllato prima di iniziare l'insulina",
+          "ok": 1,
+          "fb": "La diuresi osmotica ha causato una grande perdita di liquidi: il volume si ripristina per primo."
+        },
+        {
+          "t": "Insulina rapida 10 U sottocute subito, per bloccare la produzione di chetoni",
+          "fb": "Bloccare i chetoni è l'obiettivo, ma nella chetoacidosi l'insulina si dà in infusione EV e solo dopo il controllo del potassio. Il sottocute in una paziente disidratata è assorbito male.",
+          "s": {
+            "vit": {
+              "sys": 92,
+              "hr": 128
+            }
+          },
+          "end": "Assorbimento irregolare"
+        },
+        {
+          "t": "Bicarbonato di sodio EV per correggere il pH di 7,10",
+          "fb": "Il bicarbonato è riservato a casi selezionati con pH molto più basso, su indicazione medica. Può peggiorare l'ipokaliemia.",
+          "s": {
+            "phys": {
+              "kshift": 0.2
+            },
+            "vit": {
+              "ecg": "af"
+            }
+          },
+          "end": "Il potassio scende"
+        },
+        {
+          "t": "Glucosata 5% EV, che reidrata senza aggiungere sodio",
+          "fb": "Con glicemia 480 si usa la fisiologica. Il glucosio si aggiunge più tardi, quando la glicemia scende sotto circa 250 mg/dL.",
+          "s": {
+            "phys": {
+              "glu": 520
+            }
+          },
+          "end": "Glicemia 520"
+        }
+      ],
+      "out": {
+        "vit": {
+          "sys": 106,
+          "dia": 62,
+          "hr": 116
+        }
+      },
+      "learn": "Il glucosio nelle urine trascina acqua (diuresi osmotica): poliuria, sete, disidratazione. Una paziente in chetoacidosi può aver perso diversi litri.",
+      "phy": [
+        "La glicemia altissima fa passare zucchero nelle urine, che si porta dietro acqua. In due giorni Giulia ha perso diversi litri, e con pressione bassa e cuore veloce il circolo va riempito prima di tutto.",
+        "È come una pianta lasciata al sole senza acqua: prima di concimarla (l'insulina) va innaffiata. I liquidi migliorano anche la perfusione del rene, che elimina glucosio e chetoni."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Dopo il primo litro, il potassio di controllo è ancora 3,0 mmol/L. Il medico ti chiede se è pronta l'infusione di insulina.",
+      "physMode": {
+        "mode": "glucose",
+        "glu": 420,
+        "insulin": 0,
+        "ketones": 0.8,
+        "kshift": 0.7
+      },
+      "q": "Si può avviare l'infusione di insulina adesso?",
+      "win": "Potassio reintegrato, insulina avviata in sicurezza",
+      "opts": [
+        {
+          "t": "No: prima si reintegra il potassio EV come prescritto, e l'insulina si avvia quando il K⁺ è almeno 3,3 mmol/L",
+          "ok": 1,
+          "fb": "L'insulina sposta il K⁺ nelle cellule: partendo da 3,0 scenderebbe a livelli pericolosi per il cuore."
+        },
+        {
+          "t": "Sì: il potassio è basso ma l'acidosi è la priorità, e l'insulina la corregge",
+          "fb": "L'acidosi va corretta, ma l'insulina con K⁺ 3,0 provoca un'ipokaliemia grave e aritmie.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "phys": {
+              "insulin": 0.8,
+              "kshift": 0
+            },
+            "vit": {
+              "ecg": "vf",
+              "hr": 210
+            }
+          },
+          "end": "Aritmia da ipokaliemia"
+        },
+        {
+          "t": "Sì, a velocità doppia per correggere più in fretta",
+          "fb": "Raddoppiare aumenta sia l'ipokaliemia sia il calo troppo rapido della glicemia.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "phys": {
+              "insulin": 1,
+              "kshift": 0
+            },
+            "vit": {
+              "ecg": "vf",
+              "hr": 210
+            }
+          },
+          "end": "Aritmia da ipokaliemia"
+        },
+        {
+          "t": "No: l'insulina si avvia solo quando il K⁺ supera 5,5 mmol/L",
+          "fb": "Sopra 5,5 di solito non si aggiunge potassio ai liquidi, ma l'insulina si può avviare già da 3,3. Aspettare 5,5 ritarda inutilmente.",
+          "s": {
+            "phys": {
+              "ketones": 0.95
+            },
+            "vit": {
+              "rr": 32
+            }
+          },
+          "end": "I chetoni salgono"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 104,
+          "rr": 24,
+          "sys": 110,
+          "dia": 66
+        },
+        "phys": {
+          "glu": 300,
+          "insulin": 0.8,
+          "ketones": 0.6,
+          "kshift": 0.3
+        }
+      },
+      "learn": "Nella chetoacidosi il potassio totale del corpo è basso, anche quando nel sangue sembra normale.",
+      "phy": [
+        "Nella chetoacidosi il potassio è uscito dalle cellule ed è stato perso con le urine. L'insulina lo rispinge dentro le cellule: se nel sangue ce n'è già poco, scende a livelli pericolosi per il cuore.",
+        "È come un conto corrente quasi vuoto con un addebito automatico in arrivo: prima di autorizzarlo devi fare un versamento. Il versamento è il potassio EV."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Dopo 6 ore: glicemia 230 mg/dL, chetonemia 2,4 mmol/L, pH 7,26.",
+      "q": "Cosa ti aspetti come passo successivo?",
+      "win": "Chetoacidosi risolta",
+      "opts": [
+        {
+          "t": "Si aggiunge una soluzione glucosata all'infusione e si continua l'insulina finché chetoni e pH non tornano nei limiti",
+          "ok": 1,
+          "fb": "L'insulina serve a fermare i chetoni, non solo ad abbassare la glicemia. Il glucosio evita l'ipoglicemia."
+        },
+        {
+          "t": "Si sospende l'insulina perché la glicemia è quasi a target",
+          "fb": "La glicemia sì, ma i chetoni sono ancora alti: senza insulina tornano a salire.",
+          "s": {
+            "phys": {
+              "insulin": 0,
+              "ketones": 0.9,
+              "glu": 260
+            },
+            "vit": {
+              "rr": 30
+            }
+          },
+          "end": "I chetoni risalgono"
+        },
+        {
+          "t": "Si passa subito all'insulina sottocute e si stacca l'infusione",
+          "fb": "Il passaggio si fa a chetoacidosi risolta, con la basale sottocute fatta prima di staccare l'infusione.",
+          "s": {
+            "phys": {
+              "insulin": 0.2,
+              "ketones": 0.8
+            },
+            "vit": {
+              "rr": 28
+            }
+          },
+          "end": "I chetoni risalgono"
+        },
+        {
+          "t": "Si aggiunge bicarbonato perché il pH è ancora sotto 7,30",
+          "fb": "Il pH sta migliorando con la terapia: il bicarbonato non è indicato.",
+          "s": {
+            "phys": {
+              "kshift": 0.1
+            }
+          },
+          "end": "Ipokaliemia"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 92,
+          "rr": 18,
+          "sys": 114,
+          "dia": 70
+        },
+        "pat": {
+          "skin": "normal"
+        },
+        "phys": {
+          "glu": 180,
+          "insulin": 0.8,
+          "ketones": 0.15,
+          "kshift": 0.05
+        }
+      },
+      "learn": "La chetoacidosi è risolta quando chetoni e pH tornano nei limiti, non quando scende la glicemia.",
+      "phy": [
+        "La glicemia scende più in fretta dei chetoni. L'insulina serve ancora per spegnere la produzione di chetoni, e il glucosio aggiunto evita che la glicemia scenda troppo.",
+        "È come spegnere un incendio: quando le fiamme non si vedono più ci sono ancora le braci. Si continua a bagnare (insulina), mettendo un telo per non allagare la stanza (il glucosio)."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Giulia sta meglio. Prima della dimissione fai educazione terapeutica con lei e la madre.",
+      "q": "Quale indicazione per i giorni di malattia è corretta?",
+      "win": "Giulia sa cosa fare",
+      "opts": [
+        {
+          "t": "Non sospendere mai l'insulina basale, controllare glicemia e chetoni ogni 2-4 ore, bere molto e contattare il centro se vomita o i chetoni superano 1,5 mmol/L",
+          "ok": 1,
+          "fb": "Durante una malattia gli ormoni dello stress alzano la glicemia: l'insulina serve anche se si mangia poco."
+        },
+        {
+          "t": "Se non mangia, non deve fare insulina, per evitare l'ipoglicemia",
+          "fb": "È proprio l'errore che l'ha portata qui.",
+          "x": 2,
+          "s": {
+            "phys": {
+              "insulin": 0,
+              "ketones": 0.9,
+              "glu": 450
+            },
+            "vit": {
+              "rr": 30
+            }
+          },
+          "end": "Nuova chetoacidosi"
+        },
+        {
+          "t": "Sospendere la basale e fare solo la rapida in base a quello che mangia",
+          "fb": "Senza basale l'organismo produce chetoni anche a digiuno.",
+          "s": {
+            "phys": {
+              "insulin": 0.1,
+              "ketones": 0.6
+            }
+          },
+          "end": "Chetoni in salita"
+        },
+        {
+          "t": "Raddoppiare sempre la basale durante la malattia",
+          "fb": "A volte serve più insulina, ma secondo un piano concordato con il diabetologo, non in modo fisso.",
+          "s": {
+            "phys": {
+              "glu": 60
+            },
+            "pat": {
+              "sweat": 1
+            }
+          },
+          "end": "Ipoglicemia"
+        }
+      ],
+      "learn": "L'educazione terapeutica è uno degli interventi infermieristici con più impatto nel diabete tipo 1.",
+      "phy": [
+        "Durante una malattia il corpo produce ormoni dello stress (cortisolo, adrenalina) che alzano la glicemia anche se si mangia poco. Senza insulina basale il fegato inizia subito a produrre chetoni.",
+        "È come una casa d'inverno: anche se non cucini, il riscaldamento di base deve restare acceso, altrimenti i tubi gelano. La basale è il riscaldamento di base."
+      ]
+    }
+  ],
+  "src": [
+    "ADA Consensus Report: Hyperglycemic crises in adult patients with diabetes (2024)",
+    "JBDS-IP, The management of diabetic ketoacidosis in adults (2023)"
+  ],
+  "notes": ""
+}

@@ -1,0 +1,396 @@
+{
+  "id": 9,
+  "slug": "febbre-e-confusione",
+  "title": "Febbre e confusione",
+  "diff": "Difficile",
+  "area": "Infettivologia",
+  "pt": "Sig. Franco P., 80 anni, 80 kg · Medicina interna, letto 10",
+  "hook": "Perché crolla la pressione senza perdere sangue?",
+  "intro": "Alle 16 la figlia ti ferma in corridoio: oggi il padre non la riconosce bene.",
+  "look": {
+    "gown": "#b88a3c",
+    "hair": "#e0e0e0"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Scompenso cardiaco, ricoverato da 6 giorni."
+    ],
+    [
+      "Dispositivi",
+      "Catetere vescicale da 6 giorni, posizionato in PS per il monitoraggio della diuresi, mai rivalutato."
+    ],
+    [
+      "Anamnesi",
+      "Diabete tipo 2, ipertrofia prostatica, lieve deterioramento cognitivo (vive con la figlia, autonomo)."
+    ],
+    [
+      "Terapia",
+      "Furosemide, ramipril, bisoprololo, metformina."
+    ],
+    [
+      "Parametri alle 8",
+      "PA 122/70 · FC 92 · SpO₂ 95% · FR 18 · T 37,5°C · urine torbide"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 92,
+      "sys": 122,
+      "dia": 70,
+      "spo2": 95,
+      "rr": 18,
+      "temp": 37.5,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "vessel",
+      "dilation": 0.3,
+      "leak": 0,
+      "bacteria": 0.2,
+      "hemolysis": 0,
+      "histamine": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "Pressione media",
+      "source": "calc.map",
+      "unit": "mmHg",
+      "lo": 65,
+      "hi": 110
+    },
+    {
+      "label": "Temperatura",
+      "source": "vit.temp",
+      "unit": "°C",
+      "lo": 35,
+      "hi": 38,
+      "decimals": 1
+    }
+  ],
+  "abcde": {
+    "bad": "BCDE",
+    "first": "B",
+    "A": "Risponde a monosillabi: vie aeree pervie.",
+    "B": "FR 24, SpO₂ 93% in aria.",
+    "C": "FC 118, PA 92/50, cute calda, riempimento capillare 3 secondi, urine torbide nel catetere.",
+    "D": "Confuso, non riconosce bene la figlia: è nuovo. Glicemia 168 mg/dL.",
+    "E": "T 38,9°C, catetere vescicale da 6 giorni.",
+    "why": "La saturazione del 93% è sotto l'obiettivo di 94-98%: in B si avvia l'ossigeno. Poi C, dove c'è il problema più grave (ipotensione), e D. Nell'ABCDE si tratta ogni problema appena lo si trova."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "Rilevi i parametri.",
+      "seq": [
+        {
+          "d": 1.3,
+          "cap": "I batteri passano nel sangue",
+          "s": {
+            "phys": {
+              "bacteria": 0.85
+            }
+          }
+        },
+        {
+          "d": 1.9,
+          "cap": "L'infiammazione dilata i vasi",
+          "s": {
+            "vit": {
+              "temp": 38.9,
+              "hr": 118,
+              "sys": 92,
+              "dia": 50,
+              "rr": 24,
+              "spo2": 93
+            },
+            "pat": {
+              "skin": "flushed",
+              "sweat": 1
+            },
+            "phys": {
+              "dilation": 0.85,
+              "leak": 0.6
+            }
+          }
+        }
+      ],
+      "q": "T 38,9°C, FC 118, PA 92/50, FR 24, SpO₂ 93%, confuso. Tra questi dati, quale indica un danno d'organo e non solo un'infezione?",
+      "opts": [
+        {
+          "t": "La confusione nuova notata dalla figlia, in un paziente che di solito la riconosce",
+          "ok": 1,
+          "fb": "Un'alterazione mentale nuova è un segno di disfunzione cerebrale per ridotta perfusione e infiammazione."
+        },
+        {
+          "t": "La febbre a 38,9°C",
+          "fb": "Indica infezione e infiammazione, non di per sé un danno d'organo. Gli anziani possono avere sepsi anche senza febbre."
+        },
+        {
+          "t": "La FC di 118",
+          "fb": "È una risposta di compenso, presente anche in infezioni senza sepsi. Il betabloccante può anzi attenuarla."
+        },
+        {
+          "t": "Il catetere da 6 giorni",
+          "fb": "È il probabile punto di partenza dell'infezione e un fattore di rischio, non un segno di danno."
+        }
+      ],
+      "learn": "Sepsi: disfunzione d'organo pericolosa per la vita causata da una risposta alterata dell'organismo a un'infezione (Sepsis-3).",
+      "phy": [
+        "L'infezione partita dal catetere ha scatenato una reazione infiammatoria in tutto il corpo. I vasi si dilatano, la pressione cala e il cervello, il primo a soffrire, riceve meno sangue: compare la confusione.",
+        "È come una città in cui scatta l'allarme incendio ovunque contemporaneamente: i pompieri aprono tutti gli idranti e la pressione dell'acqua cala in tutte le case. La confusione è la casa in cima alla collina che resta per prima senz'acqua."
+      ]
+    },
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "In aria ambiente: FR 24, SpO₂ 93%, PA 92/50, FC 118, confusione nuova, T 38,9°C.",
+      "q": "Quanto vale il NEWS2 e che risposta richiede?",
+      "opts": [
+        {
+          "t": "12: risposta d'emergenza, con valutazione immediata da parte di un team esperto",
+          "ok": 1,
+          "fb": "FR 24 = 2, SpO₂ 93% = 2, aria = 0, PAS 92 = 2, FC 118 = 2, confusione nuova = 3, T 38,9 = 1."
+        },
+        {
+          "t": "9: risposta d'emergenza",
+          "fb": "La risposta è giusta, il conto no: probabilmente hai dato 0 alla confusione nuova, che nel NEWS2 vale 3."
+        },
+        {
+          "t": "7: risposta d'emergenza",
+          "fb": "Ricontrolla FR (21-24 = 2) e SpO₂ (92-93% = 2)."
+        },
+        {
+          "t": "5: risposta urgente entro un'ora",
+          "fb": "Hai sottostimato più voci. Rifai il conto parametro per parametro."
+        }
+      ],
+      "learn": "NEWS2 5-6, o un singolo parametro a 3: risposta urgente. 7 o più: risposta d'emergenza.",
+      "phy": [
+        "Il NEWS2 somma piccoli segnali che da soli sembrano poco gravi. Insieme indicano un paziente che sta peggiorando prima che arrivi lo shock.",
+        "È come le spie sul cruscotto dell'auto: una sola può aspettare, cinque accese insieme dicono di fermarsi subito."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Il medico conferma: sospetta sepsi di origine urinaria. Ti chiede di procedere con il pacchetto della prima ora.",
+      "q": "Qual è la sequenza corretta?",
+      "win": "Antibiotico entro un'ora",
+      "opts": [
+        {
+          "t": "Emocolture da due siti, urinocoltura dal punto di prelievo del catetere, lattati, antibiotico EV entro un'ora senza ritardarlo per i prelievi, liquidi in bolo come prescritto",
+          "ok": 1,
+          "fb": "Le colture prima dell'antibiotico aiutano a identificare il batterio, ma non devono ritardarlo."
+        },
+        {
+          "t": "Antibiotico subito, poi emocolture alla mattina successiva quando passa il prelievista",
+          "fb": "L'antibiotico precoce è giusto, ma dopo l'antibiotico le colture possono risultare negative anche se l'infezione c'è.",
+          "s": {
+            "phys": {
+              "bacteria": 0.5
+            }
+          },
+          "end": "Colture inutilizzabili"
+        },
+        {
+          "t": "Emocolture e urinocoltura, poi attesa dell'antibiogramma per scegliere l'antibiotico giusto",
+          "fb": "L'antibiogramma richiede 24-48 ore. Nell'attesa la sepsi diventa shock.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "sys": 62,
+              "dia": 30,
+              "hr": 138
+            },
+            "pat": {
+              "skin": "grey"
+            },
+            "phys": {
+              "bacteria": 1,
+              "dilation": 1,
+              "leak": 1
+            }
+          },
+          "end": "Shock settico"
+        },
+        {
+          "t": "Urinocoltura dalla sacca di raccolta, poi antibiotico",
+          "fb": "Il campione dalla sacca è contaminato: i batteri si moltiplicano nell'urina ferma. Si preleva dal punto dedicato, dopo disinfezione.",
+          "s": {
+            "phys": {
+              "bacteria": 0.6
+            }
+          },
+          "end": "Campione contaminato"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 106,
+          "sys": 102,
+          "dia": 58,
+          "temp": 38.4
+        },
+        "phys": {
+          "bacteria": 0.45,
+          "dilation": 0.6,
+          "leak": 0.35
+        }
+      },
+      "learn": "Con ipotensione o lattati ≥ 4 mmol/L le linee guida suggeriscono almeno 30 mL/kg di cristalloidi nelle prime 3 ore: per 80 kg sono 2400 mL.",
+      "phy": [
+        "Le colture catturano i batteri prima che l'antibiotico li riduca, così il laboratorio può dire quale antibiotico funziona meglio. L'antibiotico precoce ferma la moltiplicazione dei batteri, che ogni ora peggiorano il quadro.",
+        "È come fotografare un ladro prima che scappi: dopo, sarà più facile riconoscerlo. Ma la foto non deve far perdere tempo a chiamare la polizia."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Ritorna alla PA iniziale: 92/50 mmHg.",
+      "q": "Quanto vale la pressione arteriosa media, e perché conta più della sistolica?",
+      "opts": [
+        {
+          "t": "Circa 64 mmHg: è la pressione media che perfonde gli organi durante tutto il ciclo cardiaco",
+          "ok": 1,
+          "fb": "PAM ≈ (92 + 2 × 50) / 3 ≈ 64. Sotto 65 mmHg la perfusione degli organi è a rischio."
+        },
+        {
+          "t": "71 mmHg: la media tra sistolica e diastolica",
+          "fb": "La diastolica pesa il doppio, perché il cuore passa circa due terzi del ciclo in diastole."
+        },
+        {
+          "t": "42 mmHg: la differenza tra sistolica e diastolica",
+          "fb": "Questa è la pressione differenziale, non la media."
+        },
+        {
+          "t": "78 mmHg: la sistolica meno un sesto",
+          "fb": "Non è una formula valida."
+        }
+      ],
+      "learn": "Nello shock settico l'obiettivo iniziale è una PAM di almeno 65 mmHg.",
+      "phy": [
+        "Il cuore passa circa un terzo del tempo a spingere e due terzi a riempirsi. La pressione media tiene conto di questo, per questo la diastolica conta doppio. Sotto 65 mmHg gli organi iniziano a non ricevere abbastanza sangue.",
+        "È come calcolare la velocità media di un viaggio fatto per un terzo in autostrada e per due terzi in città: conta di più la velocità in città, dove passi più tempo."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Dopo un'ora e 1000 mL di cristalloidi: PA 104/58, FC 104. Diuresi dell'ultima ora: 15 mL.",
+      "q": "Il paziente pesa 80 kg. Come interpreti la diuresi e cosa fai?",
+      "win": "Catetere libero, segnalato: diuresi riparte",
+      "opts": [
+        {
+          "t": "È sotto 0,5 mL/kg/h (cioè 40 mL/h): controllo che il catetere non sia piegato od ostruito e lo segnalo subito al medico",
+          "ok": 1,
+          "fb": "Prima si esclude un problema meccanico, poi si segnala: è un segno di perfusione renale insufficiente."
+        },
+        {
+          "t": "È accettabile per un anziano con scompenso, che tende a urinare meno",
+          "fb": "L'obiettivo minimo è 0,5 mL/kg/h anche nell'anziano.",
+          "s": {
+            "vit": {
+              "sys": 90,
+              "dia": 48
+            },
+            "phys": {
+              "leak": 0.6
+            }
+          },
+          "end": "Danno renale acuto"
+        },
+        {
+          "t": "Riduco la velocità dei liquidi per non sovraccaricare il cuore scompensato",
+          "fb": "Il timore del sovraccarico è legittimo, ma la velocità dei liquidi è una decisione medica, e la diuresi bassa può indicare proprio bisogno di volume.",
+          "s": {
+            "vit": {
+              "sys": 86,
+              "dia": 46,
+              "hr": 118
+            }
+          },
+          "end": "PA 86/46"
+        },
+        {
+          "t": "Annoto il dato e aspetto il bilancio delle 24 ore",
+          "fb": "Nella sepsi la diuresi oraria serve proprio a reagire in fretta.",
+          "s": {
+            "vit": {
+              "sys": 88,
+              "dia": 46
+            }
+          },
+          "end": "Nessuno reagisce"
+        }
+      ],
+      "out": {
+        "vit": {
+          "sys": 112,
+          "dia": 64,
+          "hr": 96,
+          "temp": 37.9,
+          "rr": 20
+        },
+        "pat": {
+          "sweat": 0,
+          "skin": "normal"
+        },
+        "phys": {
+          "bacteria": 0.25,
+          "dilation": 0.45,
+          "leak": 0.2
+        }
+      },
+      "learn": "Indicatori pratici di perfusione: diuresi, stato mentale, cute, tempo di riempimento capillare, lattati.",
+      "phy": [
+        "Il rene produce urina solo se riceve abbastanza sangue a una pressione sufficiente. Se l'urina cala, è il segno che i reni (e probabilmente anche altri organi) sono poco irrorati.",
+        "È come una fontana che zampilla poco: o il tubo è piegato (il catetere), o in rete c'è poca pressione. Prima controlli il tubo, poi chiami l'idraulico."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Il paziente non ha perso sangue, eppure la pressione è crollata.",
+      "q": "Perché?",
+      "opts": [
+        {
+          "t": "Mediatori dell'infiammazione come l'ossido nitrico dilatano i vasi e ne aumentano la permeabilità: il liquido esce nei tessuti",
+          "ok": 1,
+          "fb": "Il contenitore si allarga e perde liquido: il volume efficace cala anche senza emorragia. È uno shock distributivo."
+        },
+        {
+          "t": "La febbre deprime la contrazione del cuore fino a fermarlo",
+          "fb": "Nella sepsi può esserci una disfunzione miocardica, ma all'inizio il cuore anzi accelera per compensare."
+        },
+        {
+          "t": "I batteri distruggono i globuli rossi e riducono il volume di sangue",
+          "fb": "Alcuni batteri possono causare emolisi, ma non è il meccanismo dello shock settico."
+        },
+        {
+          "t": "Il rene trattiene acqua e sodio",
+          "fb": "È il contrario di ciò che spiega l'ipotensione."
+        }
+      ],
+      "learn": "Lo shock settico e quello anafilattico sono entrambi distributivi: il problema principale è nei vasi.",
+      "phy": [
+        "I mediatori dell'infiammazione fanno produrre ossido nitrico, che rilassa le pareti dei vasi. I vasi si allargano e diventano porosi: lo stesso sangue riempie un contenitore più grande e in parte esce nei tessuti.",
+        "È come versare la stessa acqua da un bicchiere stretto in una bacinella larga e bucherellata: il livello si abbassa anche se non hai perso una goccia dal rubinetto."
+      ]
+    }
+  ],
+  "src": [
+    "Surviving Sepsis Campaign: International Guidelines 2021",
+    "Royal College of Physicians, National Early Warning Score (NEWS) 2",
+    "Singer M. et al., Sepsis-3 definitions, JAMA 2016"
+  ],
+  "notes": ""
+}

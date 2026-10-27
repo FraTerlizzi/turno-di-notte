@@ -1,5 +1,6 @@
 /* Motore del gioco: scena, display, audio, glossario, Neuro, eventi fuori turno. */
 import { SKIN, DEATH, CASES, ROAD, GL, SKINS, GOWN, HAIR, EVENTS, ABC_L, ABC_ACT } from './data/index.js';
+import { hudValue } from './content/compile.js';
 
 let curSkin=null;
 function pickSkin(){return prog.costume!==false?SKINS[Math.floor(Math.random()*SKINS.length)]:null}
@@ -7,24 +8,6 @@ function skinTarget(){const st=hex2rgb(SKIN[TGT.pat.skin||'normal']);if(!curSkin
 function renderCostumeBtn(){document.querySelectorAll('.au-c').forEach(b=>{const on=prog.costume!==false;b.textContent=on?'Pazienti in costume: sì':'Pazienti in costume: no';b.classList.toggle('off',!on)})}
 document.addEventListener('click',e=>{if(e.target.closest('.au-c')){prog.costume=prog.costume===false;save();renderCostumeBtn()}});
 let PAT_MODE='bed',NURSE_TGT=null;
-
-/* ===== Ganci e display LCD per episodio ===== */
-const V=k=>()=>CUR.vit[k], Ph=k=>()=>CUR.phys[k];
-const EXTRA={
- 1:{hook:"Perché non il cioccolato?",hud:[{l:"Glicemia",g:Ph('glu'),u:"mg/dL",lo:70,hi:250},{l:"Freq. cardiaca",g:V('hr'),u:"bpm",lo:50,hi:110}]},
- 2:{hook:"Perché seduta con le gambe giù?",hud:[{l:"Saturazione",g:V('spo2'),u:"%",lo:92,hi:101},{l:"Respiri/min",g:V('rr'),u:"",lo:10,hi:24}]},
- 3:{hook:"Perché non puntare al 100%?",hud:[{l:"Saturazione",g:V('spo2'),u:"%",lo:88,hi:93},{l:"CO₂ nel sangue",g:()=>CUR.phys.co2!=null?CUR.phys.co2*100:null,u:"%",lo:0,hi:70,bar:1}]},
- 4:{hook:"Perché dorme così bene?",hud:[{l:"Respiri/min",g:V('rr'),u:"",lo:10,hi:24},{l:"Saturazione",g:V('spo2'),u:"%",lo:92,hi:101}]},
- 5:{hook:"Perché l'adrenalina nella coscia?",hud:[{l:"PA sistolica",g:V('sys'),u:"mmHg",lo:90,hi:180},{l:"Saturazione",g:V('spo2'),u:"%",lo:92,hi:101}]},
- 6:{hook:"Perché restare nei primi 15 minuti?",hud:[{l:"Temperatura",g:V('temp'),u:"°C",lo:35,hi:38,d:1},{l:"PA sistolica",g:V('sys'),u:"mmHg",lo:90,hi:180}]},
- 7:{hook:"Perché conta l'ultima volta visto bene?",hud:[{l:"Flusso cerebrale",g:()=>CUR.phys.occlusion!=null?(1-CUR.phys.occlusion)*100:null,u:"%",lo:60,hi:101},{l:"PA sistolica",g:V('sys'),u:"mmHg",lo:90,hi:185}]},
- 8:{hook:"Perché non massaggiare il polpaccio?",hud:[{l:"Saturazione",g:V('spo2'),u:"%",lo:92,hi:101},{l:"Freq. cardiaca",g:V('hr'),u:"bpm",lo:50,hi:110}]},
- 9:{hook:"Perché crolla la pressione senza perdere sangue?",hud:[{l:"Pressione media",g:()=>CUR.vit.sys!=null?(CUR.vit.sys+2*CUR.vit.dia)/3:null,u:"mmHg",lo:65,hi:110},{l:"Temperatura",g:V('temp'),u:"°C",lo:35,hi:38,d:1}]},
- 10:{hook:"Perché il calcio, se non abbassa il potassio?",hud:[{l:"Potassio",g:Ph('k'),u:"mmol/L",lo:3.5,hi:5.5,d:1},{l:"Freq. cardiaca",g:V('hr'),u:"bpm",lo:50,hi:110}]},
- 11:{hook:"Perché non partire subito con l'insulina?",hud:[{l:"Glicemia",g:Ph('glu'),u:"mg/dL",lo:70,hi:250},{l:"Respiri/min",g:V('rr'),u:"",lo:10,hi:24}]},
- 12:{hook:"Perché è svenuta appena seduta?",hud:[{l:"PA sistolica",g:V('sys'),u:"mmHg",lo:90,hi:180},{l:"Riempimento",g:()=>CUR.phys.preload!=null?CUR.phys.preload*100:null,u:"%",lo:30,hi:101,bar:1}]}
-};
-CASES.forEach(c=>Object.assign(c,EXTRA[c.id]||{}));
 
 /* ===== Progresso ===== */
 // il motore comunica all'esterno (account, sincronizzazione) solo tramite questi eventi: 'progress' e 'attempt'
@@ -666,7 +649,8 @@ function drawPatient(ctx,t,cid){
   const shY=hipY-L;
   const breath=Math.sin(respPh*2*Math.PI)*((v.rr||16)>24?1.6:1);
   const skin=`rgb(${skinRGB.map(Math.round).join(',')})`;
-  const gown=(curSkin&&curSkin.gown)||GOWN[cid%GOWN.length];const hairC=curSkin?curSkin.hair:HAIR[cid%HAIR.length];
+  const look=curCase&&curCase.look;
+  const gown=(curSkin&&curSkin.gown)||(look&&look.gown)||GOWN[cid%GOWN.length];const hairC=curSkin?curSkin.hair:(look&&look.hair)||HAIR[cid%HAIR.length];
   // gambe: lunghe 4H dall'inguine alla pianta
   const legEnd=hipY+H*4;
   if(PAT_MODE==='street'){const lg=(curSkin&&curSkin.legs)||'#2c3566';ctx.fillStyle=lg;rr(ctx,cx-25,hipY-4,22,H*4-10,7);ctx.fill();rr(ctx,cx+3,hipY-4,22,H*4-10,7);ctx.fill();ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(cx-2,hipY,4,H*1.2);ctx.fillStyle='#1b1b22';rr(ctx,cx-26,legEnd-16,22,16,6);ctx.fill();rr(ctx,cx+4,legEnd-16,22,16,6);ctx.fill()}
@@ -782,7 +766,7 @@ const sparkCtx=$('spark').getContext('2d');
 function fmt(v,d){return v==null||isNaN(v)?'--':v.toFixed(d||0)}
 function updateHud(dt){
   if(!curCase||!curCase.hud)return;
-  const [a,b]=curCase.hud,va=a.g(),vb=b.g();
+  const [a,b]=curCase.hud,va=hudValue(a,CUR),vb=hudValue(b,CUR);
   $('h1v').textContent=fmt(va,a.d);$('h1u').textContent=a.u;
   $('h2v').textContent=b.bar?barTxt(vb):fmt(vb,b.d)+(b.u?' '+b.u:'');
   trendT+=dt;if(trendT>1.2){trendT=0;trendRef=[va,vb]}

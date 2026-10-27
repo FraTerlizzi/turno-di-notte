@@ -1,0 +1,448 @@
+{
+  "id": 5,
+  "slug": "cinque-minuti-dopo-l-antibiotico",
+  "title": "Cinque minuti dopo l'antibiotico",
+  "diff": "Media",
+  "area": "Emergenza",
+  "pt": "Sig. Luca M., 35 anni, 78 kg · Medicina d'urgenza, letto 2",
+  "hook": "Perché l'adrenalina nella coscia?",
+  "intro": "Hai appena avviato la prima dose di antibiotico EV e sei uscito dalla stanza.",
+  "look": {
+    "gown": "#5b8fd6",
+    "hair": "#1a1a1a"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Cellulite della gamba sinistra con febbre."
+    ],
+    [
+      "Anamnesi",
+      "Asma lieve, usa il salbutamolo al bisogno. Nessuna allergia nota in cartella. Da bambino ricorda un'eruzione cutanea con uno sciroppo antibiotico, mai indagata."
+    ],
+    [
+      "Terapia in corso",
+      "Amoxicillina-clavulanato 2,2 g EV, prima dose."
+    ],
+    [
+      "Parametri pre-infusione",
+      "PA 124/76 · FC 84 · SpO₂ 98% · FR 15 · T 37,8°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 84,
+      "sys": 124,
+      "dia": 76,
+      "spo2": 98,
+      "rr": 15,
+      "temp": 37.8,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "vessel",
+      "dilation": 0.25,
+      "leak": 0,
+      "bacteria": 0,
+      "hemolysis": 0,
+      "histamine": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "PA sistolica",
+      "source": "vit.sys",
+      "unit": "mmHg",
+      "lo": 90,
+      "hi": 180
+    },
+    {
+      "label": "Saturazione",
+      "source": "vit.spo2",
+      "unit": "%",
+      "lo": 92,
+      "hi": 101
+    }
+  ],
+  "abcde": {
+    "bad": "ABCDE",
+    "first": "A",
+    "A": "Labbra e lingua gonfie, voce rauca: le vie aeree rischiano di chiudersi.",
+    "B": "FR 28, SpO₂ 91%, sibili diffusi.",
+    "C": "FC 128, PA 82/44, cute calda e arrossata.",
+    "D": "Vigile, molto ansioso, dice di sentirsi morire.",
+    "E": "Orticaria su tutto il corpo. Infusione di antibiotico in corso.",
+    "why": "Gonfiore di lingua e voce rauca indicano edema delle vie aeree superiori: A è minacciata. Nell'anafilassi la presenza di un problema in A, B o C è proprio ciò che impone l'adrenalina."
+  },
+  "steps": [
+    {
+      "tag": "Decisione",
+      "text": "Dopo 5 minuti suona il campanello.",
+      "seq": [
+        {
+          "d": 1.3,
+          "cap": "I mastociti liberano istamina",
+          "s": {
+            "phys": {
+              "histamine": 0.9,
+              "dilation": 0.6
+            }
+          }
+        },
+        {
+          "d": 2,
+          "cap": "Vasi dilatati, liquido nei tessuti",
+          "s": {
+            "vit": {
+              "hr": 128,
+              "sys": 82,
+              "dia": 44,
+              "spo2": 91,
+              "rr": 28
+            },
+            "pat": {
+              "hives": 1,
+              "skin": "flushed",
+              "sweat": 1
+            },
+            "phys": {
+              "dilation": 0.95,
+              "leak": 0.85
+            }
+          }
+        }
+      ],
+      "q": "Orticaria diffusa, labbra e lingua gonfie, sibili, voce rauca. PA 82/44, FC 128, SpO₂ 91%. Dice di sentirsi morire. Qual è la prima azione corretta?",
+      "win": "L'adrenalina agisce",
+      "opts": [
+        {
+          "t": "Fermo l'infusione, chiamo il team d'emergenza e si somministra adrenalina 0,5 mg IM (0,5 mL della soluzione 1 mg/mL) nella coscia anterolaterale",
+          "ok": 1,
+          "fb": "È anafilassi: vie aeree, respiro e circolo sono coinvolti. L'adrenalina IM è il farmaco salvavita."
+        },
+        {
+          "t": "Fermo l'infusione e si somministra adrenalina 0,5 mg IM nel deltoide",
+          "fb": "Dose corretta, sede meno indicata: nel deltoide l'assorbimento è più lento e meno affidabile. Il miglioramento tarda.",
+          "s": {
+            "vit": {
+              "hr": 122,
+              "sys": 86,
+              "spo2": 91
+            }
+          },
+          "end": "Migliora poco e lentamente"
+        },
+        {
+          "t": "Fermo l'infusione e si somministra adrenalina 1 mg EV in bolo",
+          "fb": "1 mg EV è la dose dell'arresto cardiaco. In un paziente con polso può provocare aritmie ventricolari e infarto. L'adrenalina EV nell'anafilassi si usa solo in infusione titolata, da esperti.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "hr": 190,
+              "sys": 230,
+              "dia": 130,
+              "ecg": "vf"
+            }
+          },
+          "end": "Fibrillazione ventricolare"
+        },
+        {
+          "t": "Fermo l'infusione e si somministrano clorfenamina 10 mg EV e idrocortisone 200 mg EV",
+          "fb": "Sono farmaci che si usano nell'anafilassi, ma come seconda linea: non trattano lo shock né l'edema delle vie aeree. Senza adrenalina il quadro precipita.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "sys": 58,
+              "dia": 30,
+              "spo2": 78,
+              "hr": 146
+            },
+            "pat": {
+              "skin": "cyan"
+            }
+          },
+          "end": "Arresto cardiaco da shock anafilattico"
+        },
+        {
+          "t": "Fermo l'infusione e somministro salbutamolo spray, 4 puff con distanziatore, come per la sua asma",
+          "fb": "Il salbutamolo può aiutare il broncospasmo, ma non tratta l'ipotensione né l'edema delle labbra e della lingua.",
+          "s": {
+            "vit": {
+              "sys": 72,
+              "dia": 38,
+              "spo2": 88
+            }
+          },
+          "end": "PA 72/38"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 112,
+          "sys": 94,
+          "dia": 56,
+          "spo2": 93,
+          "rr": 24
+        },
+        "phys": {
+          "dilation": 0.7,
+          "leak": 0.5,
+          "histamine": 0.6
+        }
+      },
+      "learn": "Coscia anterolaterale (vasto laterale): l'assorbimento intramuscolo è più rapido e affidabile che nel deltoide o nel sottocute.",
+      "phy": [
+        "Nell'allergia i mastociti, cellule piene di granuli, si svuotano tutti insieme. L'istamina dilata i vasi e li rende porosi: la pressione crolla, il liquido esce nei tessuti (labbra e lingua gonfie) e i bronchi si chiudono. L'adrenalina contrasta tutto insieme.",
+        "È come una diga con tante crepe che si aprono insieme: l'acqua esce ovunque e il livello nel bacino crolla. L'adrenalina stringe i tubi, rinforza la pompa e riapre i bronchi in pochi minuti."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "L'adrenalina è stata fatta. Il paziente cerca di alzarsi per andare alla finestra.",
+      "q": "Come lo posizioni, e perché?",
+      "win": "La pressione tiene",
+      "opts": [
+        {
+          "t": "Supino con le gambe sollevate; se respira con fatica, seduto con le gambe distese sul letto",
+          "ok": 1,
+          "fb": "Con i vasi dilatati il sangue ristagna in periferia: sdraiato, il sangue torna al cuore."
+        },
+        {
+          "t": "Seduto sul bordo del letto con le gambe giù, che è la posizione migliore per respirare",
+          "fb": "È davvero la posizione che aiuta il respiro nell'edema polmonare. Qui però le gambe giù trattengono sangue e riducono il ritorno venoso.",
+          "s": {
+            "vit": {
+              "sys": 70,
+              "dia": 36,
+              "hr": 140
+            },
+            "pat": {
+              "pose": 2
+            }
+          },
+          "end": "PA 70/36"
+        },
+        {
+          "t": "Lo accompagno in piedi alla finestra, così si calma e respira aria fresca",
+          "fb": "Passare in piedi può svuotare il cuore: è descritto come causa di arresto nell'anafilassi.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "sys": 40,
+              "dia": 20,
+              "hr": 150
+            },
+            "pat": {
+              "pose": 2
+            }
+          },
+          "end": "Arresto cardiaco in posizione eretta"
+        },
+        {
+          "t": "Posizione laterale di sicurezza",
+          "fb": "Si usa per una persona incosciente che respira. Lui è cosciente e ha bisogno di sostegno al circolo.",
+          "s": {
+            "vit": {
+              "sys": 80
+            }
+          },
+          "end": "Nessun miglioramento"
+        }
+      ],
+      "out": {
+        "pat": {
+          "pose": 0
+        },
+        "vit": {
+          "sys": 96,
+          "dia": 58
+        }
+      },
+      "learn": "Se è incinta, la paziente va posta sul fianco sinistro, per non comprimere la vena cava.",
+      "phy": [
+        "Con i vasi dilatati, il sangue tende a raccogliersi in basso. In piedi o con le gambe giù al cuore ne arriva troppo poco e può fermarsi a vuoto. Sdraiato con le gambe in alto, il sangue torna verso il cuore.",
+        "È come una pompa che pesca da un serbatoio quasi vuoto: se la sollevi sopra il livello dell'acqua, pesca aria. Tenere il paziente sdraiato tiene la pompa sotto il livello."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Dopo 5 minuti: PA 84/50, sibili ancora presenti, labbra ancora gonfie.",
+      "q": "Qual è il passo successivo più appropriato?",
+      "win": "Seconda dose: si stabilizza",
+      "opts": [
+        {
+          "t": "Ripetere l'adrenalina IM e somministrare un bolo di cristalloidi EV (500-1000 mL nell'adulto) come da prescrizione",
+          "ok": 1,
+          "fb": "Se dopo 5 minuti non c'è miglioramento, l'adrenalina IM si ripete. I liquidi compensano quanto uscito dai vasi."
+        },
+        {
+          "t": "Attendere l'effetto dell'idrocortisone già somministrato",
+          "fb": "I corticosteroidi agiscono in ore, non in minuti.",
+          "s": {
+            "vit": {
+              "sys": 74,
+              "dia": 40,
+              "spo2": 89
+            }
+          },
+          "end": "PA 74/40"
+        },
+        {
+          "t": "Salbutamolo nebulizzato 5 mg con ossigeno",
+          "fb": "È utile per il broncospasmo residuo, ma non tratta lo shock.",
+          "s": {
+            "vit": {
+              "sys": 76,
+              "dia": 42
+            }
+          },
+          "end": "PA 76/42"
+        },
+        {
+          "t": "Cetirizina 10 mg per bocca",
+          "fb": "Agisce lentamente e con labbra e lingua gonfie deglutire è rischioso.",
+          "s": {
+            "vit": {
+              "sys": 74
+            }
+          },
+          "end": "PA 74"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 102,
+          "sys": 108,
+          "dia": 64,
+          "spo2": 96,
+          "rr": 20
+        },
+        "pat": {
+          "skin": "normal",
+          "sweat": 0,
+          "hives": 0.4
+        },
+        "phys": {
+          "dilation": 0.45,
+          "leak": 0.25,
+          "histamine": 0.3
+        }
+      },
+      "learn": "Se dopo due dosi di adrenalina IM il paziente non migliora (anafilassi refrattaria), serve un'infusione di adrenalina in area critica.",
+      "phy": [
+        "Dopo cinque minuti la prima dose di adrenalina è già in parte consumata e la reazione continua. Una seconda dose e i liquidi riempiono il circolo che si è allargato.",
+        "È come una tinozza con un buco: se il buco resta aperto, serve più di un secchio per mantenerla piena. Qui il buco sono i capillari che perdono liquido."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "In pochi minuti la pressione risale e i sibili si riducono.",
+      "q": "Quale effetto dell'adrenalina ha ridotto il broncospasmo?",
+      "opts": [
+        {
+          "t": "Stimolazione dei recettori β2 della muscolatura liscia bronchiale",
+          "ok": 1,
+          "fb": "I β2 rilasciano la muscolatura dei bronchi."
+        },
+        {
+          "t": "Stimolazione dei recettori α1 dei vasi",
+          "fb": "È un effetto reale dell'adrenalina: vasocostrizione, aumento della pressione, riduzione dell'edema. Ma non dilata i bronchi."
+        },
+        {
+          "t": "Stimolazione dei recettori β1 del miocardio",
+          "fb": "È un effetto reale: aumenta forza e frequenza del cuore. Non agisce sui bronchi."
+        },
+        {
+          "t": "Blocco dei recettori H1 dell'istamina",
+          "fb": "È il meccanismo degli antistaminici."
+        }
+      ],
+      "learn": "L'anafilassi è spesso mediata da IgE legate ai mastociti: al contatto con l'allergene liberano istamina, triptasi e leucotrieni.",
+      "phy": [
+        "L'adrenalina agisce su recettori diversi in organi diversi. Sui bronchi stimola i β2, che rilasciano la muscolatura e li riaprono.",
+        "È come una chiave che apre porte diverse in un palazzo: la stessa chiave stringe i vasi (α1), accelera il cuore (β1) e apre i bronchi (β2)."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Dopo un'ora sta bene e chiede di tornare a casa.",
+      "q": "Cosa è corretto fare?",
+      "win": "Dimissione sicura il giorno dopo",
+      "opts": [
+        {
+          "t": "Osservazione per diverse ore per il rischio di reazione bifasica, registrazione dell'allergia in cartella e sul braccialetto, comunicazione al paziente e al medico curante",
+          "ok": 1,
+          "fb": "Una seconda reazione può comparire ore dopo. L'allergia documentata protegge il paziente in futuro."
+        },
+        {
+          "t": "Può andare a casa: i parametri sono normali da un'ora",
+          "fb": "Parametri normali non escludono una reazione bifasica. A casa, 6 ore dopo, ricompaiono orticaria e dispnea.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "sys": 86,
+              "spo2": 91,
+              "hr": 124
+            },
+            "pat": {
+              "hives": 1
+            }
+          },
+          "end": "Reazione bifasica a casa"
+        },
+        {
+          "t": "Si riprende l'amoxicillina-clavulanato a velocità ridotta, sotto stretto controllo",
+          "fb": "Il farmaco che ha causato l'anafilassi non va più somministrato.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "sys": 78,
+              "spo2": 88,
+              "hr": 136
+            },
+            "pat": {
+              "hives": 1,
+              "skin": "flushed"
+            },
+            "phys": {
+              "histamine": 0.9,
+              "dilation": 0.9,
+              "leak": 0.8
+            }
+          },
+          "end": "Seconda anafilassi"
+        },
+        {
+          "t": "Si passa a una cefalosporina di prima generazione, che appartiene a un'altra classe",
+          "fb": "Le cefalosporine hanno una struttura simile alle penicilline e una possibile reattività crociata. La scelta spetta al medico, eventualmente dopo valutazione allergologica.",
+          "s": {
+            "pat": {
+              "hives": 0.6
+            }
+          },
+          "end": "Compare orticaria"
+        }
+      ],
+      "learn": "Il medico valuta la prescrizione di adrenalina autoiniettabile e l'invio all'allergologo.",
+      "phy": [
+        "Alcuni mediatori dell'allergia vengono prodotti più tardi, e i mastociti possono attivarsi una seconda volta anche senza nuovo contatto. Per questo la reazione può tornare ore dopo.",
+        "È come un incendio domato in superficie: le braci sotto la cenere possono riaccendersi. Per questo si resta a guardare per alcune ore prima di andare via."
+      ]
+    }
+  ],
+  "src": [
+    "Resuscitation Council UK, Emergency treatment of anaphylaxis (2021)",
+    "EAACI Anaphylaxis Guidelines (2021)"
+  ],
+  "notes": ""
+}

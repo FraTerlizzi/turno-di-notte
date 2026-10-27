@@ -1,0 +1,359 @@
+{
+  "id": 7,
+  "slug": "la-bocca-storta-a-colazione",
+  "title": "La bocca storta a colazione",
+  "diff": "Media",
+  "area": "Neurologia",
+  "pt": "Sig. Bruno L., 74 anni · Medicina interna, letto 5",
+  "hook": "Perché conta l'ultima volta visto bene?",
+  "intro": "Alle 8:10 porti la colazione.",
+  "look": {
+    "gown": "#6c9a4c",
+    "hair": "#bdbdbd"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Bronchite acuta, ricoverato da 2 giorni."
+    ],
+    [
+      "Anamnesi",
+      "Fibrillazione atriale permanente. Ipertensione. Diabete tipo 2 in metformina."
+    ],
+    [
+      "Anticoagulante",
+      "Apixaban sospeso dal medico di base 5 giorni fa per sanguinamento gengivale."
+    ],
+    [
+      "Consegne della notte",
+      "Alle 7:30 il collega lo ha visto parlare normalmente mentre misurava i parametri."
+    ],
+    [
+      "Parametri alle 7:30",
+      "PA 158/92 · FC 96 irregolare · SpO₂ 96% · FR 17 · T 36,9°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 96,
+      "sys": 158,
+      "dia": 92,
+      "spo2": 96,
+      "rr": 17,
+      "temp": 36.9,
+      "ecg": "af"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "brain",
+      "occlusion": 0,
+      "penumbra": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "Flusso cerebrale",
+      "source": "phys.occlusion",
+      "unit": "%",
+      "lo": 60,
+      "hi": 101,
+      "scale": 100,
+      "invert": true
+    },
+    {
+      "label": "PA sistolica",
+      "source": "vit.sys",
+      "unit": "mmHg",
+      "lo": 90,
+      "hi": 185
+    }
+  ],
+  "abcde": {
+    "bad": "CD",
+    "first": "D",
+    "A": "Parla, anche se con parole confuse, e deglutisce la saliva: vie aeree pervie.",
+    "B": "FR 17, SpO₂ 96% in aria.",
+    "C": "FC 96 irregolare, PA 178/98.",
+    "D": "Bocca cadente a destra, braccio destro che cade, eloquio confuso. Pupille uguali. Glicemia: ancora da misurare.",
+    "E": "T 36,9°C, nessun trauma, nessuna caduta.",
+    "why": "La PA alta in C è frequente nell'ictus e non va abbassata d'impulso. Il problema è in D: un deficit neurologico improvviso, che fa partire il codice ictus."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "text": "Ti saluta, ma le parole sono confuse.",
+      "seq": [
+        {
+          "d": 1.3,
+          "cap": "Un trombo blocca l'arteria cerebrale media sinistra",
+          "s": {
+            "phys": {
+              "occlusion": 0.85,
+              "penumbra": 0.8
+            }
+          }
+        },
+        {
+          "d": 1.8,
+          "cap": "La bocca cade a destra",
+          "s": {
+            "pat": {
+              "droop": 1
+            },
+            "vit": {
+              "sys": 178,
+              "dia": 98
+            }
+          }
+        }
+      ],
+      "q": "Angolo destro della bocca cadente, braccio destro che cade quando gli chiedi di alzarli entrambi, eloquio confuso. Hai attivato il codice ictus. Quale esame al letto fai subito, perché può cambiare la diagnosi?",
+      "win": "Glicemia 132: è un ictus",
+      "opts": [
+        {
+          "t": "Glicemia capillare",
+          "ok": 1,
+          "fb": "Un'ipoglicemia può dare sintomi identici a un ictus, soprattutto in un diabetico. Va esclusa subito: un valore basso cambia completamente il trattamento."
+        },
+        {
+          "t": "ECG a 12 derivazioni, per documentare la fibrillazione atriale",
+          "fb": "È utile e verrà fatto, ma non esclude un simulatore dell'ictus e non deve ritardare la TC."
+        },
+        {
+          "t": "Temperatura timpanica, perché la febbre peggiora il danno ischemico",
+          "fb": "È vero che la febbre peggiora la prognosi, ma non cambia la diagnosi in questo momento."
+        },
+        {
+          "t": "Scala del dolore NRS",
+          "fb": "Non aiuta a distinguere un ictus da un suo simulatore."
+        }
+      ],
+      "kn": 1,
+      "learn": "FAST: Face (volto), Arm (braccio), Speech (linguaggio), Time (tempo). BE-FAST aggiunge Balance ed Eyes.",
+      "phy": [
+        "Un trombo partito dal cuore ha chiuso un'arteria del cervello. La zona che quell'arteria irrora smette di funzionare in pochi secondi: un lato del viso e un braccio non rispondono e le parole si confondono. Un'ipoglicemia può dare sintomi identici, per questo si controlla subito.",
+        "È come un blackout in un quartiere: le luci si spengono tutte insieme. Prima di chiamare i tecnici dell'alta tensione si controlla che non sia solo saltato il contatore di casa (la glicemia)."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Il neurologo al telefono ti chiede quando il paziente è stato visto bene l'ultima volta.",
+      "q": "Che orario comunichi?",
+      "win": "Dentro la finestra per la trombolisi",
+      "opts": [
+        {
+          "t": "Le 7:30, quando il collega lo ha visto parlare normalmente",
+          "ok": 1,
+          "fb": "Conta l'ultimo momento noto in benessere, non quello in cui hai notato i sintomi."
+        },
+        {
+          "t": "Le 8:10, quando ho trovato i sintomi",
+          "fb": "L'esordio può essere in qualsiasi momento tra 7:30 e 8:10. Comunicare un orario più tardo rischia di trattare fuori finestra.",
+          "s": {
+            "phys": {
+              "occlusion": 0.85
+            }
+          },
+          "end": "Orario sbagliato in cartella"
+        },
+        {
+          "t": "Le 22 di ieri sera, l'ultima volta che l'ho visto io",
+          "fb": "Alle 7:30 era stato visto bene: è il dato più recente. Con le 22 il neurologo esclude la trombolisi e la penombra si perde.",
+          "s": {
+            "phys": {
+              "occlusion": 0.9,
+              "penumbra": 0.1
+            }
+          },
+          "end": "Escluso dalla trombolisi: danno permanente"
+        },
+        {
+          "t": "Le 7:50, a metà tra i due orari",
+          "fb": "Non si stima: si usa l'ultimo momento documentato in benessere.",
+          "s": {
+            "phys": {
+              "occlusion": 0.85
+            }
+          },
+          "end": "Orario non documentato"
+        }
+      ],
+      "learn": "La trombolisi EV si valuta in genere entro 4,5 ore dall'ultimo momento noto in benessere.",
+      "phy": [
+        "Intorno alla zona già morta c'è un'area che soffre ma è ancora viva. Si può salvare solo se il sangue torna in tempo. L'orario conta perché dopo un certo limite i rischi della terapia superano i benefici.",
+        "È come il gelato fuori dal freezer: fino a un certo punto lo rimetti dentro e torna buono, dopo è perso. Per sapere quanto tempo è fuori si guarda quando l'hai visto intatto l'ultima volta."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "La TC esclude un'emorragia. Prima della trombolisi la PA è 196/104.",
+      "state": {
+        "vit": {
+          "sys": 196,
+          "dia": 104
+        }
+      },
+      "q": "Cosa fai con questo valore?",
+      "win": "PA 178/96: trombolisi avviata",
+      "opts": [
+        {
+          "t": "Lo comunico subito al medico: per la trombolisi la PA deve essere sotto 185/110, e sarà lui a decidere se abbassarla e di quanto",
+          "ok": 1,
+          "fb": "Sopra quella soglia il rischio di emorragia cerebrale dopo la trombolisi aumenta."
+        },
+        {
+          "t": "Preparo e somministro l'antipertensivo al bisogno in terapia per portarla rapidamente a 120/80",
+          "fb": "Abbassare la pressione è a volte necessario, ma un calo brusco riduce il flusso alla penombra, il tessuto ancora salvabile.",
+          "s": {
+            "vit": {
+              "sys": 118,
+              "dia": 70
+            },
+            "phys": {
+              "penumbra": 0.2,
+              "occlusion": 0.95
+            }
+          },
+          "end": "La penombra si perde"
+        },
+        {
+          "t": "Non lo segnalo: nell'ictus acuto una PA alta è attesa e protegge il cervello",
+          "fb": "È vero che spesso è reattiva e che non va abbassata troppo, ma prima della trombolisi c'è una soglia precisa da rispettare.",
+          "s": {
+            "phys": {
+              "occlusion": 0.85
+            }
+          },
+          "end": "Trombolisi rinviata"
+        },
+        {
+          "t": "Lo interpreto come segno di emorragia e sospendo la preparazione della trombolisi",
+          "fb": "La PA alta non distingue ischemia ed emorragia: lo fa la TC, che qui è negativa.",
+          "s": {
+            "phys": {
+              "occlusion": 0.9,
+              "penumbra": 0.2
+            }
+          },
+          "end": "Trombolisi persa"
+        }
+      ],
+      "out": {
+        "vit": {
+          "sys": 178,
+          "dia": 96
+        }
+      },
+      "learn": "Dopo la trombolisi PA e valutazione neurologica si controllano molto spesso nelle prime 24 ore.",
+      "phy": [
+        "Il tessuto in sofferenza riceve sangue solo grazie alla pressione alta, che spinge il flusso nei vasi vicini. Abbassarla troppo lo priva di quell'aiuto; lasciarla troppo alta aumenta il rischio di sanguinamento durante la trombolisi.",
+        "È come innaffiare un giardino con un tubo piegato: alzi la pressione per far arrivare un po' d'acqua. Se la abbassi troppo, le piante in fondo seccano; se la alzi troppo, il tubo può rompersi."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "La trombolisi è in corso. Il paziente ha sete e ti chiede da bere per prendere la metformina del mattino.",
+      "q": "Cosa fai?",
+      "win": "Nessuna aspirazione",
+      "opts": [
+        {
+          "t": "Niente per bocca, compresi farmaci e acqua, finché non è stato fatto lo screening della deglutizione; lo segnalo al medico per la metformina",
+          "ok": 1,
+          "fb": "La disfagia dopo ictus è frequente e porta a polmonite ab ingestis."
+        },
+        {
+          "t": "Gli do acqua addensata a cucchiaini, che è più sicura dei liquidi",
+          "fb": "I liquidi addensati si usano nella disfagia, ma solo secondo l'esito dello screening.",
+          "s": {
+            "vit": {
+              "spo2": 91,
+              "rr": 24,
+              "temp": 37.8
+            }
+          },
+          "end": "Tosse e aspirazione"
+        },
+        {
+          "t": "Gli do la compressa con un piccolo sorso d'acqua, seduto a 90°",
+          "fb": "La posizione seduta aiuta, ma anche un sorso può essere aspirato se il riflesso è alterato.",
+          "s": {
+            "vit": {
+              "spo2": 90,
+              "rr": 24
+            }
+          },
+          "end": "Tosse e aspirazione"
+        },
+        {
+          "t": "Gli do l'acqua con la cannuccia, così controlla meglio il volume",
+          "fb": "La cannuccia non protegge dall'aspirazione, anzi può aumentarla.",
+          "s": {
+            "vit": {
+              "spo2": 89,
+              "rr": 26
+            }
+          },
+          "end": "Aspirazione"
+        }
+      ],
+      "out": {
+        "phys": {
+          "occlusion": 0.2,
+          "penumbra": 0.15
+        },
+        "vit": {
+          "sys": 160,
+          "dia": 90
+        },
+        "pat": {
+          "droop": 0.3
+        }
+      },
+      "learn": "Nell'animazione la trombolisi ha riaperto l'arteria: la penombra è stata salvata e i sintomi si riducono.",
+      "phy": [
+        "L'ictus può colpire i nervi che coordinano la deglutizione. Il riflesso che chiude le vie aeree quando si beve diventa lento, e l'acqua può finire nei bronchi senza che il paziente tossisca.",
+        "È come un passaggio a livello con la sbarra che scende in ritardo: il treno (il sorso d'acqua) passa prima che la strada (la trachea) sia chiusa."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "Il danno è nell'emisfero sinistro.",
+      "q": "Perché il paziente ha anche difficoltà a parlare?",
+      "opts": [
+        {
+          "t": "Nella maggior parte delle persone le aree del linguaggio (Broca e Wernicke) sono nell'emisfero sinistro, nel territorio dell'arteria cerebrale media",
+          "ok": 1,
+          "fb": "Per questo un ictus dell'arteria cerebrale media sinistra dà spesso afasia oltre alla paralisi a destra."
+        },
+        {
+          "t": "Le vie motorie si incrociano nel bulbo (decussazione delle piramidi)",
+          "fb": "È vero, e spiega perché la paralisi è a destra. Non spiega l'afasia."
+        },
+        {
+          "t": "L'arteria cerebrale anteriore irrora le aree del linguaggio",
+          "fb": "L'anteriore irrora soprattutto la faccia mediale dei lobi frontali e parietali (arto inferiore)."
+        },
+        {
+          "t": "Il trombo ha colpito il cervelletto",
+          "fb": "Il cervelletto dà disturbi dell'equilibrio e della coordinazione, e un eloquio scandito (disartria), non l'afasia."
+        }
+      ],
+      "learn": "La fibrillazione atriale favorisce trombi nell'auricola sinistra: per questo l'anticoagulante sospeso era un fattore di rischio importante.",
+      "phy": [
+        "Le vie del movimento si incrociano nel bulbo: l'emisfero sinistro comanda la metà destra del corpo. Nella maggior parte delle persone il linguaggio sta a sinistra, quindi un ictus sinistro dà insieme paralisi destra e difficoltà a parlare.",
+        "È come un telecomando con i fili invertiti: il tasto a sinistra muove il lato destro. E nell'emisfero sinistro c'è anche la tastiera con cui scriviamo le parole."
+      ]
+    }
+  ],
+  "src": [
+    "ESO (European Stroke Organisation) Guidelines on intravenous thrombolysis (2021)",
+    "AHA/ASA Guidelines for the early management of acute ischemic stroke (2019)"
+  ],
+  "notes": ""
+}

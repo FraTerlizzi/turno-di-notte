@@ -1,0 +1,410 @@
+{
+  "id": 4,
+  "slug": "sonno-troppo-profondo",
+  "title": "Sonno troppo profondo",
+  "diff": "Media",
+  "area": "Chirurgia",
+  "pt": "Sig.ra Anna V., 64 anni · Ortopedia, letto 21",
+  "hook": "Perché dorme così bene?",
+  "intro": "Giro delle 22. La stanza è silenziosa, la paziente russa rumorosamente.",
+  "look": {
+    "gown": "#c97a4a",
+    "hair": "#3a2a1a"
+  },
+  "scheda": [
+    [
+      "Intervento",
+      "Protesi totale d'anca destra ieri, in anestesia spinale con sedazione."
+    ],
+    [
+      "Anamnesi",
+      "Obesità (BMI 34). Apnee ostruttive del sonno: a casa usa la CPAP, che non ha portato in ospedale."
+    ],
+    [
+      "Analgesia",
+      "PCA di morfina: bolo 1 mg, intervallo minimo 8 minuti. Paracetamolo 1 g ogni 8 ore."
+    ],
+    [
+      "Pomeriggio",
+      "Dolore 8/10, 14 boli in 4 ore. Alle 20 dolore 3/10."
+    ],
+    [
+      "Parametri alle 20",
+      "FR 13 · SpO₂ 94% in aria · FC 66 · PA 114/68 · sedazione: sonnolenta ma risvegliabile"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 66,
+      "sys": 114,
+      "dia": 68,
+      "spo2": 94,
+      "rr": 13,
+      "temp": 37.1,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "brainstem",
+      "opioid": 0.3,
+      "naloxone": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "Respiri/min",
+      "source": "vit.rr",
+      "unit": "",
+      "lo": 10,
+      "hi": 24
+    },
+    {
+      "label": "Saturazione",
+      "source": "vit.spo2",
+      "unit": "%",
+      "lo": 92,
+      "hi": 101
+    }
+  ],
+  "abcde": {
+    "bad": "ABCD",
+    "first": "A",
+    "A": "Russa forte, con pause di 10-15 secondi in cui il torace si muove ma l'aria non entra: ostruzione parziale delle vie aeree.",
+    "B": "FR 7, respiro superficiale, SpO₂ 86% in aria.",
+    "C": "FC 58, PA 108/64, cute grigia, riempimento capillare 2 secondi.",
+    "D": "Non apre gli occhi alla voce. AVPU: risponde solo al dolore. Pupille puntiformi. Glicemia 118 mg/dL.",
+    "E": "T 37,1°C. Medicazione dell'anca asciutta. PCA: 14 boli nel pomeriggio.",
+    "why": "Un russamento rumoroso in un paziente sedato non è sonno tranquillo: è un'ostruzione parziale delle vie aeree. Si parte da A, aprendo le vie aeree, poi si tratta B."
+  },
+  "steps": [
+    {
+      "tag": "Decisione",
+      "text": "Il russamento si interrompe con pause lunghe.",
+      "seq": [
+        {
+          "d": 1.4,
+          "cap": "Gli oppioidi deprimono i centri respiratori",
+          "s": {
+            "phys": {
+              "opioid": 0.75
+            }
+          }
+        },
+        {
+          "d": 2,
+          "cap": "Pause respiratorie di 10-15 secondi",
+          "s": {
+            "vit": {
+              "rr": 7,
+              "spo2": 86,
+              "hr": 58
+            },
+            "pat": {
+              "eyes": 0,
+              "skin": "grey"
+            },
+            "phys": {
+              "opioid": 0.95
+            }
+          }
+        }
+      ],
+      "q": "La chiami per nome: non apre gli occhi. FR 7 con pause di 10-15 secondi, SpO₂ 86%, pupille puntiformi. Qual è la sequenza corretta di azioni immediate?",
+      "win": "Respira di nuovo: FR 10",
+      "opts": [
+        {
+          "t": "Stimolo verbale e tattile deciso, apertura delle vie aeree con iperestensione del capo e sollevamento del mento, ossigeno, sospensione della PCA e chiamata di aiuto",
+          "ok": 1,
+          "fb": "Stimolare e aprire le vie aeree spesso fa riprendere il respiro mentre si prepara l'antidoto. L'OSAS rende l'ostruzione più probabile."
+        },
+        {
+          "t": "Chiamo il medico e attendo al letto la prescrizione di naloxone, senza modificare la PCA",
+          "fb": "Chiamare è giusto, ma vie aeree, stimolazione e sospensione della PCA vanno fatte subito. Mentre aspetti, la FR scende a 5.",
+          "s": {
+            "vit": {
+              "rr": 5,
+              "spo2": 80,
+              "hr": 52
+            }
+          },
+          "end": "FR 5, SpO₂ 80%"
+        },
+        {
+          "t": "Riduco il bolo della PCA da 1 a 0,5 mg e ricontrollo tra 30 minuti",
+          "fb": "Ridurre il bolo è un aggiustamento utile per il futuro, ma con FR 7 e sedazione profonda la PCA va sospesa e la paziente trattata ora.",
+          "s": {
+            "vit": {
+              "rr": 5,
+              "spo2": 78,
+              "hr": 50
+            }
+          },
+          "end": "FR 5, SpO₂ 78%"
+        },
+        {
+          "t": "La lascio riposare: dopo un pomeriggio di dolore forte finalmente dorme, e la sedazione è attesa con la morfina",
+          "fb": "Un po' di sonnolenza è attesa, ma una paziente che non si sveglia alla voce, con FR 7 e OSAS, è in depressione respiratoria.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "rr": 2,
+              "spo2": 60,
+              "hr": 40
+            }
+          },
+          "end": "Arresto respiratorio"
+        }
+      ],
+      "out": {
+        "vit": {
+          "rr": 10,
+          "spo2": 90,
+          "hr": 62
+        }
+      },
+      "learn": "La sedazione precede la depressione respiratoria: con gli oppioidi si valuta sempre una scala di sedazione (ad esempio POSS) insieme alla FR.",
+      "phy": [
+        "La morfina agisce su recettori che spengono il dolore, ma gli stessi recettori ci sono anche nei centri che comandano il respiro. Ad alte dosi i centri rispondono meno alla CO₂: il respiro rallenta, la persona si addormenta e le pupille si stringono. Con le apnee notturne la gola tende anche a chiudersi.",
+        "È come abbassare il volume della sveglia per non sentire i rumori della strada: se lo abbassi troppo, non senti più nemmeno la sveglia che ti dice di respirare."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Il medico prescrive naloxone 0,4 mg diluito in 10 mL di fisiologica, cioè 40 microgrammi per mL. La paziente risponde solo al dolore.",
+      "q": "Come lo somministri?",
+      "win": "Sveglia, respira bene, dolore gestibile",
+      "opts": [
+        {
+          "t": "Boli EV di 1-2 mL (40-80 microgrammi) ogni 2-3 minuti, valutando FR e sedazione dopo ogni bolo, fino a FR di almeno 10 e risveglio alla voce",
+          "ok": 1,
+          "fb": "L'obiettivo è far respirare la paziente senza annullare tutta l'analgesia."
+        },
+        {
+          "t": "Tutti i 10 mL in bolo rapido EV, per invertire subito la depressione respiratoria",
+          "fb": "La dose totale è corretta per un'overdose fuori dall'ospedale, ma un'inversione brusca dopo chirurgia scatena dolore violento, agitazione, ipertensione e tachicardia.",
+          "s": {
+            "vit": {
+              "rr": 28,
+              "hr": 142,
+              "sys": 192,
+              "dia": 104,
+              "spo2": 96
+            },
+            "pat": {
+              "eyes": 1,
+              "sweat": 1,
+              "tremor": 1
+            },
+            "phys": {
+              "opioid": 0.1,
+              "naloxone": 1
+            }
+          },
+          "end": "Risveglio brusco: dolore 10/10, PA 192"
+        },
+        {
+          "t": "0,4 mg intramuscolo nel deltoide, poi ricontrollo tra 30 minuti",
+          "fb": "La via IM è usata quando non c'è un accesso venoso, ma agisce più lentamente e non si può titolare. Ha un accesso EV: in 30 minuti resta in ipoventilazione.",
+          "s": {
+            "vit": {
+              "rr": 8,
+              "spo2": 87
+            }
+          },
+          "end": "Migliora poco e lentamente"
+        },
+        {
+          "t": "Boli titolati EV fino al risveglio, poi riavvio la PCA con la stessa impostazione per non lasciarla con dolore",
+          "fb": "La titolazione è corretta, ma riavviare la PCA invariata ripropone la stessa causa. La prescrizione analgesica va rivista.",
+          "s": {
+            "vit": {
+              "rr": 7,
+              "spo2": 86
+            },
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "opioid": 0.9
+            }
+          },
+          "end": "Dopo un'ora: di nuovo FR 7"
+        }
+      ],
+      "out": {
+        "vit": {
+          "rr": 14,
+          "spo2": 95,
+          "hr": 72
+        },
+        "pat": {
+          "eyes": 1,
+          "skin": "normal"
+        },
+        "phys": {
+          "opioid": 0.35,
+          "naloxone": 0.85
+        }
+      },
+      "learn": "Dopo il naloxone il dolore va rivalutato: serve analgesia, con dosi o farmaci diversi.",
+      "phy": [
+        "Stimolarla e aprire le vie aeree risveglia per un po' i centri del respiro e libera la gola che si chiude. Sospendere la PCA ferma l'arrivo di nuova morfina.",
+        "È come scuotere qualcuno che si sta addormentando alla guida: per un attimo riprende il controllo. Nel frattempo si toglie il piede dall'acceleratore, cioè la pompa."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Dopo 30 minuti: FR 14, sveglia, dolore 6/10, SpO₂ 95%.",
+      "q": "Quale piano di sorveglianza è corretto per le ore successive?",
+      "win": "Notte sicura",
+      "opts": [
+        {
+          "t": "FR, sedazione e SpO₂ ogni 15 minuti nella prima ora e poi frequentemente per alcune ore, perché il naloxone dura meno della morfina; analgesia rivista dal medico e CPAP fatta portare dai familiari",
+          "ok": 1,
+          "fb": "Il naloxone dura in genere 30-90 minuti: quando finisce, la morfina può tornare a deprimere il respiro."
+        },
+        {
+          "t": "Ricontrollo al giro delle 6: ora è sveglia e respira bene",
+          "fb": "Quando l'effetto del naloxone finisce, la depressione respiratoria ritorna senza che nessuno se ne accorga.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "rr": 4,
+              "spo2": 70
+            },
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "opioid": 0.95,
+              "naloxone": 0
+            }
+          },
+          "end": "Ri-narcotizzazione notturna"
+        },
+        {
+          "t": "Saturimetro continuo con allarme sotto 90%, senza altri controlli",
+          "fb": "Il saturimetro continuo è utile, ma con ossigeno la SpO₂ può restare normale mentre la CO₂ sale: serve anche la valutazione di FR e sedazione.",
+          "s": {
+            "vit": {
+              "rr": 8,
+              "spo2": 93
+            },
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "opioid": 0.8
+            }
+          },
+          "end": "SpO₂ normale, ma FR 8"
+        },
+        {
+          "t": "Controlli ogni 15 minuti per un'ora, poi ripresa della PCA con la stessa impostazione",
+          "fb": "La prima parte è corretta. Ma un'ora è poco e la PCA invariata ripropone il problema.",
+          "s": {
+            "vit": {
+              "rr": 7
+            },
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "opioid": 0.9
+            }
+          },
+          "end": "Alle 2: di nuovo FR 7"
+        }
+      ],
+      "out": {
+        "vit": {
+          "rr": 14,
+          "spo2": 96
+        },
+        "phys": {
+          "opioid": 0.3,
+          "naloxone": 0.5
+        }
+      },
+      "learn": "Fattori di rischio per depressione respiratoria da oppioidi: OSAS, obesità, età avanzata, insufficienza renale, altri sedativi, prime 24 ore di terapia.",
+      "phy": [
+        "Il naloxone occupa gli stessi recettori della morfina senza attivarli. A piccole dosi ne libera solo una parte: torna il respiro, ma resta un po' di analgesia.",
+        "È come spegnere alcune lampadine di un lampadario troppo forte invece di staccare la corrente a tutta la casa. Una dose unica e grande toglie tutto, compreso il controllo del dolore."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Il naloxone ha funzionato in pochi minuti.",
+      "q": "Come agisce il naloxone?",
+      "opts": [
+        {
+          "t": "È un antagonista competitivo dei recettori μ: li occupa senza attivarli e sposta la morfina",
+          "ok": 1,
+          "fb": "Per questo l'effetto dipende dalla dose e dura finché il naloxone resta in circolo."
+        },
+        {
+          "t": "Accelera il metabolismo epatico della morfina",
+          "fb": "Non modifica il metabolismo della morfina."
+        },
+        {
+          "t": "È un agonista parziale dei recettori μ, come la buprenorfina",
+          "fb": "La buprenorfina è davvero un agonista parziale, ma il naloxone è un antagonista puro."
+        },
+        {
+          "t": "Stimola direttamente i centri respiratori, come il doxapram",
+          "fb": "Il doxapram è uno stimolante respiratorio. Il naloxone agisce sui recettori degli oppioidi."
+        }
+      ],
+      "learn": "La morfina riduce la risposta dei centri respiratori alla CO₂: la CO₂ sale ma la paziente non aumenta la ventilazione.",
+      "phy": [
+        "Il naloxone viene eliminato in meno di un'ora o poco più, la morfina resta di più. Quando il naloxone se ne va, la morfina rimasta torna a occupare i recettori.",
+        "È come un buttafuori che tiene lontano un ospite indesiderato, ma finisce il turno prima che la festa sia finita: appena se ne va, l'ospite rientra. Per questo i controlli continuano per ore."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "I recettori μ che rallentano il respiro sono in una zona precisa.",
+      "q": "Dove nasce il ritmo respiratorio automatico?",
+      "opts": [
+        {
+          "t": "Nel bulbo, nel complesso pre-Bötzinger, con modulazione dal ponte",
+          "ok": 1,
+          "fb": "È lì che gli oppioidi deprimono il respiro."
+        },
+        {
+          "t": "Nella corteccia motoria primaria",
+          "fb": "Controlla il respiro volontario (parlare, trattenere il fiato), non il ritmo automatico."
+        },
+        {
+          "t": "Nei motoneuroni del midollo cervicale C3-C5",
+          "fb": "Da lì partono i nervi frenici per il diaframma, ma il ritmo nasce più in alto."
+        },
+        {
+          "t": "Nel cervelletto",
+          "fb": "Il cervelletto coordina il movimento."
+        }
+      ],
+      "learn": "Una lesione del midollo sopra C3 abolisce la respirazione spontanea, perché interrompe i frenici.",
+      "phy": [
+        "Il ritmo del respiro nasce in un piccolo gruppo di neuroni nel bulbo, alla base del cervello. Funziona da solo, senza che ci pensiamo, ed è proprio lì che la morfina abbassa il volume.",
+        "È come il metronomo di un pianista: batte il tempo da solo. Gli oppioidi lo rallentano finché le note diventano troppo distanti."
+      ]
+    }
+  ],
+  "src": [
+    "Pasero Opioid-Induced Sedation Scale (POSS)",
+    "Resuscitation Council UK: gestione dell'overdose da oppioidi",
+    "Foglietto illustrativo naloxone (AIFA)"
+  ],
+  "notes": ""
+}

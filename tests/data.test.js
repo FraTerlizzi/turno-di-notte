@@ -1,71 +1,101 @@
 // Controlli di coerenza sui contenuti: un errore qui è un caso clinico che in gioco si blocca o si comporta male.
+// I controlli sui casi e sui capitoli sono gli stessi che l'editor mostra dal vivo (src/content/validate.js).
 import { describe, it, expect } from 'vitest';
-import { CASES, ROAD, GL, PHY, ABCDE, EVENTS, SKINS, GOWN, HAIR } from '../src/data/index.js';
+import { CASES, CASE_FILES, CHAPTERS, GL, EVENTS, SKINS } from '../src/data/index.js';
+import { validateCase, validateCollection, errorsOnly, describePath } from '../src/content/validate.js';
+import { compileCase, hudValue } from '../src/content/compile.js';
 
-const DIFFS = ['Base', 'Media', 'Difficile'];
+const show = (list) => list.map((p) => `${describePath(p.path)}: ${p.msg}`);
 const withOpts = (steps) => steps.filter((s) => Array.isArray(s.opts));
 
-describe('casi clinici', () => {
-  it('hanno id unici e consecutivi da 1', () => {
-    expect(CASES.map((c) => c.id)).toEqual(CASES.map((_, i) => i + 1));
+describe('file dei casi', () => {
+  it.each(CASE_FILES.map((c) => [c.id, c]))('caso %i: nessun errore', (_, c) => {
+    expect(show(errorsOnly(validateCase(c)))).toEqual([]);
   });
 
-  it.each(CASES.map((c) => [c.id, c]))('caso %i: campi principali', (_, c) => {
-    expect(c.title).toBeTruthy();
-    expect(c.area).toBeTruthy();
-    expect(c.pt).toBeTruthy();
-    expect(DIFFS).toContain(c.diff);
-    expect(c.steps.length).toBeGreaterThan(0);
-    expect(c.src?.length).toBeGreaterThan(0);
+  it('numeri e nomi brevi unici, capitoli coerenti', () => {
+    expect(show(errorsOnly(validateCollection(CASE_FILES, CHAPTERS)))).toEqual([]);
   });
 
-  it.each(CASES.map((c) => [c.id, c]))('caso %i: ogni domanda ha almeno una risposta giusta e un feedback per ogni opzione', (_, c) => {
-    for (const s of withOpts(c.steps)) {
-      expect(s.opts.some((o) => o.ok), `tappa "${s.tag}": nessuna opzione giusta`).toBe(true);
-      for (const o of s.opts) {
-        expect(o.t, `tappa "${s.tag}": opzione senza testo`).toBeTruthy();
-        expect(o.fb, `tappa "${s.tag}": "${o.t}" senza feedback`).toBeTruthy();
-      }
-    }
-  });
-
-  it('ogni domanda ha al massimo 5 opzioni (lettere A-E)', () => {
-    for (const c of CASES) for (const s of withOpts(c.steps)) expect(s.opts.length, `caso ${c.id} "${s.tag}"`).toBeLessThanOrEqual(5);
+  it('il nome del file corrisponde a numero e nome breve del caso', () => {
+    const files = Object.keys(import.meta.glob('../content/cases/*.json')).map((k) => k.split('/').pop()).sort();
+    const expected = [...CASE_FILES].sort((a, b) => a.id - b.id).map((c) => `${String(c.id).padStart(3, '0')}-${c.slug}.json`);
+    expect(files).toEqual(expected);
   });
 });
 
-describe('ABCDE', () => {
+describe('casi compilati per il motore', () => {
   it('ogni caso parte dalla tappa ABCDE con una sola lettera giusta', () => {
     for (const c of CASES) {
-      if (!ABCDE[c.id]) continue;
-      const s0 = c.steps[0];
-      expect(s0.tag, `caso ${c.id}`).toBe('ABCDE');
-      expect(s0.opts.filter((o) => o.ok)).toHaveLength(1);
+      expect(c.steps[0].tag, `caso ${c.id}`).toBe('ABCDE');
+      expect(c.steps[0].opts.filter((o) => o.ok)).toHaveLength(1);
     }
   });
 
-  it('la lettera prioritaria è tra quelle alterate', () => {
-    for (const [id, ab] of Object.entries(ABCDE)) {
-      expect('ABCDE', `caso ${id}`).toContain(ab.first);
-      expect(ab.bad, `caso ${id}`).toContain(ab.first);
-      for (const L of 'ABCDE') expect(ab[L], `caso ${id}, lettera ${L}`).toBeTruthy();
+  it('l\'animazione d\'apertura passa dalla prima tappa alla tappa ABCDE', () => {
+    for (const f of CASE_FILES) {
+      const c = compileCase(f);
+      if (f.steps[0].seq) {
+        expect(c.steps[0].seq).toEqual(f.steps[0].seq);
+        expect(c.steps[1].seq).toBeUndefined();
+      }
+      expect(f.steps[0].seq === undefined || f.steps[0].seq.length > 0).toBe(true); // il file non viene modificato
     }
   });
 
-  it('esiste per tutti e soli i casi presenti', () => {
-    expect(Object.keys(ABCDE).map(Number).sort((a, b) => a - b)).toEqual(CASES.map((c) => c.id));
+  it('ogni domanda ha almeno una risposta giusta e un feedback per ogni opzione', () => {
+    for (const c of CASES) for (const s of withOpts(c.steps)) {
+      expect(s.opts.some((o) => o.ok), `caso ${c.id} "${s.tag}"`).toBe(true);
+      for (const o of s.opts) expect(o.fb, `caso ${c.id} "${s.tag}": "${o.t}"`).toBeTruthy();
+    }
+  });
+
+  it('valori extra del monitor', () => {
+    const st = { vit: { sys: 120, dia: 60, hr: 80 }, pat: {}, phys: { co2: 0.4, occlusion: 0.25 } };
+    expect(hudValue({ source: 'calc.map' }, st)).toBe(80);
+    expect(hudValue({ source: 'vit.hr' }, st)).toBe(80);
+    expect(hudValue({ source: 'phys.co2', scale: 100 }, st)).toBeCloseTo(40);
+    expect(hudValue({ source: 'phys.occlusion', scale: 100, invert: true }, st)).toBeCloseTo(75);
+    expect(hudValue({ source: 'phys.glu', scale: 100 }, st)).toBeNull();
+    expect(hudValue({ source: 'phys.glu' }, st)).toBeUndefined();
   });
 });
 
-describe('fisiologia al volo', () => {
-  it('riferisce solo casi esistenti e non supera il numero di tappe', () => {
-    for (const [id, arr] of Object.entries(PHY)) {
-      const c = CASES.find((x) => x.id === Number(id));
-      expect(c, `PHY ${id} senza caso`).toBeTruthy();
-      const original = c.steps.filter((s) => s.tag !== 'ABCDE').length;
-      expect(arr.length, `caso ${id}`).toBeLessThanOrEqual(original);
-      for (const p of arr) if (p) expect(p).toHaveLength(2);
-    }
+describe('controlli dell\'editor', () => {
+  const base = () => JSON.parse(JSON.stringify(CASE_FILES[0]));
+
+  it('segnalano gli errori tipici di un caso scritto a mano', () => {
+    const c = base();
+    c.steps[1].opts.forEach((o) => { delete o.ok; });
+    c.steps[2].opts[0].fb = '';
+    c.abcde.first = 'E';
+    c.abcde.bad = 'B';
+    c.hud.pop();
+    c.base.vit.spo2 = 140;
+    const msgs = validateCase(c).filter((p) => p.level === 'error').map((p) => p.msg);
+    expect(msgs).toContain('nessuna risposta giusta');
+    expect(msgs).toContain('feedback mancante');
+    expect(msgs).toContain('la lettera prioritaria deve essere tra quelle alterate');
+    expect(msgs).toContain('servono esattamente due valori extra per il monitor');
+    expect(msgs.some((m) => m.startsWith('Saturazione fuori'))).toBe(true);
+  });
+
+  it('non accettano la tappa ABCDE scritta a mano né un decesso senza evento critico', () => {
+    const c = base();
+    c.steps.unshift({ ...compileCase(c).steps[0] });
+    const o = c.steps[2].opts.find((x) => !x.ok);
+    o.dead = 1; o.x = 1;
+    const msgs = errorsOnly(validateCase(c)).map((p) => p.msg);
+    expect(msgs).toContain('la tappa ABCDE si genera da sola: non va scritta tra le tappe');
+    expect(msgs).toContain('il decesso richiede gravità "evento critico"');
+  });
+
+  it('i capitoli non possono contenere casi inesistenti o ripetuti', () => {
+    const ch = JSON.parse(JSON.stringify(CHAPTERS));
+    ch[1].cases = [1, 99];
+    const msgs = errorsOnly(validateCollection(CASE_FILES, ch)).map((p) => p.msg);
+    expect(msgs).toContain('il caso 99 non esiste');
+    expect(msgs.some((m) => m.startsWith('il caso 1 è già nel capitolo'))).toBe(true);
   });
 });
 
@@ -73,8 +103,7 @@ describe('glossario', () => {
   const keys = GL.map((e) => e[0]);
 
   it('ha chiavi uniche', () => {
-    const dup = keys.filter((k, i) => keys.indexOf(k) !== i);
-    expect(dup).toEqual([]);
+    expect(keys.filter((k, i) => keys.indexOf(k) !== i)).toEqual([]);
   });
 
   it('ogni voce ha nome, tipo, modelli e contenuto', () => {
@@ -87,11 +116,9 @@ describe('glossario', () => {
   });
 
   it('i modelli di testo sono espressioni regolari valide', () => {
-    for (const [k, , , patterns] of GL) {
-      for (const p of patterns) {
-        const src = p[0] === '!' ? p.slice(1) : p;
-        expect(() => new RegExp(src, 'iu'), `${k}: ${p}`).not.toThrow();
-      }
+    for (const [k, , , patterns] of GL) for (const p of patterns) {
+      const src = p[0] === '!' ? p.slice(1) : p;
+      expect(() => new RegExp(src, 'iu'), `${k}: ${p}`).not.toThrow();
     }
   });
 
@@ -118,20 +145,8 @@ describe('eventi fuori turno', () => {
   });
 });
 
-describe('mappa e aspetto', () => {
-  it('le stagioni future partono dopo l\'ultimo caso e arrivano a 100 senza buchi', () => {
-    let next = CASES.length + 1;
-    for (const [, , from, to] of ROAD) {
-      expect(from).toBe(next);
-      expect(to).toBeGreaterThanOrEqual(from);
-      next = to + 1;
-    }
-    expect(next - 1).toBe(100);
-  });
-
-  it('ci sono colori di camice e capelli per ogni caso e costumi validi', () => {
-    expect(GOWN.length).toBeGreaterThanOrEqual(CASES.length);
-    expect(HAIR.length).toBeGreaterThanOrEqual(CASES.length);
+describe('costumi', () => {
+  it('sono validi', () => {
     for (const s of SKINS) {
       expect(s.name).toBeTruthy();
       expect(s.base).toMatch(/^#[0-9a-f]{6}$/i);

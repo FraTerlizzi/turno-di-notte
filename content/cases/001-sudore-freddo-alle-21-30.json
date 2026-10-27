@@ -1,0 +1,385 @@
+{
+  "id": 1,
+  "slug": "sudore-freddo-alle-21-30",
+  "title": "Sudore freddo alle 21:30",
+  "diff": "Base",
+  "area": "Endocrinologia",
+  "pt": "Sig. Marco R., 58 anni · Medicina interna, letto 7",
+  "hook": "Perché non il cioccolato?",
+  "intro": "Sei l'infermiere del turno serale. Alle 21:30 passi per il giro dei parametri.",
+  "look": {
+    "gown": "#4f86c6",
+    "hair": "#2b1d14"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Polmonite lobare destra, 2ª giornata di antibiotico EV."
+    ],
+    [
+      "Anamnesi",
+      "Diabete tipo 2 da 15 anni in schema basal-bolus. Ipertensione. Insufficienza renale cronica lieve (eGFR 52)."
+    ],
+    [
+      "Terapia",
+      "Insulina glargine 22 U alle 22. Insulina lispro 8 U ai pasti. Ramipril 5 mg."
+    ],
+    [
+      "Stasera",
+      "Nausea. Ha mangiato circa un quarto della cena. La lispro delle 19 è stata somministrata a inizio pasto."
+    ],
+    [
+      "Parametri alle 19",
+      "PA 132/78 · FC 82 · SpO₂ 96% in aria · FR 16 · T 37,2°C · glicemia pre-cena 156 mg/dL"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 82,
+      "sys": 132,
+      "dia": 78,
+      "spo2": 96,
+      "rr": 16,
+      "temp": 37.2,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "glucose",
+      "glu": 118,
+      "insulin": 0.6,
+      "ketones": 0,
+      "kshift": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "Glicemia",
+      "source": "phys.glu",
+      "unit": "mg/dL",
+      "lo": 70,
+      "hi": 250
+    },
+    {
+      "label": "Freq. cardiaca",
+      "source": "vit.hr",
+      "unit": "bpm",
+      "lo": 50,
+      "hi": 110
+    }
+  ],
+  "abcde": {
+    "bad": "BCD",
+    "first": "D",
+    "A": "Parla e risponde, anche se in modo confuso: vie aeree pervie, nessun rumore anomalo.",
+    "B": "FR 16, SpO₂ 96% in aria. Espansione simmetrica, crepitii già noti alla base destra per la polmonite, invariati.",
+    "C": "FC 112 regolare, PA 146/84. Cute fredda e sudata, riempimento capillare 2 secondi.",
+    "D": "Confuso, chiede più volte che ore sono. AVPU: risponde alla voce. Pupille normali. Glicemia: ancora da misurare.",
+    "E": "T 37,2°C. Nessuna lesione, accesso venoso in ordine. Il vassoio della cena è quasi pieno.",
+    "why": "La tachicardia in C è la risposta all'adrenalina con pressione e perfusione buone. Il problema da trattare subito è in D: una confusione nuova in un paziente in insulina. In D si controlla sempre la glicemia."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "text": "Lo trovi sveglio e agitato, con la fronte imperlata di sudore e la cute fredda. Le mani tremano. Ti chiede due volte che ore sono. FC 112, PA 146/84, SpO₂ 96%.",
+      "seq": [
+        {
+          "d": 1.2,
+          "cap": "La glicemia sta scendendo",
+          "s": {
+            "phys": {
+              "glu": 70
+            }
+          }
+        },
+        {
+          "d": 1.8,
+          "cap": "Sudore freddo e tremore",
+          "s": {
+            "vit": {
+              "hr": 112,
+              "sys": 146,
+              "dia": 84
+            },
+            "pat": {
+              "sweat": 1,
+              "tremor": 1,
+              "skin": "pale"
+            },
+            "phys": {
+              "glu": 50
+            }
+          }
+        }
+      ],
+      "q": "Tenendo conto della serata (insulina rapida fatta, pasto quasi saltato, funzione renale ridotta), quale valutazione fai per prima, perché decide il tuo intervento?",
+      "win": "Glicemia 48 mg/dL: hai trovato la causa",
+      "opts": [
+        {
+          "t": "Glicemia capillare al letto, prima di qualsiasi altra rilevazione",
+          "ok": 1,
+          "fb": "Insulina rapida in circolo, pasto quasi saltato, rene che elimina l'insulina più lentamente: il quadro (sudore freddo, tremore, tachicardia, confusione) è quello di un'ipoglicemia, e la glicemia capillare la conferma in un minuto."
+        },
+        {
+          "t": "Saturazione, frequenza respiratoria e auscultazione del torace, per escludere un peggioramento della polmonite",
+          "fb": "Sono valutazioni corrette in un paziente con polmonite, ma non spiegano cute fredda, tremore e confusione dopo insulina a digiuno. Mentre ausculti, la glicemia continua a scendere e il paziente diventa soporoso.",
+          "s": {
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "glu": 36
+            },
+            "vit": {
+              "hr": 118
+            }
+          },
+          "end": "Diventa soporoso: glicemia 36"
+        },
+        {
+          "t": "Temperatura timpanica e, se supera 38°C, paracetamolo al bisogno come da prescrizione",
+          "fb": "Il paracetamolo al bisogno è prescritto per la febbre, ma qui la cute è fredda e sudata: è l'attivazione adrenergica dell'ipoglicemia. Perdi minuti preziosi.",
+          "s": {
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "glu": 38
+            }
+          },
+          "end": "Peggiora: glicemia 38"
+        },
+        {
+          "t": "Valutazione neurologica completa con GCS e pupille, da documentare prima di chiamare il medico",
+          "fb": "La GCS descrive bene la coscienza, ma non indica la causa e richiede tempo. Un dato di un minuto (la glicemia) ti avrebbe già detto cosa fare.",
+          "s": {
+            "pat": {
+              "eyes": 0
+            },
+            "phys": {
+              "glu": 40
+            }
+          },
+          "end": "Peggiora: glicemia 40"
+        }
+      ],
+      "learn": "I sintomi adrenergici (sudore, tremore, tachicardia, ansia) sono l'allarme dell'organismo. Quelli neuroglicopenici (confusione, sonnolenza, comportamento strano) indicano che il cervello sta già soffrendo.",
+      "phy": [
+        "L'insulina rapida funziona come una porta che fa entrare il glucosio nelle cellule. Se la porta si apre ma il pasto non arriva, il glucosio nel sangue finisce. Il corpo allora libera adrenalina per chiedere aiuto: da qui sudore, tremore e cuore veloce. Il rene che lavora poco elimina l'insulina più lentamente, quindi l'effetto dura di più.",
+        "È come aprire tutte le casse di un supermercato quando non ci sono clienti: i cassieri restano senza lavoro. Il paziente con l'insulina in circolo e il piatto pieno sul vassoio è proprio in questa situazione."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Glicemia capillare 48 mg/dL. È cosciente, risponde correttamente alle domande e deglutisce senza problemi un sorso d'acqua. Sul comodino: succo d'arancia in brick da 200 mL (circa 20 g di zuccheri), cracker integrali, cioccolato al latte, yogurt intero. Nel carrello: glucagone 1 mg e glucosio 33%.",
+      "q": "Qual è il trattamento più appropriato in questo momento?",
+      "win": "La glicemia risale",
+      "opts": [
+        {
+          "t": "150 mL di succo d'arancia, cioè circa 15 g di zuccheri semplici, e nuovo controllo della glicemia dopo 15 minuti",
+          "ok": 1,
+          "fb": "È la regola del 15: zuccheri semplici già sciolti, assorbiti in pochi minuti, e verifica a 15 minuti."
+        },
+        {
+          "t": "Due confezioni di cracker integrali: i carboidrati complessi mantengono la glicemia stabile più a lungo",
+          "fb": "È vero che i carboidrati complessi danno una glicemia più stabile, ed è per questo che si usano dopo, come spuntino. Per correggere un'ipoglicemia sono troppo lenti: a 15 minuti la glicemia è ancora 44.",
+          "s": {
+            "phys": {
+              "glu": 44
+            }
+          },
+          "end": "A 15 minuti: glicemia 44"
+        },
+        {
+          "t": "Una barretta di cioccolato al latte, che contiene circa 25 g di zuccheri",
+          "fb": "Il contenuto di zuccheri è sufficiente, ma i grassi rallentano lo svuotamento gastrico e l'assorbimento. A 15 minuti la glicemia è salita solo a 54.",
+          "s": {
+            "phys": {
+              "glu": 54
+            }
+          },
+          "end": "A 15 minuti: glicemia 54"
+        },
+        {
+          "t": "Glucagone 1 mg intramuscolo nella coscia, come previsto dal protocollo per l'ipoglicemia",
+          "fb": "Il glucagone è il farmaco giusto per l'ipoglicemia grave quando il paziente non può assumere nulla per bocca. Lui deglutisce bene, e il glucagone dà spesso nausea e vomito: in un paziente già nauseato, vomita.",
+          "s": {
+            "phys": {
+              "glu": 80
+            },
+            "pat": {
+              "sweat": 1
+            }
+          },
+          "end": "La glicemia sale, ma vomita"
+        },
+        {
+          "t": "Glucosio 33% EV in bolo attraverso l'accesso venoso già presente",
+          "fb": "Il glucosio EV corregge rapidamente, ma richiede prescrizione e si riserva a chi non può usare la via orale. Le soluzioni concentrate sono molto irritanti per la vena: compaiono dolore e arrossamento lungo il braccio.",
+          "s": {
+            "phys": {
+              "glu": 110
+            }
+          },
+          "end": "Sale, ma la vena si infiamma"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 98
+        },
+        "pat": {
+          "tremor": 0
+        },
+        "phys": {
+          "glu": 66
+        }
+      },
+      "learn": "Se il paziente non deglutisce in sicurezza non si dà nulla per bocca: glucagone IM o glucosio EV secondo prescrizione o protocollo.",
+      "phy": [
+        "Lo zucchero del succo è già sciolto: dallo stomaco passa nell'intestino in pochi minuti e da lì nel sangue. Grassi e fibre rallentano lo svuotamento dello stomaco, quindi cioccolato e cracker arrivano tardi.",
+        "È la differenza tra accendere la luce con l'interruttore e aspettare che sorga il sole. Chi ha un'ipoglicemia ha bisogno dell'interruttore."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Dopo 15 minuti: glicemia 66 mg/dL, la sudorazione si riduce, ti chiede di poter dormire. La colazione è alle 7:30. Alle 22 è prevista la glargine 22 U.",
+      "q": "Cosa fai adesso, considerando anche l'insulina basale delle 22?",
+      "win": "Glicemia 96: notte tranquilla",
+      "opts": [
+        {
+          "t": "Ripeto 15 g di zuccheri semplici e ricontrollo dopo 15 minuti. Sopra 70 mg/dL do uno spuntino con carboidrati complessi e segnalo l'episodio al medico prima della glargine",
+          "ok": 1,
+          "fb": "Sotto 70 si ripete il ciclo. Lo spuntino evita che la glicemia riscenda nella notte. La dose di basale dopo un'ipoglicemia va decisa con il medico."
+        },
+        {
+          "t": "Visto che sta meglio, gli do subito i cracker e lo lascio dormire, con glicemia di controllo al mattino",
+          "fb": "Sentirsi meglio non basta: è ancora sotto 70, e i cracker agiscono lentamente. Alle 2 di notte la glicemia è 50 e nessuno se ne accorge.",
+          "s": {
+            "phys": {
+              "glu": 50
+            },
+            "pat": {
+              "eyes": 0,
+              "sweat": 1
+            }
+          },
+          "end": "Alle 2: glicemia 50, nessuno se ne accorge"
+        },
+        {
+          "t": "Somministro la glargine delle 22 come prescritto, perché l'insulina basale non va mai saltata",
+          "fb": "Il principio è corretto, ma con 66 mg/dL e un'ipoglicemia appena avvenuta la dose va discussa con il medico. Nella notte la glicemia riscende a 52.",
+          "s": {
+            "phys": {
+              "glu": 52
+            },
+            "pat": {
+              "sweat": 1
+            }
+          },
+          "end": "Nella notte: glicemia 52"
+        },
+        {
+          "t": "Sospendo di mia iniziativa la glargine di stasera, così evito altre ipoglicemie",
+          "fb": "Modificare la terapia insulinica è una decisione medica. E saltare la basale ha un prezzo: al mattino la glicemia è 312 mg/dL.",
+          "s": {
+            "phys": {
+              "glu": 312,
+              "insulin": 0
+            }
+          },
+          "end": "Al mattino: glicemia 312"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 84,
+          "sys": 130
+        },
+        "pat": {
+          "sweat": 0,
+          "skin": "normal"
+        },
+        "phys": {
+          "glu": 96
+        }
+      },
+      "learn": "L'episodio va documentato: ora, valore, trattamento, valori successivi e comunicazione al medico.",
+      "phy": [
+        "Il succo ha alzato la glicemia per un po', ma l'insulina rapida è ancora attiva per ore e continua a far entrare glucosio nelle cellule. Per questo si ricontrolla e, quando si è risaliti, si aggiungono carboidrati lenti che coprono le ore successive.",
+        "È come mettere legna sottile nel camino: prende subito ma brucia in fretta. Per arrivare al mattino serve anche un ciocco grosso, cioè lo spuntino."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Ripensa ai sintomi che hai osservato durante l'ipoglicemia.",
+      "q": "Quale di questi segni indica che il cervello stava già soffrendo per mancanza di glucosio, e non solo che l'organismo aveva dato l'allarme?",
+      "opts": [
+        {
+          "t": "La confusione: chiedeva più volte l'ora e rispondeva lentamente",
+          "ok": 1,
+          "fb": "È un sintomo neuroglicopenico: i neuroni ricevono troppo poco glucosio."
+        },
+        {
+          "t": "La sudorazione fredda: è causata dall'attivazione del sistema simpatico sulle ghiandole sudoripare",
+          "fb": "Descrizione corretta del meccanismo, ma proprio per questo è un sintomo adrenergico, cioè di allarme."
+        },
+        {
+          "t": "Il tremore: è dovuto all'adrenalina che agisce sui recettori β2 dei muscoli",
+          "fb": "Il meccanismo è corretto: è un sintomo adrenergico, non di danno cerebrale."
+        },
+        {
+          "t": "La tachicardia: l'adrenalina stimola i recettori β1 del cuore",
+          "fb": "Anche questa è una risposta di allarme."
+        }
+      ],
+      "learn": "I betabloccanti possono mascherare tremore e tachicardia: in quei pazienti l'ipoglicemia può presentarsi direttamente con confusione.",
+      "phy": [
+        "Il cervello non ha riserve di zucchero: usa quello che arriva dal sangue minuto per minuto. Quando l'apporto cala, le funzioni più delicate (attenzione, memoria, orientamento) saltano per prime.",
+        "È come un telefono senza batteria interna, che funziona solo attaccato alla presa: appena la corrente cala, lo schermo si spegne. Chiedere più volte che ore sono è il segno che il cervello ha già meno energia."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "Nel paziente sano, quando la glicemia scende, il pancreas libera glucagone.",
+      "q": "Quali cellule lo producono, e dove si trovano?",
+      "opts": [
+        {
+          "t": "Cellule alfa delle isole di Langerhans, la parte endocrina del pancreas",
+          "ok": 1,
+          "fb": "Il glucagone stimola il fegato a liberare glucosio dal glicogeno (glicogenolisi) e a produrne di nuovo (gluconeogenesi)."
+        },
+        {
+          "t": "Cellule beta delle isole di Langerhans, che rispondono al glucosio tramite il trasportatore GLUT2",
+          "fb": "Le beta usano davvero il GLUT2 per sentire la glicemia, ma producono insulina."
+        },
+        {
+          "t": "Cellule delta delle isole di Langerhans, che producono somatostatina",
+          "fb": "La somatostatina frena sia insulina sia glucagone. Non è il glucagone."
+        },
+        {
+          "t": "Cellule acinose del pancreas, che versano il secreto nel dotto di Wirsung",
+          "fb": "Descrizione corretta della parte esocrina, che produce enzimi digestivi."
+        }
+      ],
+      "learn": "Le isole di Langerhans sono circa l'1-2% del pancreas: alfa (glucagone), beta (insulina), delta (somatostatina), PP (polipeptide pancreatico).",
+      "phy": [
+        "Nel pancreas ci sono due interruttori opposti: le cellule beta abbassano la glicemia con l'insulina, le cellule alfa la alzano con il glucagone. Il fegato è il magazzino di glucosio che il glucagone fa aprire.",
+        "È come un termostato con riscaldamento e condizionatore: uno sale, l'altro scende. Quando si inietta insulina dall'esterno, il termostato non può più spegnere il condizionatore."
+      ]
+    }
+  ],
+  "src": [
+    "American Diabetes Association, Standards of Care in Diabetes: ipoglicemia (regola del 15)",
+    "Guyton & Hall, Fisiologia medica: pancreas endocrino"
+  ],
+  "notes": ""
+}

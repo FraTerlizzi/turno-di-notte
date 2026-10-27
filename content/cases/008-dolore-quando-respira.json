@@ -1,0 +1,359 @@
+{
+  "id": 8,
+  "slug": "dolore-quando-respira",
+  "title": "Dolore quando respira",
+  "diff": "Difficile",
+  "area": "Chirurgia",
+  "pt": "Sig.ra Laura D., 67 anni · Ortopedia, letto 18",
+  "hook": "Perché non massaggiare il polpaccio?",
+  "intro": "Alle 10 la aiuti a sistemarsi nel letto dopo la fisioterapia.",
+  "look": {
+    "gown": "#4a9ac9",
+    "hair": "#5a3a22"
+  },
+  "scheda": [
+    [
+      "Intervento",
+      "Protesi totale di ginocchio sinistro, 3ª giornata."
+    ],
+    [
+      "Anamnesi",
+      "Obesità (BMI 31). Varici agli arti inferiori. Ipertensione."
+    ],
+    [
+      "Profilassi",
+      "Enoxaparina 4000 UI sottocute la sera. Ieri sera l'ha rifiutata per paura delle iniezioni; non è stato segnalato."
+    ],
+    [
+      "Mobilizzazione",
+      "Poca: si è alzata solo per la fisioterapia."
+    ],
+    [
+      "Ieri",
+      "Ha riferito fastidio al polpaccio sinistro, attribuito all'intervento."
+    ],
+    [
+      "Parametri alle 8",
+      "PA 128/76 · FC 88 · SpO₂ 96% · FR 17 · T 37,3°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 88,
+      "sys": 128,
+      "dia": 76,
+      "spo2": 96,
+      "rr": 17,
+      "temp": 37.3,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "normal",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "alveolus",
+      "fluid": 0,
+      "perfusion": 1,
+      "co2": 0.25
+    }
+  },
+  "hud": [
+    {
+      "label": "Saturazione",
+      "source": "vit.spo2",
+      "unit": "%",
+      "lo": 92,
+      "hi": 101
+    },
+    {
+      "label": "Freq. cardiaca",
+      "source": "vit.hr",
+      "unit": "bpm",
+      "lo": 50,
+      "hi": 110
+    }
+  ],
+  "abcde": {
+    "bad": "BC",
+    "first": "B",
+    "A": "Parla, risponde: vie aeree pervie.",
+    "B": "FR 30, SpO₂ 87% in aria, torace simmetrico, murmure presente ovunque, nessun rumore aggiunto.",
+    "C": "FC 122, PA 112/70, cute pallida e sudata.",
+    "D": "Vigile, ansiosa. Glicemia 110 mg/dL.",
+    "E": "T 37,3°C. Polpacci: da valutare.",
+    "why": "Il primo problema è in B: ipossiemia con polmoni puliti, un indizio importante. Si tratta con ossigeno e posizione e si prosegue con C, dove la tachicardia è un altro segnale."
+  },
+  "steps": [
+    {
+      "tag": "Decisione",
+      "text": "Improvvisamente si porta la mano al petto.",
+      "seq": [
+        {
+          "d": 1.3,
+          "cap": "Un embolo arriva nell'arteria polmonare",
+          "s": {
+            "phys": {
+              "perfusion": 0.15
+            }
+          }
+        },
+        {
+          "d": 1.9,
+          "cap": "Dispnea improvvisa",
+          "s": {
+            "vit": {
+              "hr": 122,
+              "spo2": 87,
+              "rr": 30,
+              "sys": 112,
+              "dia": 70
+            },
+            "pat": {
+              "sweat": 1,
+              "skin": "pale"
+            }
+          }
+        }
+      ],
+      "q": "Dispnea improvvisa, dolore toracico che peggiora inspirando, è ansiosa. FC 122, SpO₂ 87%, FR 30, PA 112/70. Cosa fai?",
+      "win": "Stabilizzata in attesa del medico",
+      "opts": [
+        {
+          "t": "La metto semiseduta, avvio ossigeno, monitoraggio continuo, chiamo urgentemente il medico e controllo che l'accesso venoso sia funzionante",
+          "ok": 1,
+          "fb": "Il quadro fa sospettare un'embolia polmonare: servono valutazione medica immediata e monitoraggio."
+        },
+        {
+          "t": "Eseguo un ECG a 12 derivazioni e la rivaluto tra un'ora",
+          "fb": "L'ECG si fa e può mostrare un sovraccarico destro, ma con questi parametri non si aspetta un'ora.",
+          "s": {
+            "vit": {
+              "hr": 132,
+              "spo2": 84,
+              "sys": 98
+            }
+          },
+          "end": "Peggiora: PA 98"
+        },
+        {
+          "t": "Somministro salbutamolo per aerosol, pensando a un broncospasmo",
+          "fb": "Non ci sono sibili: il problema è nei vasi, non nei bronchi. Il salbutamolo aumenta anche la frequenza cardiaca.",
+          "s": {
+            "vit": {
+              "hr": 138,
+              "spo2": 85
+            }
+          },
+          "end": "FC 138"
+        },
+        {
+          "t": "La aiuto ad alzarsi e a fare due passi, per migliorare la ventilazione e ridurre l'ansia",
+          "fb": "Mobilizzare previene la trombosi, ma con un'embolia in corso e un trombo nel polpaccio può staccare altro materiale.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "hr": 150,
+              "spo2": 70,
+              "sys": 60,
+              "dia": 30
+            },
+            "pat": {
+              "skin": "cyan"
+            },
+            "phys": {
+              "perfusion": 0
+            }
+          },
+          "end": "Embolia massiva: arresto cardiaco"
+        }
+      ],
+      "out": {
+        "pat": {
+          "pose": 1.4
+        },
+        "vit": {
+          "spo2": 92,
+          "hr": 116
+        }
+      },
+      "learn": "Segni che fanno pensare all'embolia polmonare: dispnea improvvisa, tachicardia, dolore pleuritico, a volte emottisi o sincope, dopo immobilità o chirurgia.",
+      "phy": [
+        "Un frammento di trombo partito dalla gamba ha chiuso un ramo dell'arteria polmonare. Una parte del polmone riceve aria ma non sangue: l'ossigeno respirato non può essere raccolto. Il cuore accelera per compensare.",
+        "È come una stazione di benzina con una corsia chiusa: le auto (il sangue) si accalcano nelle altre e molte ripartono senza fare il pieno. Il dolore che aumenta inspirando è la pleura irritata sopra la zona colpita."
+      ]
+    },
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "Il medico arriva e ti chiede cosa hai notato all'esame obiettivo.",
+      "q": "Quale reperto rende l'embolia polmonare più probabile delle alternative?",
+      "opts": [
+        {
+          "t": "Polpaccio sinistro gonfio, caldo e dolente, con circonferenza di 3 cm maggiore del destro",
+          "ok": 1,
+          "fb": "Indica una trombosi venosa profonda, la fonte più comune dell'embolo. Nel punteggio di Wells vale 3 punti."
+        },
+        {
+          "t": "Crepitii fini a entrambe le basi",
+          "fb": "Fanno pensare a edema polmonare cardiogeno."
+        },
+        {
+          "t": "Febbre 38,5°C con tosse ed espettorato giallo",
+          "fb": "Fanno pensare a una polmonite."
+        },
+        {
+          "t": "Sibili espiratori diffusi",
+          "fb": "Fanno pensare a un broncospasmo."
+        }
+      ],
+      "learn": "La profilassi saltata ieri sera e non segnalata è un'informazione da comunicare subito al medico.",
+      "phy": [
+        "Il polpaccio gonfio e caldo è il punto di partenza: lì il sangue ristagnato ha formato il trombo. Da quel trombo si staccano i frammenti che arrivano al polmone.",
+        "È come trovare la crepa nella diga a monte quando a valle c'è un'inondazione. Quel fastidio al polpaccio di ieri era il primo segnale."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "All'auscultazione i polmoni sono puliti, eppure la saturazione è bassa.",
+      "q": "Perché c'è ipossiemia?",
+      "opts": [
+        {
+          "t": "Una parte di polmone è ventilata ma non perfusa, e il resto riceve più sangue di quanto la ventilazione possa ossigenare: squilibrio ventilazione/perfusione",
+          "ok": 1,
+          "fb": "L'aria arriva, ma il sangue non passa da lì: lo scambio diventa inefficiente."
+        },
+        {
+          "t": "Gli alveoli sono pieni di liquido e l'ossigeno non attraversa la membrana",
+          "fb": "È il meccanismo dell'edema polmonare, che darebbe crepitii."
+        },
+        {
+          "t": "I bronchi sono ristretti e l'aria non arriva agli alveoli",
+          "fb": "È il meccanismo dell'asma."
+        },
+        {
+          "t": "L'emoglobina è legata a un'altra molecola e non trasporta ossigeno",
+          "fb": "È il meccanismo dell'intossicazione da monossido di carbonio."
+        }
+      ],
+      "learn": "Un'embolia estesa fa salire la pressione in arteria polmonare e sovraccarica il ventricolo destro: è la causa dello shock nell'embolia massiva.",
+      "phy": [
+        "Gli alveoli ricevono aria normalmente, quindi i polmoni all'auscultazione sono puliti. Il problema è che il sangue non passa da lì, mentre si concentra nelle zone rimaste aperte, che non riescono a ossigenarlo tutto.",
+        "È come un ristorante con metà dei tavoli apparecchiati ma senza camerieri: c'è posto, ma nessuno serve. I clienti si accalcano negli altri tavoli e molti escono senza mangiare."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "Il trombo è partito dalla vena poplitea sinistra.",
+      "q": "Quale percorso fa per arrivare al polmone?",
+      "opts": [
+        {
+          "t": "Vena femorale → vena iliaca → vena cava inferiore → atrio destro → ventricolo destro → arteria polmonare",
+          "ok": 1,
+          "fb": "Il sangue venoso porta il trombo al cuore destro, che lo spinge nel circolo polmonare."
+        },
+        {
+          "t": "Vena femorale → vena iliaca → vena cava inferiore → atrio sinistro → aorta",
+          "fb": "La cava sbocca nell'atrio destro. Un passaggio diretto a sinistra avviene solo con un forame ovale pervio (embolia paradossa)."
+        },
+        {
+          "t": "Vena poplitea → vene polmonari → polmone",
+          "fb": "Le vene polmonari portano sangue dai polmoni all'atrio sinistro, nel verso opposto."
+        },
+        {
+          "t": "Vena femorale → vena cava superiore → ventricolo destro",
+          "fb": "Le vene delle gambe arrivano alla cava inferiore."
+        }
+      ],
+      "learn": "Un trombo venoso si ferma nei polmoni perché i capillari polmonari sono il primo filtro che incontra.",
+      "phy": [
+        "Le vene delle gambe confluiscono in vene sempre più grandi fino alla cava inferiore, che porta il sangue nel cuore destro. Il cuore destro pompa tutto verso i polmoni, dove i vasi diventano sottilissimi: lì il trombo si incastra.",
+        "È come un sasso che scende in un torrente fino a un filtro a rete: passa per i corsi d'acqua grandi e si ferma dove le maglie diventano strette."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "La paziente inizia l'anticoagulante. Il giorno dopo ti occupi di un'altra paziente operata di anca.",
+      "physMode": {
+        "mode": "alveolus",
+        "fluid": 0,
+        "perfusion": 0.7,
+        "co2": 0.25
+      },
+      "q": "Quale insieme di interventi infermieristici previene meglio la trombosi venosa?",
+      "win": "Nessuna trombosi",
+      "opts": [
+        {
+          "t": "Mobilizzazione precoce, esercizi di flesso-estensione della caviglia, idratazione adeguata, profilassi prescritta somministrata e un eventuale rifiuto segnalato subito",
+          "ok": 1,
+          "fb": "Si agisce sulla stasi, il fattore più modificabile, e si garantisce la profilassi."
+        },
+        {
+          "t": "Calze elastiche a compressione graduata a tutti gli operati, senza bisogno di misurazione",
+          "fb": "Le calze sono efficaci, ma vanno misurate e sono controindicate in alcuni casi, come l'arteriopatia periferica.",
+          "s": {
+            "phys": {
+              "perfusion": 0.8
+            }
+          },
+          "end": "Lesione da calza mal misurata"
+        },
+        {
+          "t": "Riposo a letto con gambe sollevate per i primi 7 giorni",
+          "fb": "Sollevare le gambe riduce l'edema, ma l'immobilità è il principale fattore di rischio.",
+          "x": 2,
+          "s": {
+            "phys": {
+              "perfusion": 0.2
+            },
+            "vit": {
+              "spo2": 88,
+              "hr": 120
+            }
+          },
+          "end": "Nuova embolia"
+        },
+        {
+          "t": "Massaggio quotidiano dei polpacci per favorire il ritorno venoso",
+          "fb": "Il massaggio non previene la trombosi ed è rischioso se un trombo è già presente.",
+          "s": {
+            "phys": {
+              "perfusion": 0.6
+            }
+          },
+          "end": "Rischio non ridotto"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 92,
+          "spo2": 95,
+          "rr": 18
+        },
+        "pat": {
+          "sweat": 0,
+          "skin": "normal"
+        },
+        "phys": {
+          "perfusion": 0.8
+        }
+      },
+      "learn": "Triade di Virchow: stasi, danno della parete del vaso, ipercoagulabilità. La chirurgia ortopedica di anca e ginocchio le mette insieme tutte e tre.",
+      "phy": [
+        "Il sangue nelle vene delle gambe risale grazie ai muscoli del polpaccio che lo spremono a ogni passo. Se la persona non si muove, il sangue ristagna e coagula più facilmente, soprattutto dopo un intervento ortopedico.",
+        "È come l'acqua di uno stagno senza ricambio: ferma, diventa torbida. Muovere i piedi anche a letto è come accendere una piccola pompa che rimette in circolo l'acqua."
+      ]
+    }
+  ],
+  "src": [
+    "ESC 2019 Guidelines for acute pulmonary embolism",
+    "NICE NG89: Venous thromboembolism in over 16s, reducing the risk (aggiornato 2019)"
+  ],
+  "notes": ""
+}

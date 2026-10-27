@@ -1,0 +1,396 @@
+{
+  "id": 3,
+  "slug": "troppo-ossigeno",
+  "title": "Troppo ossigeno",
+  "diff": "Media",
+  "area": "Pneumologia",
+  "pt": "Sig. Giorgio T., 71 anni · Pneumologia, letto 9",
+  "hook": "Perché non puntare al 100%?",
+  "intro": "Arriva dal pronto soccorso alle 18. Respira a labbra socchiuse, usa i muscoli del collo per inspirare.",
+  "look": {
+    "gown": "#3fa38d",
+    "hair": "#cfcfcf"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Riacutizzazione di BPCO grave, espettorato purulento da 3 giorni."
+    ],
+    [
+      "Anamnesi",
+      "Ex fumatore (50 pacchi/anno). Due ricoveri per insufficienza respiratoria ipercapnica, l'ultimo con ventilazione non invasiva. Ipertensione."
+    ],
+    [
+      "Terapia",
+      "Tiotropio/olodaterolo inalatorio. Salbutamolo al bisogno. Nessun ossigeno a domicilio."
+    ],
+    [
+      "EGA in PS (in aria)",
+      "pH 7,36 · PaCO₂ 52 mmHg · PaO₂ 50 mmHg · HCO₃⁻ 30 mmol/L"
+    ],
+    [
+      "Parametri",
+      "SpO₂ 84% · FR 26 · FC 104 · PA 146/86 · T 37,6°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 104,
+      "sys": 146,
+      "dia": 86,
+      "spo2": 84,
+      "rr": 26,
+      "temp": 37.6,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 2,
+      "skin": "cyan",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "alveolus",
+      "fluid": 0,
+      "perfusion": 0.8,
+      "co2": 0.55
+    }
+  },
+  "hud": [
+    {
+      "label": "Saturazione",
+      "source": "vit.spo2",
+      "unit": "%",
+      "lo": 88,
+      "hi": 93
+    },
+    {
+      "label": "CO₂ nel sangue",
+      "source": "phys.co2",
+      "unit": "%",
+      "lo": 0,
+      "hi": 70,
+      "scale": 100,
+      "bar": true
+    }
+  ],
+  "abcde": {
+    "bad": "BCE",
+    "first": "B",
+    "A": "Parla a frasi brevi, nessuno stridore: vie aeree pervie.",
+    "B": "FR 26, SpO₂ 84% in aria, respira a labbra socchiuse con i muscoli del collo, espirazione prolungata con sibili sparsi.",
+    "C": "FC 104, PA 146/86, cute calda, riempimento capillare 2 secondi.",
+    "D": "Vigile, orientato, affaticato. Glicemia 128 mg/dL.",
+    "E": "T 37,6°C. Espettorato purulento.",
+    "why": "A è a posto. In B c'è un'ipossiemia importante: va trattata subito, scegliendo bene obiettivo e dispositivo."
+  },
+  "steps": [
+    {
+      "tag": "Decisione",
+      "text": "Il medico ti chiede di avviare l'ossigeno e di scrivere l'obiettivo di saturazione in terapia.",
+      "q": "Guardando l'emogasanalisi, quale obiettivo è corretto, e quale dato lo giustifica?",
+      "win": "Saturazione 90%, CO₂ stabile",
+      "opts": [
+        {
+          "t": "88-92%: il bicarbonato alto (30) indica che la CO₂ è alta da tempo e il rene l'ha compensata, quindi è a rischio di ritenzione",
+          "ok": 1,
+          "fb": "pH quasi normale con PaCO₂ e bicarbonato alti: è un'ipercapnia cronica compensata. Questo paziente è a rischio."
+        },
+        {
+          "t": "94-98%, perché è l'obiettivo standard della maggior parte dei pazienti adulti",
+          "fb": "È lo standard per chi non ha rischio di ipercapnia. Qui la CO₂ sale.",
+          "s": {
+            "phys": {
+              "co2": 0.8
+            },
+            "vit": {
+              "spo2": 96,
+              "rr": 20
+            },
+            "pat": {
+              "skin": "flushed"
+            }
+          },
+          "end": "La CO₂ sale"
+        },
+        {
+          "t": "Almeno 96%, perché una PaO₂ di 50 mmHg è un'insufficienza respiratoria grave",
+          "fb": "PaO₂ 50 è davvero un'ipossiemia grave, ma puntare alla saturazione piena in un ipercapnico cronico fa salire la CO₂.",
+          "s": {
+            "phys": {
+              "co2": 0.85
+            },
+            "vit": {
+              "spo2": 98,
+              "rr": 18
+            },
+            "pat": {
+              "skin": "flushed"
+            }
+          },
+          "end": "La CO₂ sale"
+        },
+        {
+          "t": "85-88%, per ridurre al minimo il rischio di ipercapnia",
+          "fb": "Sotto 88% gli organi rischiano l'ipossia: il cuore accelera e compaiono aritmie.",
+          "s": {
+            "vit": {
+              "spo2": 86,
+              "hr": 118
+            }
+          },
+          "end": "Resta ipossico"
+        }
+      ],
+      "learn": "pH 7,36 con PaCO₂ 52 e HCO₃⁻ 30: acidosi respiratoria cronica compensata dal rene.",
+      "phy": [
+        "Chi ha una BPCO grave vive da anni con la CO₂ un po' alta. Il rene si è adattato trattenendo bicarbonato, che neutralizza l'acidità: per questo il pH è quasi normale. Questi pazienti però reggono male un'ulteriore salita di CO₂.",
+        "È come una persona abituata a vivere in una stanza un po' affumicata: ci sta, ma se aggiungi altro fumo va in crisi prima degli altri. Il bicarbonato a 30 è il segno che la stanza è affumicata da tempo."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Devi scegliere il dispositivo.",
+      "q": "Quale ti permette di somministrare una percentuale di ossigeno precisa e costante, anche se il paziente cambia il modo di respirare?",
+      "win": "FiO₂ stabile",
+      "opts": [
+        {
+          "t": "Maschera Venturi al 24% o 28%, con il flusso indicato sull'ugello",
+          "ok": 1,
+          "fb": "La Venturi mescola aria e ossigeno in proporzione fissa: la FiO₂ resta stabile anche con FR alta."
+        },
+        {
+          "t": "Occhialini nasali a 4 L/min",
+          "fb": "Gli occhialini vanno bene a stabilizzazione avvenuta, ma la FiO₂ reale varia molto con la frequenza respiratoria. Ora il paziente riceve più ossigeno del previsto.",
+          "s": {
+            "phys": {
+              "co2": 0.7
+            },
+            "vit": {
+              "spo2": 95
+            }
+          },
+          "end": "FiO₂ imprevedibile"
+        },
+        {
+          "t": "Maschera semplice a 6 L/min",
+          "fb": "La maschera semplice dà una FiO₂ variabile e sotto i 5 L/min si rischia di rirespirare CO₂.",
+          "s": {
+            "phys": {
+              "co2": 0.72
+            },
+            "vit": {
+              "spo2": 95
+            }
+          },
+          "end": "La CO₂ sale"
+        },
+        {
+          "t": "Maschera con reservoir a 15 L/min",
+          "fb": "Il reservoir si usa nelle ipossiemie critiche senza rischio di ipercapnia, ad esempio nel trauma. Qui la CO₂ sale rapidamente.",
+          "s": {
+            "phys": {
+              "co2": 0.9
+            },
+            "vit": {
+              "spo2": 99,
+              "rr": 14
+            },
+            "pat": {
+              "eyes": 0
+            }
+          },
+          "end": "La CO₂ sale rapidamente"
+        }
+      ],
+      "out": {
+        "vit": {
+          "spo2": 90
+        }
+      },
+      "learn": "Gli occhialini a basso flusso (1-2 L/min) si usano spesso dopo la stabilizzazione.",
+      "phy": [
+        "La maschera Venturi mescola ossigeno e aria in una proporzione fissa, indipendente da come respira il paziente. Gli occhialini e la maschera semplice invece danno una quantità che cambia con il respiro.",
+        "È come un rubinetto miscelatore termostatico: l'acqua esce sempre alla temperatura scelta. Con gli occhialini è come regolare caldo e freddo a mano mentre qualcuno apre e chiude l'altro rubinetto."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Rientri dalla pausa.",
+      "seq": [
+        {
+          "d": 1.4,
+          "cap": "Un collega ha messo il reservoir a 15 L/min",
+          "s": {
+            "vit": {
+              "spo2": 99
+            },
+            "pat": {
+              "skin": "flushed"
+            }
+          }
+        },
+        {
+          "d": 2,
+          "cap": "40 minuti dopo: sonnolento",
+          "s": {
+            "vit": {
+              "rr": 10,
+              "hr": 112
+            },
+            "pat": {
+              "eyes": 0,
+              "tremor": 1
+            },
+            "phys": {
+              "co2": 0.95
+            }
+          }
+        }
+      ],
+      "q": "SpO₂ 99%, FR 10. Apre gli occhi solo se lo chiami a voce alta. Mani con tremore a scatti, cute calda e arrossata, polso pieno. Cosa fai?",
+      "win": "Si risveglia, la CO₂ scende",
+      "opts": [
+        {
+          "t": "Sostituisco il reservoir con la Venturi titolando a 88-92%, lo stimolo per tenerlo sveglio, avviso subito il medico e preparo il materiale per l'emogasanalisi",
+          "ok": 1,
+          "fb": "Sonnolenza, flapping tremor, cute calda e polso pieno sono segni di ipercapnia. Si riduce l'ossigeno gradualmente, non si toglie."
+        },
+        {
+          "t": "Rimuovo del tutto l'ossigeno per far scendere subito la CO₂",
+          "fb": "Togliere tutto di colpo fa crollare la saturazione, anche sotto il valore di partenza, perché la CO₂ alta occupa spazio negli alveoli.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "spo2": 70,
+              "hr": 132
+            },
+            "pat": {
+              "skin": "cyan"
+            }
+          },
+          "end": "Ipossiemia grave: SpO₂ 70%"
+        },
+        {
+          "t": "Lo lascio riposare con il reservoir: la saturazione è ottima, ricontrollo tra un'ora",
+          "fb": "La saturazione è ottima, ma non dice nulla sulla CO₂. Continua a salire fino alla narcosi e all'arresto respiratorio.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "rr": 4,
+              "hr": 48
+            },
+            "phys": {
+              "co2": 1
+            }
+          },
+          "end": "Arresto respiratorio da narcosi carbonica"
+        },
+        {
+          "t": "Abbasso lo schienale e lo metto supino, così riposa e riduce il consumo di ossigeno",
+          "fb": "Da supino il diaframma è spinto in alto dai visceri e la ventilazione si riduce ancora.",
+          "s": {
+            "pat": {
+              "pose": 0
+            },
+            "vit": {
+              "rr": 8
+            },
+            "phys": {
+              "co2": 1
+            }
+          },
+          "end": "Respira ancora meno"
+        }
+      ],
+      "out": {
+        "vit": {
+          "spo2": 90,
+          "rr": 20,
+          "hr": 100
+        },
+        "pat": {
+          "eyes": 1,
+          "tremor": 0,
+          "skin": "normal",
+          "pose": 2
+        },
+        "phys": {
+          "co2": 0.6
+        }
+      },
+      "learn": "Se l'emogasanalisi mostra acidosi respiratoria (pH sotto 7,35 con CO₂ alta), il medico valuta la ventilazione non invasiva.",
+      "phy": [
+        "Riducendo l'ossigeno in modo graduale si torna a una saturazione sufficiente senza alimentare la salita della CO₂. Toglierlo del tutto sarebbe un errore: la CO₂ accumulata occupa spazio negli alveoli e l'ossigeno crollerebbe.",
+        "È come scendere da una scala: un gradino alla volta. Saltare giù tutto insieme fa male anche se la direzione è giusta."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Perché l'ossigeno ad alto flusso ha fatto salire la CO₂?",
+      "q": "Qual è il meccanismo principale?",
+      "opts": [
+        {
+          "t": "Peggiora il rapporto ventilazione/perfusione annullando la vasocostrizione ipossica, e per effetto Haldane l'emoglobina ossigenata rilascia CO₂",
+          "ok": 1,
+          "fb": "Il sangue torna verso alveoli poco ventilati e l'emoglobina trasporta meno CO₂."
+        },
+        {
+          "t": "Il paziente perde lo stimolo ipossico e smette di respirare",
+          "fb": "Lo stimolo ipossico conta, ma gli studi mostrano che la ventilazione cala poco. Il meccanismo principale è V/Q con l'effetto Haldane."
+        },
+        {
+          "t": "L'ossigeno aumenta il metabolismo cellulare e quindi la produzione di CO₂",
+          "fb": "La produzione di CO₂ non cambia in modo significativo."
+        },
+        {
+          "t": "L'ossigeno provoca broncocostrizione riflessa",
+          "fb": "L'ossigeno non chiude i bronchi."
+        }
+      ],
+      "learn": "Vasocostrizione polmonare ipossica: i vasi si chiudono dove l'alveolo ha poco ossigeno, così il sangue va dove la ventilazione è buona.",
+      "phy": [
+        "Il polmone sano manda il sangue dove c'è aria, chiudendo i vasi delle zone poco ventilate. L'ossigeno ad alto flusso inganna questo sistema, e l'emoglobina carica di ossigeno porta meno CO₂ ai polmoni per eliminarla.",
+        "È come un vigile che devia il traffico dalle strade chiuse: se gli togli il fischietto, le macchine finiscono anche nelle strade bloccate e il traffico generale rallenta."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "Il respiro è regolato da chemocettori centrali e periferici.",
+      "q": "Dove sono i chemocettori centrali, sensibili a CO₂ e pH?",
+      "opts": [
+        {
+          "t": "Sulla superficie ventrale del bulbo, a contatto con il liquor",
+          "ok": 1,
+          "fb": "La CO₂ attraversa la barriera ematoencefalica e abbassa il pH del liquor: questi recettori lo rilevano."
+        },
+        {
+          "t": "Nei glomi carotidei, alla biforcazione della carotide comune",
+          "fb": "Descrizione corretta della sede, ma sono chemocettori periferici, sensibili soprattutto al calo di O₂."
+        },
+        {
+          "t": "Nei glomi aortici, sull'arco dell'aorta",
+          "fb": "Anche questi sono periferici."
+        },
+        {
+          "t": "Nel complesso pre-Bötzinger del bulbo",
+          "fb": "Lì nasce il ritmo respiratorio, ma non sono i chemocettori."
+        }
+      ],
+      "learn": "Nella BPCO cronica i chemocettori centrali si adattano a una CO₂ più alta.",
+      "phy": [
+        "Nel bulbo ci sono sensori che misurano l'acidità del liquido intorno al cervello, che dipende dalla CO₂. Se la CO₂ sale, ordinano di respirare di più.",
+        "È come il rilevatore di fumo di casa: quando l'aria si riempie, suona e ti fa aprire le finestre. Nella BPCO cronica il rilevatore si è abituato e suona solo con molto più fumo."
+      ]
+    }
+  ],
+  "src": [
+    "British Thoracic Society, Guideline for oxygen use in adults in healthcare and emergency settings (2017)",
+    "GOLD Report 2025: gestione delle riacutizzazioni"
+  ],
+  "notes": ""
+}

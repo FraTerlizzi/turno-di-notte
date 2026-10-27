@@ -23,5 +23,6 @@ export const SKINS=[
    c.fillStyle='#c8302f';c.beginPath();c.moveTo(-hw,-hh+3);c.lineTo(0,-hh-16);c.lineTo(hw,-hh+3);c.fill();c.fillStyle='#f4f4f4';c.fillRect(-hw-1,-hh+1,hw*2+2,4);c.beginPath();c.arc(0,-hh-17,3,0,7);c.fill()}}
 ];
 
+// colori di riserva di camice e capelli, per i casi il cui file non li indica (content/cases/*.json → look)
 export const GOWN=['#4f86c6','#8a6fd1','#3fa38d','#c97a4a','#5b8fd6','#c96a8a','#6c9a4c','#4a9ac9','#b88a3c','#7a6fd1','#d07a9a','#5a7fd8'];
 export const HAIR=['#2b1d14','#9a9a9a','#cfcfcf','#3a2a1a','#1a1a1a','#c8c8c8','#bdbdbd','#5a3a22','#e0e0e0','#a0a0a0','#2a1a10','#d8d8d8'];

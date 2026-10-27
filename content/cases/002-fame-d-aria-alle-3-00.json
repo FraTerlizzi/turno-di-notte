@@ -1,0 +1,413 @@
+{
+  "id": 2,
+  "slug": "fame-d-aria-alle-3-00",
+  "title": "Fame d'aria alle 3:00",
+  "diff": "Media",
+  "area": "Cardiologia",
+  "pt": "Sig.ra Elena B., 76 anni · Cardiologia, letto 3",
+  "hook": "Perché seduta con le gambe giù?",
+  "intro": "Alle 3:00 suona il campanello. Entri e la trovi seduta sul bordo del letto, aggrappata al materasso.",
+  "look": {
+    "gown": "#8a6fd1",
+    "hair": "#9a9a9a"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Scompenso cardiaco cronico riacutizzato, ricoverata da 24 ore."
+    ],
+    [
+      "Anamnesi",
+      "Cardiopatia ipertensiva, frazione d'eiezione 55%. Fibrillazione atriale parossistica. Insufficienza renale lieve."
+    ],
+    [
+      "Terapia",
+      "Furosemide 25 mg per os mattina e sera. Ramipril. Bisoprololo. Apixaban."
+    ],
+    [
+      "Ieri sera",
+      "La nipote le ha portato una pizza. Ha rifiutato la furosemide serale per non doversi alzare di notte."
+    ],
+    [
+      "Peso",
+      "+1,8 kg rispetto a due giorni fa."
+    ],
+    [
+      "Parametri ore 3:00",
+      "PA 178/98 · FC 118 · FR 30 · SpO₂ 86% in aria · T 36,8°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 118,
+      "sys": 178,
+      "dia": 98,
+      "spo2": 86,
+      "rr": 30,
+      "temp": 36.8,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "pale",
+      "sweat": 1,
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "alveolus",
+      "fluid": 0.75,
+      "perfusion": 1,
+      "co2": 0.3
+    }
+  },
+  "hud": [
+    {
+      "label": "Saturazione",
+      "source": "vit.spo2",
+      "unit": "%",
+      "lo": 92,
+      "hi": 101
+    },
+    {
+      "label": "Respiri/min",
+      "source": "vit.rr",
+      "unit": "",
+      "lo": 10,
+      "hi": 24
+    }
+  ],
+  "abcde": {
+    "bad": "BCE",
+    "first": "B",
+    "A": "Parla a frasi di due o tre parole: vie aeree pervie.",
+    "B": "FR 30, SpO₂ 86% in aria, usa i muscoli del collo per respirare, tosse con espettorato schiumoso rosato. Auscultazione da completare.",
+    "C": "FC 118, PA 178/98, giugulari turgide, cute sudata, edemi alle caviglie.",
+    "D": "Vigile, agitata, orientata. Glicemia 142 mg/dL.",
+    "E": "T 36,8°C. Peso +1,8 kg in due giorni.",
+    "why": "Le vie aeree sono pervie. Il primo problema è in B: saturazione 86% e grave fatica respiratoria. Posizione e ossigeno vengono prima di tutto il resto."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "kn": 1,
+      "text": "È sudata, parla a frasi di due o tre parole e tossisce un espettorato schiumoso rosato. Le giugulari sono turgide anche da seduta.",
+      "q": "All'auscultazione del torace, quale reperto conferma l'origine cardiogena della sua insufficienza respiratoria?",
+      "opts": [
+        {
+          "t": "Crepitii fini inspiratori a entrambe le basi, che risalgono verso i campi medi",
+          "ok": 1,
+          "fb": "Indicano liquido negli alveoli bilateralmente: con giugulari turgide, sale e diuretico saltato, il quadro è quello dell'edema polmonare cardiogeno."
+        },
+        {
+          "t": "Sibili espiratori diffusi con espirazione prolungata",
+          "fb": "Sono tipici di asma e BPCO. Nell'edema possono comparire (il cosiddetto asma cardiaco), ma da soli non confermano l'origine cardiogena."
+        },
+        {
+          "t": "Murmure vescicolare abolito a destra, con iperfonesi alla percussione dello stesso lato",
+          "fb": "È il quadro del pneumotorace."
+        },
+        {
+          "t": "Soffio bronchiale e crepitii localizzati alla base destra, con aumento del fremito vocale tattile",
+          "fb": "È il quadro di un addensamento, come nella polmonite."
+        }
+      ],
+      "learn": "L'espettorato schiumoso rosato è aria mescolata a liquido e globuli rossi passati dai capillari agli alveoli.",
+      "phy": [
+        "Il cuore sinistro non riesce a mandare avanti tutto il sangue che riceve. Il sangue si accumula a monte, nei polmoni, e la pressione nei capillari sale fino a spingere liquido dentro gli alveoli. I crepitii sono il rumore delle bolle d'aria che attraversano quel liquido.",
+        "È come un imbuto con il buco stretto: se versi troppa acqua, l'imbuto si riempie e trabocca. La pizza salata e il diuretico saltato hanno versato acqua in più nell'imbuto."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Ti chiede di aiutarla a sdraiarsi perché è sfinita. Sei solo in stanza, il collega sta chiamando il medico.",
+      "physMode": {
+        "mode": "heart",
+        "stenosis": 0,
+        "preload": 0.95,
+        "backflow": 0.85,
+        "contract": 0.6
+      },
+      "q": "Come la posizioni, e con quale razionale?",
+      "win": "Respira meglio da seduta",
+      "opts": [
+        {
+          "t": "Seduta con schienale quasi a 90°, gambe fuori dal letto e piedi appoggiati in basso: il sangue resta nelle gambe, il precarico cala e il diaframma si espande meglio",
+          "ok": 1,
+          "fb": "Riducendo il ritorno venoso arriva meno sangue al cuore sinistro in difficoltà, e la pressione nei capillari polmonari scende."
+        },
+        {
+          "t": "Supina con due cuscini sotto le gambe, per farla riposare e favorire il ritorno venoso",
+          "fb": "Favorire il ritorno venoso è utile nello shock ipovolemico. Qui aumenta il sangue che arriva a un cuore già sovraccarico: l'edema peggiora.",
+          "s": {
+            "vit": {
+              "spo2": 79,
+              "rr": 36
+            },
+            "pat": {
+              "pose": 0
+            },
+            "phys": {
+              "fluid": 0.95
+            }
+          },
+          "end": "L'edema peggiora: SpO₂ 79%"
+        },
+        {
+          "t": "Semiseduta a 30-45° con un cuscino sotto le ginocchia, la posizione che previene lo scivolamento e le lesioni sacrali",
+          "fb": "È una buona posizione di prevenzione nell'allettato, ma qui l'inclinazione è insufficiente e le ginocchia sollevate aumentano il ritorno venoso.",
+          "s": {
+            "vit": {
+              "spo2": 83,
+              "rr": 32
+            },
+            "pat": {
+              "pose": 0.8
+            },
+            "phys": {
+              "fluid": 0.85
+            }
+          },
+          "end": "Non migliora: SpO₂ 83%"
+        },
+        {
+          "t": "Trendelenburg: testa in basso e bacino in alto",
+          "fb": "Il Trendelenburg si usa in alcune procedure, come l'inserimento di un catetere venoso centrale in giugulare. Qui spinge i visceri contro il diaframma e aumenta il ritorno venoso.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "spo2": 70,
+              "rr": 40,
+              "hr": 134
+            },
+            "pat": {
+              "pose": 0,
+              "skin": "cyan"
+            },
+            "phys": {
+              "fluid": 1
+            }
+          },
+          "end": "Insufficienza respiratoria grave"
+        }
+      ],
+      "out": {
+        "pat": {
+          "pose": 2
+        },
+        "vit": {
+          "spo2": 88
+        },
+        "phys": {
+          "fluid": 0.65
+        }
+      },
+      "learn": "Respirare meglio da seduti si chiama ortopnea. Il numero di cuscini usati per dormire è un dato utile in anamnesi.",
+      "phy": [
+        "Da seduta con le gambe giù, la gravità tiene una parte del sangue nelle gambe: al cuore arriva meno sangue da spingere e i polmoni si scaricano. In più il diaframma, libero dal peso dei visceri, si muove meglio.",
+        "È come chiudere un po' il rubinetto di un lavandino che si sta riempiendo troppo. Molti scompensati lo fanno da soli: di notte si svegliano e si siedono sul bordo del letto per respirare."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "SpO₂ 88% in aria. Non ha BPCO né altri fattori di rischio per l'ipercapnia. Il medico arriva tra circa 5 minuti.",
+      "q": "Come imposti l'ossigeno in attesa del medico, secondo il protocollo di reparto basato sulle linee guida BTS?",
+      "win": "La saturazione risale",
+      "opts": [
+        {
+          "t": "Maschera semplice a 5-10 L/min, titolando per una SpO₂ di 94-98%, con monitoraggio continuo",
+          "ok": 1,
+          "fb": "Senza rischio ipercapnico l'obiettivo è 94-98%. La maschera semplice permette flussi adeguati a questo livello di ipossiemia."
+        },
+        {
+          "t": "Occhialini nasali a 2 L/min, che disturbano meno e permettono di parlare e tossire",
+          "fb": "Gli occhialini sono comodi e adatti a ipossiemie lievi. A 2 L/min, con FR 30 e respirazione a bocca aperta, l'ossigeno inspirato è troppo poco.",
+          "s": {
+            "vit": {
+              "spo2": 87
+            }
+          },
+          "end": "Resta ipossica: SpO₂ 87%"
+        },
+        {
+          "t": "Maschera Venturi al 28% con obiettivo 88-92%, per prudenza in una paziente anziana",
+          "fb": "La Venturi con obiettivo 88-92% è corretta per chi rischia l'ipercapnia, come nella BPCO. L'età da sola non è un motivo: la paziente resta troppo ipossica.",
+          "s": {
+            "vit": {
+              "spo2": 89
+            }
+          },
+          "end": "Resta a 89%"
+        },
+        {
+          "t": "Attendo il medico per la prescrizione: l'ossigeno è un farmaco e va prescritto",
+          "fb": "È vero che l'ossigeno è un farmaco, ma nelle emergenze si avvia secondo protocollo e si fa prescrivere subito dopo. Nei 5 minuti di attesa la saturazione scende.",
+          "s": {
+            "vit": {
+              "spo2": 82,
+              "rr": 34
+            }
+          },
+          "end": "Scende a 82%"
+        }
+      ],
+      "out": {
+        "vit": {
+          "spo2": 93,
+          "rr": 26
+        }
+      },
+      "learn": "Riferimento pratico: occhialini 1-4 L/min, maschera semplice 5-10 L/min, maschera con reservoir 15 L/min nei casi più gravi.",
+      "phy": [
+        "Il liquido negli alveoli rende più difficile il passaggio dell'ossigeno nel sangue. Aumentare l'ossigeno che respira compensa in parte, finché il diuretico e la posizione non tolgono il liquido.",
+        "È come parlare con qualcuno attraverso un vetro appannato: puoi alzare la voce mentre aspetti che il vetro si asciughi. Nella paziente, la saturazione risale mentre il polmone si libera."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Il medico prescrive furosemide 40 mg EV. Dopo 2 ore: diuresi 1200 mL, FR 20, SpO₂ 95% con 2 L/min, PA 132/80. Al monitor ogni tanto compare un battito anticipato.",
+      "q": "Quale esame di laboratorio è più importante seguire nelle prossime ore, e perché?",
+      "win": "K⁺ 3,3: reintegrato in tempo",
+      "opts": [
+        {
+          "t": "Potassiemia: i diuretici dell'ansa ne fanno perdere molto con le urine, e l'ipokaliemia favorisce le aritmie",
+          "ok": 1,
+          "fb": "Con 1200 mL in 2 ore e battiti anticipati al monitor, il potassio è la priorità."
+        },
+        {
+          "t": "Sodiemia: la furosemide può causare iponatriemia, che dà confusione e convulsioni",
+          "fb": "È vero che può, ed è un esame che si controlla. Ma il rischio più immediato, con battiti anticipati al monitor, è aritmico: il potassio. Dopo 6 ore il K⁺ è 2,9 e compaiono salve di extrasistoli.",
+          "s": {
+            "vit": {
+              "ecg": "af",
+              "hr": 112
+            }
+          },
+          "end": "K⁺ 2,9: aritmia"
+        },
+        {
+          "t": "Troponina: per capire se un infarto ha scatenato lo scompenso",
+          "fb": "Aiuta a cercare la causa ed è spesso richiesta, ma non sorveglia l'effetto del diuretico. Dopo 6 ore il K⁺ è 2,9.",
+          "s": {
+            "vit": {
+              "ecg": "af",
+              "hr": 110
+            }
+          },
+          "end": "K⁺ 2,9: aritmia"
+        },
+        {
+          "t": "Emocromo: un'anemia può peggiorare lo scompenso",
+          "fb": "È vero, ma non è il rischio legato alla diuresi forzata. Dopo 6 ore il K⁺ è 2,9.",
+          "s": {
+            "vit": {
+              "ecg": "af",
+              "hr": 110
+            }
+          },
+          "end": "K⁺ 2,9: aritmia"
+        }
+      ],
+      "out": {
+        "vit": {
+          "spo2": 96,
+          "rr": 18,
+          "hr": 90,
+          "sys": 136,
+          "dia": 80
+        },
+        "pat": {
+          "sweat": 0,
+          "skin": "normal"
+        },
+        "phys": {
+          "fluid": 0.15
+        }
+      },
+      "learn": "Dopo il diuretico: bilancio idrico, PA, creatinina e potassio, peso giornaliero alla stessa ora e con la stessa bilancia. All'educazione alla dimissione: sale e aderenza al diuretico.",
+      "phy": [
+        "La furosemide fa uscire con le urine sodio e acqua, ma anche molto potassio. Il potassio serve a mantenere stabile l'elettricità del cuore: se scende, compaiono battiti anticipati e aritmie.",
+        "È come svuotare una piscina e perdere insieme all'acqua anche il cloro: l'acqua cala come volevi, ma l'equilibrio chimico cambia. Dopo 1200 mL di urine, il primo controllo è il potassio."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Torniamo al momento dell'edema.",
+      "physMode": {
+        "mode": "alveolus",
+        "fluid": 0.7,
+        "perfusion": 1,
+        "co2": 0.3
+      },
+      "q": "Quale meccanismo spiega l'edema polmonare di questa paziente?",
+      "opts": [
+        {
+          "t": "Aumento della pressione idrostatica nei capillari polmonari, trasmessa all'indietro dall'atrio sinistro",
+          "ok": 1,
+          "fb": "Sale, diuretico saltato e cuore rigido: la pressione risale in atrio sinistro, vene e capillari polmonari, e il liquido filtra negli alveoli."
+        },
+        {
+          "t": "Riduzione della pressione oncotica plasmatica per ipoalbuminemia",
+          "fb": "È un meccanismo reale di edema (ad esempio nella cirrosi o nella sindrome nefrosica), ma lento e diffuso."
+        },
+        {
+          "t": "Aumento della permeabilità della membrana alveolo-capillare per danno infiammatorio",
+          "fb": "È il meccanismo dell'edema non cardiogeno, come nella ARDS."
+        },
+        {
+          "t": "Ridotto drenaggio linfatico del polmone",
+          "fb": "I linfatici drenano il liquido in eccesso, ma non sono la causa di un edema acuto come questo."
+        }
+      ],
+      "learn": "Forze di Starling: la pressione idrostatica spinge il liquido fuori dal capillare, quella oncotica (soprattutto l'albumina) lo trattiene.",
+      "phy": [
+        "Nei capillari due forze si sfidano: la pressione del sangue spinge il liquido fuori, le proteine del sangue (soprattutto l'albumina) lo trattengono dentro. Se la pressione a monte del cuore sale, vince la spinta e il liquido esce.",
+        "È come un tubo da giardino un po' poroso: con la pressione normale l'acqua resta dentro, se apri al massimo il rubinetto inizia a trasudare. Nell'edema cardiogeno il rubinetto è il cuore sinistro in difficoltà."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "La furosemide agisce in un punto preciso del nefrone.",
+      "physMode": {
+        "mode": "heart",
+        "stenosis": 0,
+        "preload": 0.55,
+        "backflow": 0.1,
+        "contract": 0.6
+      },
+      "q": "Dove agisce, e su quale trasportatore?",
+      "opts": [
+        {
+          "t": "Tratto ascendente spesso dell'ansa di Henle, sul cotrasportatore Na⁺-K⁺-2Cl⁻",
+          "ok": 1,
+          "fb": "Lì si riassorbe circa il 25% del sodio filtrato: per questo i diuretici dell'ansa sono i più potenti."
+        },
+        {
+          "t": "Tubulo contorto distale, sul cotrasportatore Na⁺-Cl⁻",
+          "fb": "Descrizione corretta, ma è la sede dei tiazidici."
+        },
+        {
+          "t": "Dotto collettore, sui canali del sodio regolati dall'aldosterone",
+          "fb": "Descrizione corretta: è la sede dello spironolattone e dei risparmiatori di potassio."
+        },
+        {
+          "t": "Tubulo contorto prossimale, sull'anidrasi carbonica",
+          "fb": "È la sede dell'acetazolamide."
+        }
+      ],
+      "learn": "Lo spironolattone, usato nello scompenso, trattiene potassio: con la furosemide i due effetti in parte si bilanciano.",
+      "phy": [
+        "Nell'ansa di Henle il rene recupera una grande quantità di sodio. La furosemide blocca quel recupero: il sodio resta nelle urine e si porta dietro acqua.",
+        "È come togliere la spugna dal fondo di un secchio che perde: tutta l'acqua che prima veniva trattenuta ora scorre via. Per questo l'effetto è rapido e abbondante."
+      ]
+    }
+  ],
+  "src": [
+    "ESC 2021 Guidelines for heart failure (aggiornamento 2023): scompenso acuto",
+    "British Thoracic Society, Guideline for oxygen use in adults (2017)"
+  ],
+  "notes": ""
+}

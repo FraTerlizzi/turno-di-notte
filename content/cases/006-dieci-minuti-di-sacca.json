@@ -1,0 +1,362 @@
+{
+  "id": 6,
+  "slug": "dieci-minuti-di-sacca",
+  "title": "Dieci minuti di sacca",
+  "diff": "Media",
+  "area": "Ematologia",
+  "pt": "Sig.ra Paola Rossi, 69 anni · Ortopedia, letto 12",
+  "hook": "Perché restare nei primi 15 minuti?",
+  "intro": "Inizi il turno alle 20. Il collega del pomeriggio ti dice di aver avviato la trasfusione della signora Rossi alle 19:50.",
+  "look": {
+    "gown": "#c96a8a",
+    "hair": "#c8c8c8"
+  },
+  "scheda": [
+    [
+      "Motivo del ricovero",
+      "Protesi di ginocchio 2 giorni fa. Hb 7,2 g/dL, astenia, FC 92."
+    ],
+    [
+      "Gruppo sanguigno",
+      "0 positivo. Nessuna trasfusione precedente."
+    ],
+    [
+      "Prescrizione",
+      "1 unità di emazie concentrate in 90-120 minuti."
+    ],
+    [
+      "Nella stessa stanza",
+      "Letto 14: sig.ra Paola Rossini, 71 anni, gruppo A positivo, anche lei con una trasfusione prescritta."
+    ],
+    [
+      "Parametri alle 19:45",
+      "PA 118/70 · FC 92 · SpO₂ 97% · FR 16 · T 36,7°C"
+    ]
+  ],
+  "base": {
+    "vit": {
+      "hr": 92,
+      "sys": 118,
+      "dia": 70,
+      "spo2": 97,
+      "rr": 16,
+      "temp": 36.7,
+      "ecg": "sinus"
+    },
+    "pat": {
+      "pose": 1,
+      "skin": "pale",
+      "eyes": 1
+    },
+    "phys": {
+      "mode": "vessel",
+      "dilation": 0.3,
+      "leak": 0,
+      "bacteria": 0,
+      "hemolysis": 0,
+      "histamine": 0
+    }
+  },
+  "hud": [
+    {
+      "label": "Temperatura",
+      "source": "vit.temp",
+      "unit": "°C",
+      "lo": 35,
+      "hi": 38,
+      "decimals": 1
+    },
+    {
+      "label": "PA sistolica",
+      "source": "vit.sys",
+      "unit": "mmHg",
+      "lo": 90,
+      "hi": 180
+    }
+  ],
+  "abcde": {
+    "bad": "BCE",
+    "first": "C",
+    "A": "Parla e si lamenta: vie aeree pervie.",
+    "B": "FR 24, SpO₂ 97%, torace libero.",
+    "C": "FC 124, PA 86/50, dolore lungo la vena del braccio. La trasfusione è in corso.",
+    "D": "Vigile, angosciata, orientata. Glicemia 136 mg/dL.",
+    "E": "T 38,9°C, brividi, dolore lombare.",
+    "why": "A e B reggono. In C c'è ipotensione con tachicardia durante una trasfusione: è il problema più urgente, e la prima azione è fermare la sacca che lo sta causando."
+  },
+  "steps": [
+    {
+      "tag": "Decisione",
+      "text": "Alle 20:00 la paziente ti chiama.",
+      "seq": [
+        {
+          "d": 1.3,
+          "cap": "Gli anticorpi attaccano i globuli rossi trasfusi",
+          "s": {
+            "phys": {
+              "hemolysis": 0.5
+            }
+          }
+        },
+        {
+          "d": 2,
+          "cap": "I globuli rossi si rompono nei vasi",
+          "s": {
+            "vit": {
+              "temp": 38.9,
+              "hr": 124,
+              "sys": 86,
+              "dia": 50,
+              "rr": 24
+            },
+            "pat": {
+              "tremor": 1,
+              "sweat": 1
+            },
+            "phys": {
+              "hemolysis": 1,
+              "dilation": 0.7
+            }
+          }
+        }
+      ],
+      "q": "Brividi intensi, T 38,9°C, dolore lombare e al braccio dell'accesso, senso di angoscia. PA 86/50, FC 124. Cosa fai?",
+      "win": "Trasfusione fermata in tempo",
+      "opts": [
+        {
+          "t": "Fermo subito la trasfusione, mantengo l'accesso venoso con fisiologica attraverso un deflussore nuovo, chiamo il medico e rilevo i parametri",
+          "ok": 1,
+          "fb": "Sospetta reazione emolitica acuta. Fermare subito è la cosa più importante; l'accesso serve per farmaci e liquidi."
+        },
+        {
+          "t": "Fermo la trasfusione e faccio scorrere fisiologica nello stesso deflussore per mantenere pervia la vena",
+          "fb": "Mantenere pervia la vena è corretto, ma il deflussore contiene ancora sangue incompatibile: lo spingi nella paziente.",
+          "s": {
+            "vit": {
+              "sys": 78,
+              "dia": 44
+            },
+            "phys": {
+              "hemolysis": 1
+            }
+          },
+          "end": "L'emolisi peggiora"
+        },
+        {
+          "t": "Riduco la velocità a metà e somministro paracetamolo 1 g, pensando a una reazione febbrile non emolitica",
+          "fb": "La reazione febbrile non emolitica esiste ed è frequente, ma non dà ipotensione e dolore lombare. Proseguire con sangue incompatibile porta a coagulazione intravascolare e shock.",
+          "x": 2,
+          "dead": 1,
+          "s": {
+            "vit": {
+              "sys": 52,
+              "dia": 28,
+              "hr": 148,
+              "spo2": 84
+            },
+            "pat": {
+              "skin": "grey"
+            },
+            "phys": {
+              "hemolysis": 1,
+              "dilation": 1
+            }
+          },
+          "end": "Shock e coagulazione intravascolare"
+        },
+        {
+          "t": "Fermo la trasfusione e rimuovo l'ago cannula, per evitare altro passaggio di sangue",
+          "fb": "La sacca va fermata, ma l'accesso venoso serve per liquidi e farmaci proprio ora.",
+          "s": {
+            "vit": {
+              "sys": 80,
+              "dia": 46
+            }
+          },
+          "end": "Nessun accesso venoso"
+        }
+      ],
+      "out": {
+        "vit": {
+          "hr": 110,
+          "sys": 98,
+          "dia": 58
+        },
+        "pat": {
+          "tremor": 0.3
+        },
+        "phys": {
+          "hemolysis": 0.5
+        }
+      },
+      "learn": "La sacca e il deflussore non si buttano: vanno inviati al centro trasfusionale con i campioni della paziente.",
+      "phy": [
+        "Gli anticorpi della paziente riconoscono come estranei i globuli rossi della sacca e li fanno esplodere direttamente nei vasi. Il contenuto dei globuli rossi distrutti scatena febbre, brividi, calo della pressione e dolore ai reni.",
+        "È come inserire nel motore un carburante sbagliato: il motore protesta subito e ogni litro in più lo danneggia. Fermare subito la pompa è la cosa più importante."
+      ]
+    },
+    {
+      "tag": "Valutazione",
+      "text": "La trasfusione è ferma, il medico sta arrivando.",
+      "q": "Quale controllo fai subito al letto, perché può spiegare la reazione?",
+      "win": "Errore trovato: sacca della sig.ra Rossini",
+      "opts": [
+        {
+          "t": "Confronto braccialetto della paziente, etichetta della sacca e modulo di assegnazione: nome, cognome, data di nascita, numero della sacca e gruppo",
+          "ok": 1,
+          "fb": "Sull'etichetta c'è scritto Paola Rossini, gruppo A positivo. La sacca era destinata alla paziente del letto 14."
+        },
+        {
+          "t": "Glicemia capillare, perché i brividi possono essere segno di ipoglicemia",
+          "fb": "È un controllo rapido e innocuo, ma non spiega febbre, ipotensione e dolore lombare durante una trasfusione."
+        },
+        {
+          "t": "Controllo della scadenza e dell'integrità della sacca",
+          "fb": "È un controllo previsto prima dell'avvio, ma non è quello che spiega una reazione emolitica."
+        },
+        {
+          "t": "Chiamo il centro trasfusionale per sapere se la sacca era stata irradiata",
+          "fb": "L'irradiazione previene la malattia da trapianto contro l'ospite, una complicanza diversa e tardiva."
+        }
+      ],
+      "kn": 1,
+      "learn": "Un errore di identificazione può coinvolgere due pazienti: anche la sig.ra Rossini rischia di ricevere la sacca sbagliata. Va avvisato subito il centro trasfusionale.",
+      "phy": [
+        "La maggior parte di questi incidenti nasce da uno scambio di persona, non da un errore del laboratorio. Confrontare braccialetto e sacca con dati completi è il controllo che lo scopre.",
+        "È come consegnare un pacco controllando solo il cognome sul campanello: in un palazzo con Rossi e Rossini il pacco finisce alla porta sbagliata. Nome, cognome e data di nascita insieme sono l'indirizzo completo."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "kn": 1,
+      "text": "Nelle ore successive il medico ti chiede di sorvegliare la diuresi oraria.",
+      "q": "Quale aspetto delle urine conferma l'emolisi intravascolare?",
+      "opts": [
+        {
+          "t": "Urine scure, rosso-brunastre, per la presenza di emoglobina libera",
+          "ok": 1,
+          "fb": "L'emoglobina liberata dai globuli rossi passa nelle urine (emoglobinuria) e può danneggiare il rene."
+        },
+        {
+          "t": "Urine schiumose persistenti",
+          "fb": "Fanno pensare a proteinuria, ad esempio in una malattia glomerulare."
+        },
+        {
+          "t": "Urine torbide e maleodoranti",
+          "fb": "Fanno pensare a un'infezione urinaria."
+        },
+        {
+          "t": "Urine color arancio dopo l'avvio di rifampicina",
+          "fb": "È una colorazione reale da farmaco, non legata all'emolisi."
+        }
+      ],
+      "learn": "Dopo una reazione emolitica si sorvegliano diuresi oraria, funzione renale e coagulazione.",
+      "phy": [
+        "L'emoglobina liberata dai globuli rossi rotti viaggia libera nel sangue, passa nel filtro del rene e colora le urine. Può anche danneggiare i tubuli renali.",
+        "È come quando si rompe una cassetta di fragole in un carico di frutta: il succo cola fuori e macchia tutto. Le urine scure sono il succo dei globuli rossi rotti."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Paziente gruppo 0, sacca gruppo A.",
+      "q": "Perché i globuli rossi trasfusi si sono rotti?",
+      "opts": [
+        {
+          "t": "Il plasma di chi è gruppo 0 contiene anticorpi naturali anti-A e anti-B (IgM) che si legano alle emazie A e attivano il complemento",
+          "ok": 1,
+          "fb": "Il complemento perfora la membrana dei globuli rossi: emolisi intravascolare."
+        },
+        {
+          "t": "Il gruppo 0 è donatore universale, quindi il problema era il fattore Rh",
+          "fb": "È vero che le emazie 0 negativo si possono dare a tutti in emergenza, ma qui il ricevente è 0 e il donatore A: gli anti-A della paziente distruggono le emazie."
+        },
+        {
+          "t": "Gli anticorpi anti-0 della sacca hanno attaccato le emazie della paziente",
+          "fb": "Non esistono anticorpi anti-0. E un'unità di emazie concentrate contiene pochissimo plasma."
+        },
+        {
+          "t": "La sacca è stata infusa troppo fredda",
+          "fb": "Sangue molto freddo infuso velocemente può dare ipotermia e aritmie, ma non questa reazione."
+        }
+      ],
+      "learn": "Gli anticorpi anti-A e anti-B sono presenti fin dall'infanzia: l'incompatibilità ABO è pericolosa già alla prima trasfusione.",
+      "phy": [
+        "Chi è di gruppo 0 ha nel plasma anticorpi naturali contro A e B, presenti fin da piccoli. Basta una piccola quantità di sangue A per attivarli e far scattare il complemento, che buca i globuli rossi.",
+        "È come una guardia che conosce solo le facce di casa: chiunque abbia il cartellino A o B viene fermato all'istante. Non serve averlo incontrato prima."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Sei tu, il giorno dopo, a dover avviare la trasfusione della sig.ra Rossini.",
+      "q": "Quale procedura di identificazione è corretta?",
+      "win": "Trasfusione corretta e sicura",
+      "opts": [
+        {
+          "t": "Al letto, con un secondo operatore: chiedo alla paziente di dirmi nome, cognome e data di nascita, e confronto con braccialetto, etichetta della sacca e modulo",
+          "ok": 1,
+          "fb": "È l'identificazione attiva: la paziente dice i propri dati, non li conferma."
+        },
+        {
+          "t": "Al letto chiedo: \"Lei è la signora Rossini?\" e controllo che il numero del letto corrisponda alla richiesta",
+          "fb": "È un'identificazione passiva: una paziente confusa o assonnata può rispondere sì. E i letti si cambiano.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "temp": 38.6,
+              "hr": 118,
+              "sys": 88
+            },
+            "pat": {
+              "tremor": 1
+            },
+            "phys": {
+              "hemolysis": 0.8
+            }
+          },
+          "end": "Nuovo errore di identità"
+        },
+        {
+          "t": "In guardiola, con un collega, confronto l'etichetta della sacca con la richiesta in cartella",
+          "fb": "Il doppio controllo documentale è necessario ma non basta: l'errore nasce al letto, dove si incontrano sacca e paziente.",
+          "x": 2,
+          "s": {
+            "vit": {
+              "temp": 38.6,
+              "hr": 118,
+              "sys": 88
+            },
+            "pat": {
+              "tremor": 1
+            },
+            "phys": {
+              "hemolysis": 0.8
+            }
+          },
+          "end": "Nuovo errore di identità"
+        },
+        {
+          "t": "Verifico scadenza, integrità e aspetto della sacca, e controllo che il gruppo coincida con quello in cartella",
+          "fb": "Sono controlli dovuti, ma se la cartella è quella di un'altra paziente non proteggono.",
+          "s": {
+            "pat": {
+              "tremor": 0.5
+            }
+          },
+          "end": "Controllo incompleto"
+        }
+      ],
+      "learn": "La maggior parte delle reazioni ABO gravi nasce da errori di identificazione al prelievo o al letto, non in laboratorio.",
+      "phy": [
+        "Il controllo al letto funziona solo se è la paziente a dire chi è, e se due persone confrontano i dati insieme. È lì che si incontrano davvero la sacca e la persona.",
+        "È come al gate dell'aereo: non ti chiedono se sei tu, ti chiedono un documento e lo confrontano con la carta d'imbarco. Due controllori riducono la possibilità che uno sbagli."
+      ]
+    }
+  ],
+  "src": [
+    "SHOT (Serious Hazards of Transfusion), annual report e raccomandazioni",
+    "Centro Nazionale Sangue: raccomandazioni per la prevenzione della reazione trasfusionale da incompatibilità ABO"
+  ],
+  "notes": ""
+}

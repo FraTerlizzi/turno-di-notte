@@ -1,0 +1,95 @@
+[
+  {
+    "id": "c1",
+    "season": 1,
+    "title": "Primo turno",
+    "area": "Medicina e reparti",
+    "status": "aperto",
+    "cases": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  {
+    "id": "c2",
+    "season": 2,
+    "title": "Neurologia e trauma",
+    "area": "Neurologia e trauma",
+    "status": "in-arrivo",
+    "cases": [],
+    "planned": [
+      13,
+      25
+    ]
+  },
+  {
+    "id": "c3",
+    "season": 3,
+    "title": "Area critica e rianimazione",
+    "area": "Area critica e rianimazione",
+    "status": "in-arrivo",
+    "cases": [],
+    "planned": [
+      26,
+      40
+    ]
+  },
+  {
+    "id": "c4",
+    "season": 4,
+    "title": "Materno-infantile e pediatria",
+    "area": "Materno-infantile e pediatria",
+    "status": "in-arrivo",
+    "cases": [],
+    "planned": [
+      41,
+      55
+    ]
+  },
+  {
+    "id": "c5",
+    "season": 5,
+    "title": "Chirurgia e sala operatoria",
+    "area": "Chirurgia e sala operatoria",
+    "status": "in-arrivo",
+    "cases": [],
+    "planned": [
+      56,
+      70
+    ]
+  },
+  {
+    "id": "c6",
+    "season": 6,
+    "title": "Cronicità, territorio e geriatria",
+    "area": "Cronicità, territorio e geriatria",
+    "status": "in-arrivo",
+    "cases": [],
+    "planned": [
+      71,
+      85
+    ]
+  },
+  {
+    "id": "c7",
+    "season": 7,
+    "title": "Emergenze complesse",
+    "area": "Emergenze complesse",
+    "status": "in-arrivo",
+    "cases": [],
+    "planned": [
+      86,
+      100
+    ]
+  }
+]
