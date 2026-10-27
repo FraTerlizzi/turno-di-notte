@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Turno di Notte</title>
+  <meta name="description" content="Casi clinici animati di infermieristica: guardi la scena, leggi i parametri, decidi cosa fare e perché.">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Turno di Notte">
+</head>
+<body>
+<noscript><p style="padding:16px">Turno di Notte ha bisogno di JavaScript per funzionare.</p></noscript>
+<div class="wrap">
+  <section id="home">
+    <div class="hero">
+      <div class="eyebrow">Casi clinici animati · Infermieristica</div>
+      <h1>Turno di Notte</h1>
+      <p>Ogni livello è un episodio: guardi la scena, leggi i parametri, apri la lente sul corpo per vedere cosa succede dentro. Poi decidi tu cosa fare, e perché.</p>
+      <div class="stats">
+        <div class="stat"><b id="stXp">0</b><small>Punti esperienza</small></div>
+        <div class="stat"><b id="stDone">0/100</b><small>Episodi superati</small></div>
+        <div class="stat"><b id="stStars">0</b><small>Stelle</small></div>
+        <div class="row" style="align-items:center"><button class="back au-m" aria-label="Musica"></button><button class="back au-next">Brano successivo</button><button class="back au-a"></button><button class="back au-c"></button><button class="back au-s" aria-label="Effetti sonori"></button><span class="np"></span></div>
+      </div>
+    </div>
+    <div class="chapter" style="margin-top:22px">
+      <div class="chapter-head"><h2>Stagione 1 · Primo turno</h2><span class="eyebrow">Episodi 1–12 · tutti aperti</span></div>
+      <div class="row"><button class="btn" id="btnRandom">Caso a sorpresa (media o difficile)</button><button class="btn ghost" id="btnGloss">Glossario</button></div>
+      <div class="levels" id="levels"></div>
+    </div>
+    <div class="chapter" style="margin-top:26px">
+      <div class="chapter-head"><h2>Fuori turno · eventi rari</h2><span class="eyebrow">10 eventi</span></div>
+      <p style="margin:0;color:var(--muted);max-width:62ch">A volte, finito il turno, l'emergenza ti trova per strada. Niente monitor, niente carrello: solo tu, il 112 e quello che sai fare. Compaiono a caso alla fine di un episodio, oppure li scegli da qui.</p>
+      <div class="levels" id="evList"></div>
+    </div>
+    <div class="chapter" style="margin-top:26px">
+      <div class="chapter-head"><h2>Prossime stagioni</h2><span class="eyebrow">Episodi 13–100</span></div>
+      <div class="road" id="road"></div>
+    </div>
+    <p class="note" style="margin-top:22px">Gioco didattico. Dosi e procedure seguono linee guida internazionali, ma in reparto valgono sempre la prescrizione medica e i protocolli della tua struttura. Le fonti di ogni episodio sono nel riepilogo finale.</p>
+  </section>
+
+  <section id="game" hidden>
+    <div class="topbar">
+      <div class="left">
+        <button class="back" id="btnBack" aria-label="Torna alla mappa">← Mappa</button>
+        <div class="ttl"><div class="eyebrow" id="gLevel">Episodio 01</div><h2 id="gTitle">Caso</h2></div>
+      </div>
+      <div class="row" style="align-items:center"><button class="back au-m" aria-label="Musica"></button><button class="back au-next" aria-label="Brano successivo">⏭</button><button class="back au-s" aria-label="Effetti sonori"></button><div class="hearts" id="hearts" aria-label="Vite"></div></div>
+    </div>
+    <div class="prog" style="margin-top:10px"><i id="progBar" style="width:0%"></i></div>
+    <div class="game" style="margin-top:14px">
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+        <div class="stage" id="stage">
+          <canvas id="cvScene" aria-label="Scena del caso clinico"></canvas>
+          <div class="hud" aria-live="off">
+            <div><div class="l" id="h1l">—</div><div class="big"><span id="h1v">--</span><small id="h1u"></small></div></div>
+            <div class="r"><div class="l" id="h2l">—</div><div class="mid"><span id="h2v">--</span></div><div class="st" id="h2s">—</div></div>
+            <canvas id="spark" width="400" height="44"></canvas>
+            <div class="brand" id="hBrand">TURNO DI NOTTE · EP. 01</div>
+          </div>
+          <div class="caption"><span id="cap" hidden></span></div>
+          <div class="death" id="death" hidden><b>Decesso</b><span id="deathSub"></span><small>Puoi riavvolgere la scena e scegliere di nuovo</small></div>
+          <button class="lensbtn" id="btnLens">Ingrandisci la lente</button>
+          <button class="neuro" id="btnNeuro" aria-label="Chiedi aiuto a Neuro"><canvas id="cvNeuro" width="40" height="40"></canvas><span class="nbadge" id="nCount">3</span><span class="nlab">Neuro</span></button>
+          <div class="vitals" id="vitals">
+            <div id="vHr"><small>FC</small><b style="color:var(--hr)">--</b></div>
+            <div id="vBp"><small>PA</small><b style="color:var(--bp)">--</b></div>
+            <div id="vSp"><small>SpO₂</small><b style="color:var(--spo2)">--</b></div>
+            <div id="vRr"><small>FR</small><b style="color:var(--rr)">--</b></div>
+            <div id="vT"><small>T °C</small><b style="color:var(--temp)">--</b></div>
+          </div>
+        </div>
+        <div class="detail" id="detail" hidden><span class="eyebrow" id="physLabel">Dentro il corpo</span><canvas id="cvPhys"></canvas></div>
+      </div>
+      <div class="side">
+        <div class="nbubble" id="nBubble" hidden><b>Neuro dice</b><span id="nText"></span></div>
+        <div class="card" id="introCard">
+          <span class="tag" id="introArea">Area</span>
+          <div class="eyebrow" id="introPt">Paziente</div>
+          <div class="skinline" id="skinLine" hidden></div>
+          <p class="story" id="introText"></p>
+          <dl class="scheda" id="introScheda"></dl>
+          <div class="eyebrow" id="introDraw" hidden>Caso estratto per questo turno</div>
+          <div class="row"><button class="btn" id="btnStart">Inizia l'episodio</button><button class="btn ghost" id="btnReroll" hidden>Estrai un altro caso</button></div>
+        </div>
+        <div class="card" id="stepCard" hidden>
+          <span class="tag" id="sTag">Decisione</span>
+          <p class="story" id="sText"></p>
+          <div class="row" id="replayRow" hidden><button class="btn ghost" id="btnReplay">↺ Rivedi la scena</button></div>
+          <div class="abc" id="abcPanel" hidden></div>
+          <div class="q" id="sQ"></div>
+          <div class="opts" id="sOpts"></div>
+          <div class="fb" id="sFb" hidden></div>
+          <div class="phy" id="sPhy" hidden><span class="eyebrow">Fisiologia al volo</span><p id="sPhyS"></p><p class="ex"><b>Per esempio</b><span id="sPhyE"></span></p></div>
+          <div class="learn" id="sLearn" hidden><span class="eyebrow">Perché</span><span id="sLearnT"></span></div>
+          <div class="row" id="rewRow" hidden><button class="btn" id="btnRewind">↺ Riavvolgi e scegli di nuovo</button></div>
+          <div class="row"><button class="btn" id="btnNext" hidden>Avanti →</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="glossary" hidden>
+    <div class="topbar"><div class="left"><button class="back" id="btnGlossBack">← Mappa</button><div class="ttl"><div class="eyebrow" id="glCount">Voci</div><h2>Glossario</h2></div></div></div>
+    <p style="color:var(--muted);margin:12px 0">Termini clinici, farmaci, esami e strutture anatomiche che incontri negli episodi. Durante il gioco puoi toccare ogni parola sottolineata per aprire la sua scheda.</p>
+    <label for="glSearch" class="eyebrow">Cerca</label>
+    <input id="glSearch" type="search" placeholder="Es. ischemia, furosemide, NEWS2" autocomplete="off">
+    <div id="glList" class="gllist"></div>
+  </section>
+
+  <section id="street" hidden>
+    <div class="topbar">
+      <div class="left">
+        <button class="back" id="evBack" aria-label="Torna alla mappa">← Mappa</button>
+        <div class="ttl"><div class="eyebrow" id="evPlace">Fuori turno</div><h2 id="evTitle">Evento</h2></div>
+      </div>
+      <div class="row" style="align-items:center"><button class="back au-m" aria-label="Musica"></button><button class="back au-next" aria-label="Brano successivo">⏭</button><button class="back au-s" aria-label="Effetti sonori"></button><div class="hearts" id="evHearts" aria-label="Vite"></div></div>
+    </div>
+    <div class="evgrid" style="margin-top:14px">
+      <div class="evleft">
+        <div class="evscreen"><canvas id="cvStreet" aria-label="Scena vista dall'alto"></canvas><span class="evclock" id="evClock">T+ 00:00</span></div>
+        <div class="evstat" id="evStat"></div>
+      </div>
+      <div class="term">
+        <div class="termhead"><span>TERMINALE · FUORI TURNO</span><span class="blinkdot">●</span></div>
+        <div class="termbox" id="termBox"><div id="termLog"></div><div id="termOpts"></div></div>
+        <div class="termctl">
+          <button class="tbtn" id="evHelp" hidden>[?] Chiedi a Neuro (3)</button>
+          <button class="tbtn" id="evRewind" hidden>&lt;&lt; Riavvolgi e scegli di nuovo</button>
+          <button class="tbtn go" id="evNext" hidden>Avanti ▶</button>
+        </div>
+        <div class="termctl" id="evEnd" hidden>
+          <button class="tbtn go" id="evOther">Un altro evento ▶</button>
+          <button class="tbtn" id="evRetry">Rigioca</button>
+          <button class="tbtn" id="evMap">Mappa</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="result" hidden>
+    <div class="eyebrow" id="rLevel">Episodio</div>
+    <h2 id="rTitle">Caso risolto</h2>
+    <div class="bigstars" id="rStars"></div>
+    <p id="rMsg" style="margin:0;color:var(--muted)"></p>
+    <div class="card"><h3 style="font-size:16px">Cosa porti a casa</h3><ul class="recap" id="rRecap"></ul></div>
+    <div class="card"><h3 style="font-size:14px">Fonti</h3><ul class="src" id="rSrc"></ul></div>
+    <div class="teaser" id="evTeaser" hidden><div class="tl sys">FINE TURNO · 23:59</div><div class="tl" id="evTeaseT"></div><button class="tbtn go" id="evTeaseBtn">Esci dall'ospedale ▶</button></div>
+    <div class="row">
+      <button class="btn" id="btnNextLvl">Episodio successivo →</button>
+      <button class="btn ghost" id="btnRetry">Rigioca</button>
+      <button class="btn ghost" id="btnMap">Mappa</button>
+    </div>
+  </section>
+</div>
+
+<div class="glshade" id="glShade" hidden></div>
+<div class="glsheet" id="glSheet" role="dialog" aria-modal="true" aria-labelledby="glName" hidden>
+  <div class="glhead"><button class="back" id="glBack" hidden>← Indietro</button><div style="min-width:0;flex:1"><span class="tag" id="glType">Voce</span><h3 id="glName">Voce</h3></div><button class="back" id="glClose" aria-label="Chiudi">✕</button></div>
+  <div class="glbody" id="glBody"></div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
