@@ -27,9 +27,15 @@ const EXTRA={
 CASES.forEach(c=>Object.assign(c,EXTRA[c.id]||{}));
 
 /* ===== Progresso ===== */
-let prog={best:{},xp:0};
-try{const s=localStorage.getItem('turno-notte');if(s)prog=JSON.parse(s)}catch(e){}
-function save(){try{localStorage.setItem('turno-notte',JSON.stringify(prog))}catch(e){}}
+// il motore comunica all'esterno (account, sincronizzazione) solo tramite questi eventi: 'progress' e 'attempt'
+export const gameEvents=new EventTarget();
+let prog={best:{},xp:0},progKey='turno-notte';
+try{const s=localStorage.getItem(progKey);if(s)prog=JSON.parse(s)}catch(e){}
+function save(){try{localStorage.setItem(progKey,JSON.stringify(prog))}catch(e){}gameEvents.dispatchEvent(new CustomEvent('progress',{detail:prog}))}
+// cambia giocatore: progressi e chiave di salvataggio locale
+export function useProgress(key,data){progKey=key;prog={best:{},xp:0,...data};prog.best=prog.best||{};renderHome();renderCostumeBtn()}
+export function getProgress(){return prog}
+const emitAttempt=d=>gameEvents.dispatchEvent(new CustomEvent('attempt',{detail:{...d,at:new Date().toISOString()}}));
 
 /* ===== Stato animato ===== */
 const CUR={vit:{},pat:{},phys:{}}, TGT={vit:{},pat:{},phys:{}};
@@ -823,8 +829,9 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;const t=(now-
   if(running)requestAnimationFrame(loop)}
 
 /* ===== UI ===== */
-let curCase=null,stepI=0,hearts=3,errors=0,answered=false,busy=false,preSeq=null;
-function show(id){['home','game','result','glossary','street'].forEach(s=>$(s).hidden=s!==id);window.scrollTo(0,0)}
+let curCase=null,stepI=0,hearts=3,errors=0,answered=false,busy=false,preSeq=null,wrongs=[];
+const SECTIONS=['home','game','result','glossary','street','auth','account','tutor','privacy'];
+function show(id){SECTIONS.forEach(s=>{const el=$(s);if(el)el.hidden=s!==id});window.scrollTo(0,0)}
 const pad=n=>String(n).padStart(2,'0');
 function renderHome(){if(typeof setMusicContext==='function'&&AU.ctx)setMusicContext('home');
   const lv=$('levels');lv.innerHTML='';let done=0,st=0;
@@ -839,7 +846,7 @@ function renderHome(){if(typeof setMusicContext==='function'&&AU.ctx)setMusicCon
 }
 function renderHearts(){$('hearts').innerHTML=[0,1,2].map(i=>`<span class="${i<hearts?'':'off'}">♥</span>`).join('')}
 function startCase(i,drawn){
-  seqTok++;busy=false;clearOut();deaths=0;curCase=CASES[i];stepI=0;hearts=3;errors=0;hist=[];
+  seqTok++;busy=false;clearOut();deaths=0;curCase=CASES[i];stepI=0;hearts=3;errors=0;wrongs=[];hist=[];
   TGT.vit={};TGT.pat={...PAT0};TGT.phys={};
   PAT_MODE='bed';NURSE_TGT=null;curSkin=pickSkin();
   setState(curCase.base,true);skinRGB=skinTarget();physInit();lensPop=0;
@@ -908,6 +915,7 @@ function answer(o,b){if(busy||answered)return;const s=curCase.steps[stepI];
   const x=o.x!=null?o.x:(s.kn?0:1);
   sfx('wrong');playActs(actsFor(o.t,s.kn),false);
   b.classList.add('wrong');setLock(b,true);errors++;hearts--;renderHearts();nurse.q=1.8;
+  wrongs.push({step:stepI,tag:s.tag,opt:o.i,text:o.t,x});
   const head=x===0?'Sbagliato':x===2&&o.dead?'Il paziente è morto':x===2?'Evento critico':'Il paziente peggiora';
   fb.className='fb no';fb.innerHTML=`<b>${head}</b>${linkify(o.fb)}`;
   if(x===0){caption('Sbagliato','bad');if(hearts<=0)outTimers.push(setTimeout(()=>finish(false),1400));return}
@@ -935,6 +943,7 @@ $('btnRewind').onclick=rewind;
 function finish(win){
   clearOut();$('progBar').style.width='100%';caption('');
   const c=curCase;$('rLevel').textContent='Episodio '+pad(c.id)+' · '+c.area;
+  emitAttempt({kind:'case',item:c.id,win,stars:win?(errors===0?3:errors===1?2:1):0,errors,deaths,wrongs});
   if(win){sfx('win');setMusicContext('win');const st=errors===0?3:errors===1?2:1;const xp=c.steps.length*100-errors*40+st*50;
     const prev=prog.best[c.id]||0;if(st>prev)prog.best[c.id]=st;prog.xp+=Math.max(0,xp);save();
     $('rTitle').textContent=c.hook;$('rStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'':'off'}">★</span>`).join('');
@@ -1081,7 +1090,7 @@ $('btnNeuro').onclick=()=>{
 
 /* ===== Fuori turno: scena dall'alto + terminale 8-bit ===== */
 const SW=360,SH=220;let stc=null;
-let EV=null,evStep=0,evHearts=3,evErr=0,evDeaths=0,evBusy=false,evAnswered=false,evSnap=null,evHelps=3,evT0=0,evTok=0;
+let EV=null,evStep=0,evHearts=3,evErr=0,evDeaths=0,evWrongs=[],evBusy=false,evAnswered=false,evSnap=null,evHelps=3,evT0=0,evTok=0;
 let EST={},EVIS={};const STACT=[];let ambX=420;
 const BLEEDP={thigh:[168,372],flank:[212,285],chest:[162,252]};
 function M(p){const S=.68;return[180+(p[1]-323)*S,112-(p[0]-180)*S]}
@@ -1218,7 +1227,7 @@ function evApply(st){if(!st)return;if(st.pat)Object.assign(TGT.pat,st.pat);if(st
 function evLock(on){document.querySelectorAll('#termOpts .topt').forEach(b=>{if(!on&&(b.classList.contains('wrong')||b.classList.contains('elim')))return;b.classList.toggle('locked',on)})}
 function evCtl(mode){$('evNext').hidden=mode!=='next';$('evRewind').hidden=mode!=='rewind';$('evHelp').hidden=mode!=='q'}
 function startEvent(i){
-  evTok++;termQ=Promise.resolve();EV=EVENTS[i];EV.n=i;evStep=0;evHearts=3;evErr=0;evDeaths=0;evHelps=3;evBusy=true;evAnswered=false;STACT.length=0;ambX=420;NURSE_TGT=null;
+  evTok++;termQ=Promise.resolve();EV=EVENTS[i];EV.n=i;evStep=0;evHearts=3;evErr=0;evDeaths=0;evWrongs=[];evHelps=3;evBusy=true;evAnswered=false;STACT.length=0;ambX=420;NURSE_TGT=null;
   PAT_MODE='street';curSkin=pickSkin();
   TGT.vit={hr:90,sys:120,dia:70,spo2:96,rr:16,temp:36.8,ecg:'sinus'};TGT.pat={...PAT0};TGT.phys={};
   TGT.pat=Object.assign({...PAT0},EV.base.pat);Object.assign(TGT.vit,EV.base.vit);CUR.vit={...TGT.vit};CUR.pat={...TGT.pat};skinRGB=skinTarget();
@@ -1241,7 +1250,7 @@ async function renderEvStep(){
   await tprint(s.text,'',150);if(tok!==evTok)return;
   await tprint('? '+s.q,'q',60);if(tok!==evTok)return;
   evSnap=JSON.parse(JSON.stringify({pat:TGT.pat,vit:TGT.vit,st:EST,vis:EVIS}));
-  const box=$('termOpts');const opts=s.opts.map(o=>({...o})).sort(()=>Math.random()-.5);
+  const box=$('termOpts');const opts=s.opts.map((o,i)=>({...o,i})).sort(()=>Math.random()-.5);
   opts.forEach((o,j)=>{const b=document.createElement('button');b.className='topt';b._o=o;b.innerHTML=`<span class="k">[${j+1}]</span><span>${linkify(o.t)}</span>`;b.onclick=()=>{if(b.classList.contains('locked')||evBusy)return;evAnswer(o,b)};box.appendChild(b)});
   evBusy=false;evCtl('q');scrollTerm();
 }
@@ -1253,6 +1262,7 @@ async function evAnswer(o,b){
     if(s.phy){await tprint('◆ FISIOLOGIA AL VOLO · '+s.phy[0],'phy',60);await tprint('  Per esempio: '+s.phy[1],'phy2',100)}
     evAnswered=true;evBusy=false;evCtl('next');$('evNext').textContent=evStep===EV.steps.length-1?'Concludi ▶':'Avanti ▶';return}
   const x=o.x!=null?o.x:(s.kn?0:1);b.classList.add('wrong');evErr++;evHearts--;renderEvHearts();sfx('wrong');
+  evWrongs.push({step:evStep,tag:s.tag,opt:o.i,text:o.t,x});
   if(x>0)evActs(o,false);
   await tprint('✖ '+(x===0?'SBAGLIATO':o.dead?'ERRORE FATALE':x===2?'EVENTO CRITICO':'IL PAZIENTE PEGGIORA')+'. '+o.fb,'bad',150);if(tok!==evTok)return;
   if(x>0){if(o.s)evApply(o.s);if(x===2){EVIS.crit=1;setMood('tense')}
@@ -1277,6 +1287,7 @@ function evNeuro(){const s=EV&&EV.steps[evStep];if(!s||evBusy||evAnswered)return
 }
 async function evFinish(win){
   const tok=evTok;evCtl('');$('termOpts').innerHTML='';
+  emitAttempt({kind:'event',item:EV.id,win,stars:win?(evErr===0?3:evErr===1?2:1):0,errors:evErr,deaths:evDeaths,wrongs:evWrongs});
   if(win){EVIS.amb=1;sfx('siren');setTimeout(()=>sfx('siren'),1600);
     const st=evErr===0?3:evErr===1?2:1;const xp=EV.steps.length*120-evErr*40+st*60;prog.ev=prog.ev||{};if(st>(prog.ev[EV.id]||0))prog.ev[EV.id]=st;prog.xp+=Math.max(0,xp);save();
     setMusicContext('win');sfx('win');
@@ -1304,4 +1315,6 @@ function drawRandom(){const pool=CASES.map((c,i)=>i).filter(i=>CASES[i].diff!=='
   const fresh=pool.filter(i=>!prog.best[CASES[i].id]&&i!==lastDraw);const src=fresh.length?fresh:pool.filter(i=>i!==lastDraw);
   const i=src[Math.floor(Math.random()*src.length)];lastDraw=i;startCase(i,true)}
 $('btnRandom').onclick=drawRandom;$('btnReroll').onclick=drawRandom;
-renderAudioBtns();renderNowPlaying();renderCostumeBtn();renderHome();drawRandom();
+renderAudioBtns();renderNowPlaying();renderCostumeBtn();renderHome();
+// l'avvio (caso a sorpresa, oppure prima la schermata di accesso) lo decide main.js
+export { show, renderHome, drawRandom, startCase, startEvent };

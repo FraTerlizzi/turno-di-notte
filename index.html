@@ -13,6 +13,7 @@
 <noscript><p style="padding:16px">Turno di Notte ha bisogno di JavaScript per funzionare.</p></noscript>
 <div class="wrap">
   <section id="home">
+    <div class="acctbar" id="acctBar" hidden></div>
     <div class="hero">
       <div class="eyebrow">Casi clinici animati · Infermieristica</div>
       <h1>Turno di Notte</h1>
@@ -152,6 +153,78 @@
       <button class="btn" id="btnNextLvl">Episodio successivo →</button>
       <button class="btn ghost" id="btnRetry">Rigioca</button>
       <button class="btn ghost" id="btnMap">Mappa</button>
+    </div>
+  </section>
+
+  <section id="auth" hidden>
+    <div class="topbar"><div class="left"><button class="back" id="authBack" hidden>← Mappa</button><div class="ttl"><div class="eyebrow">Il tuo turno ti aspetta</div><h2 id="authTitle">Accedi</h2></div></div></div>
+    <div class="authgrid">
+      <div class="card">
+        <div class="tabs" role="tablist">
+          <button class="tab on" role="tab" data-auth="login" aria-selected="true">Accedi</button>
+          <button class="tab" role="tab" data-auth="signup" aria-selected="false">Crea account</button>
+        </div>
+
+        <form class="form" id="fLogin" data-pane="login" novalidate>
+          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+          <label class="field"><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+          <button class="btn" type="submit">Accedi</button>
+          <button class="link" type="button" data-auth="reset">Password dimenticata?</button>
+        </form>
+
+        <form class="form" id="fSignup" data-pane="signup" hidden novalidate>
+          <label class="field"><span>Nome da giocatore</span><input name="name" maxlength="40" autocomplete="nickname" required><small>È il nome che vede il tuo tutor. Non serve il cognome.</small></label>
+          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+          <label class="field"><span>Password</span><input name="password" type="password" minlength="8" autocomplete="new-password" required><small>Almeno 8 caratteri, con lettere e numeri.</small></label>
+          <label class="check"><input name="privacy" type="checkbox" required><span>Ho letto l'<button class="link" type="button" data-privacy>informativa privacy</button></span></label>
+          <button class="btn" type="submit">Crea account</button>
+        </form>
+
+        <form class="form" id="fReset" data-pane="reset" hidden novalidate>
+          <p class="hint">Inserisci l'email del tuo account: ti mandiamo un link per scegliere una nuova password.</p>
+          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+          <button class="btn" type="submit">Invia il link</button>
+          <button class="link" type="button" data-auth="login">← Torna all'accesso</button>
+        </form>
+
+        <form class="form" id="fNewPass" data-pane="newpass" hidden novalidate>
+          <p class="hint">Scegli la nuova password del tuo account.</p>
+          <label class="field"><span>Nuova password</span><input name="password" type="password" minlength="8" autocomplete="new-password" required></label>
+          <button class="btn" type="submit">Salva la password</button>
+        </form>
+
+        <p class="msg" id="authMsg" role="status" hidden></p>
+      </div>
+      <div class="card side-note">
+        <span class="tag abc">Perché un account</span>
+        <p class="story">Ritrovi episodi, stelle e punti esperienza su ogni dispositivo: inizi al PC e continui sul telefono. Se il tuo tutor ti dà un codice gruppo, può seguire i tuoi progressi e vedere dove sbagli più spesso.</p>
+        <p class="hint">Puoi anche giocare senza account: i progressi restano solo su questo dispositivo.</p>
+        <button class="btn ghost" id="btnGuest" type="button">Gioca senza account</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="account" hidden>
+    <div class="topbar"><div class="left"><button class="back" data-go="home">← Mappa</button><div class="ttl"><div class="eyebrow">Profilo</div><h2 id="accName">Giocatore</h2></div></div></div>
+    <div class="authgrid" id="accBody"></div>
+  </section>
+
+  <section id="tutor" hidden>
+    <div class="topbar"><div class="left"><button class="back" id="tutorBack">← Profilo</button><div class="ttl"><div class="eyebrow" id="tutorEyebrow">Area tutor</div><h2 id="tutorTitle">I tuoi gruppi</h2></div></div></div>
+    <div id="tutorBody" class="tutorbody"></div>
+  </section>
+
+  <section id="privacy" hidden>
+    <div class="topbar"><div class="left"><button class="back" id="privacyBack">← Indietro</button><div class="ttl"><div class="eyebrow">Account</div><h2>Informativa privacy</h2></div></div></div>
+    <div class="card prose">
+      <p><b>Titolare del trattamento.</b> <!-- DA COMPLETARE prima di aprire le iscrizioni: nome e contatto email del titolare --><span class="todo">[nome e contatto del titolare: da completare]</span></p>
+      <p><b>Quali dati.</b> Email e password (conservata solo in forma cifrata), il nome da giocatore che scegli, i progressi nel gioco (stelle, punti esperienza) e l'esito di ogni partita, comprese le risposte sbagliate.</p>
+      <p><b>Perché.</b> Per farti accedere, salvare i progressi su tutti i tuoi dispositivi e, se ti unisci a un gruppo, permettere al tuo tutor di seguire il tuo apprendimento. Base giuridica: l'esecuzione del servizio che richiedi creando l'account.</p>
+      <p><b>Chi li vede.</b> Solo tu. Se ti unisci a un gruppo con il codice, il tutor che lo gestisce vede il tuo nome da giocatore, i progressi e le partite (non la tua email). Puoi uscire dal gruppo in qualsiasi momento dal profilo.</p>
+      <p><b>Dove.</b> I dati sono conservati da Supabase, fornitore che agisce come responsabile del trattamento, su server nell'Unione europea.</p>
+      <p><b>Per quanto.</b> Finché tieni l'account. Puoi eliminarlo dal profilo: account, progressi e partite vengono cancellati subito e definitivamente.</p>
+      <p><b>I tuoi diritti.</b> Accesso, rettifica, cancellazione, limitazione, portabilità e opposizione (artt. 15-22 GDPR), scrivendo al titolare. Puoi anche presentare reclamo al Garante per la protezione dei dati personali.</p>
+      <p class="hint">Senza account il gioco non raccoglie dati personali: i progressi restano nel browser del tuo dispositivo.</p>
     </div>
   </section>
 </div>
