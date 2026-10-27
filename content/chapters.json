@@ -26,7 +26,9 @@
     "title": "Neurologia e trauma",
     "area": "Neurologia e trauma",
     "status": "in-arrivo",
-    "cases": [],
+    "cases": [
+      13
+    ],
     "planned": [
       13,
       25

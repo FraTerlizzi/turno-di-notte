@@ -24,7 +24,7 @@ const emitAttempt=d=>PREVIEW||gameEvents.dispatchEvent(new CustomEvent('attempt'
 
 /* ===== Stato animato ===== */
 const CUR={vit:{},pat:{},phys:{}}, TGT={vit:{},pat:{},phys:{}};
-const PAT0={pose:1,skin:'normal',eyes:1,sweat:0,tremor:0,hives:0,droop:0,collapsed:0};
+const PAT0={pose:1,skin:'normal',eyes:1,sweat:0,tremor:0,hives:0,droop:0,collapsed:0,bruise:0,anisocoria:0};
 function setState(st,instant){
   if(!st)return;
   if(st.vit)Object.assign(TGT.vit,st.vit);
@@ -54,7 +54,7 @@ function gauss(x,m,s){return Math.exp(-((x-m)**2)/(2*s*s))}
 
 /* ---- FISIOLOGIA ---- */
 let P=[];const R=Math.random;
-const LABEL={glucose:'Fisiologia · glucosio e insulina',heart:'Fisiologia · ventricolo sinistro e valvola aortica',alveolus:'Fisiologia · alveolo e capillare',vessel:'Fisiologia · vaso sanguigno e tessuti',brain:'Anatomia · circolo cerebrale',myocyte:'Fisiologia · membrana della cellula cardiaca',brainstem:'Fisiologia · centri respiratori del bulbo'};
+const LABEL={glucose:'Fisiologia · glucosio e insulina',heart:'Fisiologia · ventricolo sinistro e valvola aortica',alveolus:'Fisiologia · alveolo e capillare',vessel:'Fisiologia · vaso sanguigno e tessuti',brain:'Anatomia · circolo cerebrale',myocyte:'Fisiologia · membrana della cellula cardiaca',brainstem:'Fisiologia · centri respiratori del bulbo',skull:'Fisiologia · cranio e pressione intracranica'};
 function physInit(){P=[];document.getElementById('physLabel').textContent=LABEL[TGT.phys.mode]||'Fisiologia';
   const m=TGT.phys.mode;
   if(m==='glucose')for(let i=0;i<70;i++)P.push({x:R()*420,y:50+R()*70,v:.4+R()*.8,inCell:false,kind:'g'});
@@ -64,6 +64,7 @@ function physInit(){P=[];document.getElementById('physLabel').textContent=LABEL[
   if(m==='brain')for(let i=0;i<40;i++)P.push({t:R(),br:i%5});
   if(m==='myocyte')for(let i=0;i<90;i++)P.push({x:R()*420,y:0,side:R()<.5?'out':'in',vx:R()-.5,vy:R()-.5});
   if(m==='brainstem')for(let i=0;i<14;i++)P.push({slot:i,bound:R()});
+  if(m==='skull'){for(let i=0;i<12;i++)P.push({kind:'drop',t:R()});for(let i=0;i<14;i++)P.push({kind:'vein',t:R(),side:i%2})}
 }
 function txt(ctx,s,x,y,col,size,w){ctx.fillStyle=col||C.muted;ctx.font=`${w||500} ${size||11}px "Atkinson Hyperlegible",sans-serif`;ctx.fillText(s,x,y)}
 function drawPhys(t,dt){
@@ -77,6 +78,7 @@ function drawPhys(t,dt){
   else if(m==='brain')physBrain(ctx,t,dt,ph,W,H);
   else if(m==='myocyte')physMyo(ctx,t,dt,ph,W,H);
   else if(m==='brainstem')physStem(ctx,t,dt,ph,W,H);
+  else if(m==='skull')physSkull(ctx,t,dt,ph,W,H);
 }
 function physGlucose(ctx,t,dt,ph,W,H){
   // vaso
@@ -250,6 +252,73 @@ function physMyo(ctx,t,dt,ph,W,H){
   txt(ctx,'K⁺ esterno '+k.toFixed(1)+' mmol/L',W-170,gy-6,k>6?C.bad:C.hr,12,700);
   txt(ctx,'Riposo '+Math.round(rest)+' mV',W-170,gy+12,C.muted,10);
 }
+/* sezione frontale del cranio, convenzione radiologica (la destra del paziente è a sinistra, come in TC):
+   ematoma subdurale, spostamento della linea mediana, pressione intracranica, erniazione, ritorno venoso */
+function physSkull(ctx,t,dt,ph,W,H){
+  const hem=ph.hematoma||0,act=ph.active||0,icp=ph.icp??.25,gcs=ph.gcs??15,elev=ph.elevation||0,rev=ph.reversal||0;
+  const cx=168,cy=110,RX=110,RY=98,IX=RX-9,IY=RY-9;
+  const th=3+hem*30;// spessore dell'ematoma
+  const shift=hem*14+Math.max(0,icp-.5)*10;// la linea mediana scivola verso il lato sano (a destra nell'immagine)
+  const hern=Math.max(0,(icp-.65)/.35);
+  // osso e spazio interno, con il forame occipitale in basso
+  ctx.fillStyle='#d9d2bf';ctx.beginPath();ctx.ellipse(cx,cy,RX,RY,0,0,7);ctx.fill();
+  ctx.fillStyle='#0c141c';ctx.beginPath();ctx.ellipse(cx,cy,IX,IY,0,0,7);ctx.fill();
+  ctx.fillRect(cx+shift*.3-14,cy+IY-4,28,16);
+  // cervello compresso dall'ematoma e spinto verso il lato sano
+  const bx=cx+shift*.6+th*.25,brx=IX-4-th*.45,bry=IY-5-hem*3;
+  ctx.fillStyle='#2b3a4a';ctx.beginPath();ctx.ellipse(bx,cy,brx,bry,0,0,7);ctx.fill();
+  ctx.strokeStyle='#3e5266';ctx.lineWidth=2;
+  for(let k=0;k<5;k++){const a=-2.6+k*.55;ctx.beginPath();ctx.arc(bx+Math.cos(a)*brx*.72,cy+Math.sin(a)*bry*.72,13,a+1.2,a+3.6);ctx.stroke()}
+  for(let k=0;k<5;k++){const a=-.5+k*.55;ctx.beginPath();ctx.arc(bx+Math.cos(a)*brx*.72,cy+Math.sin(a)*bry*.72,13,a+2.6,a+5);ctx.stroke()}
+  // tronco encefalico che scende nel forame: si arrossa quando l'erniazione lo schiaccia
+  const sx=cx+shift*.3;
+  ctx.fillStyle=hern>.05?`rgb(${62+Math.round(160*hern)},${82-Math.round(30*hern)},${102-Math.round(40*hern)})`:'#3e5266';
+  rr(ctx,sx-10,cy+IY-34,20,48,6);ctx.fill();
+  // ventricoli (liquor): quello dal lato dell'ematoma si schiaccia, tutti si riducono quando la pressione sale
+  const vk=1-icp*.35;
+  ctx.fillStyle='rgba(94,224,208,.45)';
+  ctx.beginPath();ctx.ellipse(bx-15,cy-8,6*vk,18*vk*(1-hem*.65),.25,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(bx+15,cy-8,6*vk,18*vk,-.25,0,7);ctx.fill();
+  // falce: la linea mediana, con la posizione normale tratteggiata
+  ctx.strokeStyle='#d9d2bf';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy-IY+1);ctx.quadraticCurveTo(cx+shift*.4,cy-40,cx+shift,cy+8);ctx.stroke();
+  if(shift>3){ctx.strokeStyle='rgba(255,194,74,.7)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(cx,cy-IY+4);ctx.lineTo(cx,cy+40);ctx.stroke();ctx.setLineDash([])}
+  // ematoma subdurale: mezzaluna tra dura e cervello, lungo tutto l'emisfero destro
+  if(hem>.02){
+    ctx.fillStyle=`rgba(168,24,40,${.6+.35*hem})`;ctx.beginPath();
+    ctx.ellipse(cx,cy,IX-1,IY-1,0,Math.PI-1.25,Math.PI+1.25);
+    ctx.ellipse(cx+th,cy,IX-1-th*.35,IY-1-th*.5,0,Math.PI+1.25,Math.PI-1.25,true);
+    ctx.closePath();ctx.fill();
+  }
+  // vena a ponte strappata: gocciola finché la coagulazione non viene ripristinata
+  const va=Math.PI+1.05,vx0=cx+Math.cos(va)*(IX-1),vy0=cy+Math.sin(va)*(IY-1),vx1=bx+Math.cos(va)*brx,vy1=cy+Math.sin(va)*bry;
+  ctx.strokeStyle='#6a3a8a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(vx0,vy0);ctx.lineTo(vx0+(vx1-vx0)*.4,vy0+(vy1-vy0)*.4);ctx.moveTo(vx0+(vx1-vx0)*.6,vy0+(vy1-vy0)*.6);ctx.lineTo(vx1,vy1);ctx.stroke();
+  const flow=act*(1-rev);
+  P.forEach((p,i)=>{if(p.kind!=='drop')return;if(i>=Math.round(12*flow))return;p.t+=dt*(.5+flow);if(p.t>1)p.t=0;
+    ctx.fillStyle='#e0304a';ctx.beginPath();ctx.arc(vx0+(vx1-vx0)*.5-6*p.t,vy0+(vy1-vy0)*.5+p.t*58,2.2,0,7);ctx.fill()});
+  if(rev>.3){ctx.fillStyle=`rgba(238,228,190,${Math.min(1,rev)})`;ctx.beginPath();ctx.arc(vx0+(vx1-vx0)*.5,vy0+(vy1-vy0)*.5,5,0,7);ctx.fill()}
+  // ritorno venoso verso le giugulari: più veloce con la testa sollevata
+  P.forEach(p=>{if(p.kind!=='vein')return;p.t+=dt*(.25+elev*.9);if(p.t>1)p.t=0;
+    const x=sx+(p.side?18:-18);ctx.fillStyle='#7f8fd8';ctx.fillRect(x-1,cy+IY-20+p.t*40,3,4)});
+  // erniazione dell'uncus verso il tronco
+  if(hern>.05&&Math.floor(t*3)%2){ctx.strokeStyle=C.bad;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cx-44+shift*.3,cy+38);ctx.lineTo(sx-14,cy+IY-22);ctx.stroke();
+    ctx.fillStyle=C.bad;ctx.beginPath();ctx.moveTo(sx-10,cy+IY-18);ctx.lineTo(sx-22,cy+IY-22);ctx.lineTo(sx-14,cy+IY-32);ctx.fill()}
+  // etichette sul disegno
+  txt(ctx,'Dx',cx-RX+6,22,C.muted,11,700);txt(ctx,'Sx',cx+RX-20,22,C.muted,11,700);
+  if(hem>.1)txt(ctx,'Ematoma subdurale',8,cy+RY+22,C.bad,11,700);
+  if(shift>3)txt(ctx,`Linea mediana spostata di ${Math.round(shift*.7)} mm`,cx-40,cy+RY+22,C.accent,10,700);
+  // pressione intracranica e coscienza
+  const gx=W-104,gy=26,gh=150,mm=Math.round(icp*40);
+  txt(ctx,'Pressione',gx,gy-8,C.muted,10,700);txt(ctx,'nel cranio',gx,gy+4,C.muted,10,700);
+  ctx.fillStyle='#0b1030';ctx.fillRect(gx,gy+12,22,gh);ctx.strokeStyle='#343e7a';ctx.lineWidth=2;ctx.strokeRect(gx,gy+12,22,gh);
+  const col=mm>=30?C.bad:mm>=20?C.accent:C.hr;
+  ctx.fillStyle=col;const fh=Math.min(1,icp)*gh;ctx.fillRect(gx+2,gy+12+gh-fh,18,fh);
+  const y20=gy+12+gh-.5*gh;ctx.fillStyle=C.ink;ctx.fillRect(gx-4,y20,30,2);txt(ctx,'20',gx+28,y20+4,C.ink,10,700);
+  txt(ctx,`${mm} mmHg`,gx+30,gy+12+gh-fh+4,col,11,700);
+  const g=Math.round(gcs);txt(ctx,`GCS ${g}`,gx,gy+gh+34,g>=14?C.hr:g>=9?C.accent:C.bad,14,700);
+  if(hern>.05)txt(ctx,'Erniazione',gx,gy+gh+50,C.bad,11,700);
+  else if(elev>.5)txt(ctx,'Testa a 30°',gx,gy+gh+50,C.spo2,11,700);
+  if(rev>.3)txt(ctx,'Coagulo: antidoto',8,cy+RY+38,'#eee4be',10,700);
+}
 function physStem(ctx,t,dt,ph,W,H){
   const op=ph.opioid||0,nal=ph.naloxone||0,rrv=CUR.vit.rr||16;
   ctx.fillStyle='#2b3a4a';ctx.beginPath();ctx.moveTo(60,20);ctx.bezierCurveTo(120,10,170,20,175,60);ctx.lineTo(160,200);ctx.bezierCurveTo(150,230,90,230,80,200);ctx.lineTo(55,60);ctx.fill();
@@ -282,9 +351,9 @@ const physOff=document.createElement('canvas');physOff.width=840;physOff.height=
 const phys={ctx:physOff.getContext('2d'),W:420,H:260};phys.ctx.setTransform(2,0,0,2,0,0);
 const tiny=document.createElement('canvas');tiny.width=96;tiny.height=96;const tctx=tiny.getContext('2d');
 let scene,detail;
-const CROP={glucose:[150,30,230],heart:[20,10,230],alveolus:[60,0,220],vessel:[110,10,230],brain:[50,0,250],myocyte:[0,0,260],brainstem:[30,0,230]};
-const LENSNAME={glucose:'Nel sangue',heart:'Nel cuore',alveolus:'Nel polmone',vessel:'Nel vaso',brain:'Nel cervello',myocyte:'Nella cellula',brainstem:'Nel tronco encefalico'};
-const LENSAT={glucose:'arm',vessel:'arm',heart:'chest',alveolus:'chest',myocyte:'chest',brain:'head',brainstem:'head'};
+const CROP={glucose:[150,30,230],heart:[20,10,230],alveolus:[60,0,220],vessel:[110,10,230],brain:[50,0,250],myocyte:[0,0,260],brainstem:[30,0,230],skull:[52,4,240]};
+const LENSNAME={glucose:'Nel sangue',heart:'Nel cuore',alveolus:'Nel polmone',vessel:'Nel vaso',brain:'Nel cervello',myocyte:'Nella cellula',brainstem:'Nel tronco encefalico',skull:'Nel cranio'};
+const LENSAT={glucose:'arm',vessel:'arm',heart:'chest',alveolus:'chest',myocyte:'chest',brain:'head',brainstem:'head',skull:'head'};
 
 /* ===== Audio: sintetizzatore chiptune (musica originale) ed effetti ===== */
 const AU={ctx:null,master:null,mus:null,sfx:null,musicOn:true,sfxOn:true,mood:'calm',step:0,next:0,timer:null,noise:null,lastBlip:0,lastAlarm:0};
@@ -705,6 +774,9 @@ function drawPatient(ctx,t,cid){
   if(p.sweat>.1){ctx.fillStyle=`rgba(150,215,255,${.9*p.sweat})`;for(let k=0;k<3;k++){const ph=(t*.7+k*.33)%1;ctx.fillRect(-9+k*8,-9+ph*10,2,4)}}
   if(p.hives>.1){ctx.fillStyle=`rgba(230,70,80,${.8*p.hives})`;[[-10,6],[7,7]].forEach(([x,y])=>ctx.fillRect(x,y,3,3))}
   if(curSkin&&curSkin.extra)curSkin.extra(ctx,hwid,hh,(p.eyes??1)>.5,t);
+  // segni clinici disegnati sopra i costumi: livido della caduta e pupilla destra dilatata
+  if(p.bruise>.05){ctx.fillStyle=`rgba(118,64,160,${.8*p.bruise})`;ctx.beginPath();ctx.ellipse(-8,-9,3+p.bruise*2.5,2+p.bruise*1.5,0,0,7);ctx.fill();ctx.fillStyle=`rgba(70,36,110,${.7*p.bruise})`;ctx.fillRect(-9,-10,2,2)}
+  if(eyes&&(p.anisocoria||0)>.3){ctx.fillStyle='#10131f';ctx.fillRect(-8,-3,5,5)}
   ctx.restore();
   A.head=[hcx,hcy];
   if(coll>.5&&Math.floor(t*3)%2){ctx.fillStyle=C.bad;ctx.font='700 22px Silkscreen,monospace';ctx.fillText('!',hcx+22,hcy-12)}
@@ -949,7 +1021,7 @@ function finish(win){
   if(win){sfx('win');setMusicContext('win');const st=errors===0?3:errors===1?2:1;const xp=c.steps.length*100-errors*40+st*50;
     const prev=prog.best[c.id]||0;if(st>prev)prog.best[c.id]=st;prog.xp+=Math.max(0,xp);save();
     $('rTitle').textContent=c.hook;$('rStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'':'off'}">★</span>`).join('');
-    $('rMsg').textContent=`Caso risolto · +${xp} punti esperienza · ${errors} ${errors===1?'errore':'errori'}${deaths?' · '+deaths+(deaths===1?' decesso':' decessi')+' evitati riavvolgendo':''}`;
+    $('rMsg').textContent=`Caso risolto · +${xp} punti esperienza · ${errors} ${errors===1?'errore':'errori'}${deaths?' · '+deaths+(deaths===1?' decesso evitato':' decessi evitati')+' riavvolgendo':''}`;
   }else{setMusicContext('loss');$('rTitle').textContent=deaths?'Il paziente non ce l\'ha fatta':'Il paziente è peggiorato';$('rStars').innerHTML='<span class="off">★★★</span>';$('rMsg').textContent='Hai finito i tre cuori. Rileggi le spiegazioni e riprova l\'episodio.';}
   $('rRecap').innerHTML=c.steps.map(s=>`<li>${linkify(s.learn)}</li>`).join('');
   $('rSrc').innerHTML=c.src.map(s=>`<li>${s}</li>`).join('');

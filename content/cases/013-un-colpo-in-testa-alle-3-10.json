@@ -1,0 +1,171 @@
+{
+  "id": 13,
+  "slug": "un-colpo-in-testa-alle-3-10",
+  "title": "Un colpo in testa alle 3:10",
+  "diff": "Difficile",
+  "area": "Neurologia",
+  "pt": "Sig. Giovanni T., 81 anni · Medicina interna, letto 4",
+  "hook": "Perché la TC, se dice di stare bene?",
+  "intro": "Sei l'infermiere del turno di notte. Alle 3:10, nel silenzio del reparto, senti un tonfo dalla stanza 4.",
+  "look": {
+    "gown": "#4a9ac9",
+    "hair": "#e0e0e0"
+  },
+  "scheda": [
+    ["Motivo del ricovero", "Polmonite comunitaria, 4ª giornata di antibiotico, in miglioramento."],
+    ["Anamnesi", "Fibrillazione atriale permanente. Ipertensione. Lieve decadimento cognitivo: di notte a volte è disorientato. Una caduta in casa due mesi fa."],
+    ["Terapia", "Apixaban 5 mg alle 8 e alle 20 (ultima dose alle 20). Amlodipina 5 mg. Lorazepam 1 mg al bisogno per agitazione notturna."],
+    ["Stanotte", "Alle 23 dormiva. Per urinare ha il pappagallo, ma è testardo e non sempre chiama."],
+    ["Parametri alle 22", "PA 138/80 · FC 78 irregolare · SpO₂ 95% in aria · FR 16 · T 36,8 °C · GCS 15"]
+  ],
+  "base": {
+    "vit": { "hr": 88, "sys": 148, "dia": 84, "spo2": 95, "rr": 17, "temp": 36.8, "ecg": "af" },
+    "pat": { "pose": 1, "skin": "normal", "eyes": 1, "bruise": 0.2 },
+    "phys": { "mode": "skull", "hematoma": 0.05, "active": 0.5, "icp": 0.25, "gcs": 14, "elevation": 0.2, "reversal": 0 }
+  },
+  "hud": [
+    { "label": "Pressione nel cranio", "source": "phys.icp", "unit": "mmHg", "lo": 0, "hi": 20, "scale": 40 },
+    { "label": "Coscienza (GCS)", "source": "phys.gcs", "unit": "", "lo": 14, "hi": 16 }
+  ],
+  "abcde": {
+    "bad": "DE",
+    "first": "D",
+    "A": "Parla, anche se con la voce impastata dal sonno: vie aeree pervie.",
+    "B": "FR 17, SpO₂ 95% in aria, torace simmetrico, nessun dolore respirando.",
+    "C": "FC 88 irregolare (la fibrillazione atriale è nota), PA 148/84, cute calda, nessuna ferita che sanguina.",
+    "D": "Apre gli occhi da solo e obbedisce, ma dice che è sera e che è a casa: GCS 14 (E4 V4 M6). Pupille uguali e reattive. Glicemia 126 mg/dL.",
+    "E": "Livido che si gonfia sulla fronte a destra. Nessun dolore a collo e anca, arti senza deformità.",
+    "why": "Un punto di GCS in meno dopo un colpo alla testa, in chi prende un anticoagulante, è il problema che decide tutto il resto: un'emorragia dentro il cranio può crescere in silenzio per ore."
+  },
+  "steps": [
+    {
+      "tag": "Valutazione",
+      "text": "Lo trovi seduto per terra, appoggiato al comodino. Dice che è scivolato andando in bagno e che sta benissimo. Sulla fronte, a destra, un livido si sta gonfiando. L'OSS vuole tirarlo su subito.",
+      "seq": [
+        { "d": 1.2, "cap": "Un tonfo dalla stanza 4", "s": { "pat": { "collapsed": 1 }, "vit": { "hr": 96 } } },
+        { "d": 1.6, "cap": "È a terra, con un livido sulla fronte", "s": { "pat": { "bruise": 0.8 }, "phys": { "hematoma": 0.1 } } }
+      ],
+      "q": "Prima di rimetterlo a letto, cosa fai?",
+      "win": "Valutato prima di muoverlo",
+      "opts": [
+        { "t": "Lo lascio dov'è finché non l'ho valutato (testa, collo, anca, coscienza, parametri), poi lo solleviamo in due con l'ausilio adatto e controllo in terapia se prende anticoagulanti", "ok": 1, "fb": "Dopo una caduta si valuta prima di muovere: una frattura dell'anca o del rachide peggiora se lo tiri su di peso. E il dato che cambia tutto sta in terapia: l'apixaban." },
+        { "t": "Lo aiutiamo subito a rialzarsi e a tornare a letto, così non prende freddo, poi gli misuro i parametri", "x": 1, "fb": "Sollevarlo di slancio prima di valutarlo rischia di aggravare una frattura che lui, anziano e confuso, potrebbe non riferire. Il freddo non è la priorità.", "s": { "vit": { "hr": 108 }, "pat": { "sweat": 0.5 } }, "end": "Grida di dolore mentre lo sollevate" },
+        { "t": "Gli chiedo se ha battuto la testa: se dice di no, compilo la scheda caduta e lo rimetto a letto", "x": 1, "fb": "Un anziano confuso non è un testimone affidabile della propria caduta, e il livido sulla fronte ha già risposto. La scheda caduta va compilata, ma dopo la valutazione.", "s": { "phys": { "hematoma": 0.18 } }, "end": "Il livido dice il contrario" },
+        { "t": "Chiamo il medico di guardia e aspetto che arrivi prima di toccarlo o misurare qualsiasi cosa", "x": 0, "fb": "Il medico va avvisato, ma la tua valutazione serve proprio a dirgli cosa trovi: coscienza, parametri, dolore, terapia. Aspettare a mani in mano fa solo perdere minuti." }
+      ],
+      "out": { "pat": { "collapsed": 0, "pose": 0.8 } },
+      "learn": "Dopo una caduta in ospedale: prima valuti, poi muovi. Cerca sempre tre cose: un trauma alla testa, dolore al collo o all'anca, farmaci che fanno sanguinare.",
+      "phy": [
+        "Con l'età il cervello si ritira un po' e tra cervello e cranio resta più spazio. Le vene che lo attraversano, le vene a ponte, restano tese come corde: un colpo anche banale può strapparle.",
+        "È come un tendone da circo con le corde già tirate: basta una folata per spezzarne una. Nel giovane le corde sono lente e reggono il colpo."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Lo rimettete a letto in sicurezza. È sveglio ma rallentato: GCS 14, confuso sulla data. Pupille uguali e reattive. PA 152/86, FC 86 irregolare. L'ultima dose di apixaban è di sette ore fa. Il medico di guardia al telefono ti chiede: «Cosa mi proponi?»",
+      "q": "Cosa proponi al medico?",
+      "win": "TC richiesta, controlli ogni 30 minuti",
+      "opts": [
+        { "t": "TC dell'encefalo urgente, perché prende un anticoagulante, e intanto controlli neurologici (GCS e pupille) ogni 30 minuti", "ok": 1, "fb": "Chi prende un anticoagulante e batte la testa deve fare la TC entro 8 ore, anche se sembra stare bene. Qui c'è già un punto di GCS in meno: la richiesta va fatta subito, con controlli ravvicinati nel frattempo." },
+        { "t": "Osservazione fino al mattino: GCS 14 è quasi normale e la TC si può chiedere al giro visite", "x": 1, "fb": "Con un anticoagulante un ematoma può crescere per ore mentre il paziente sembra stare bene. Rimandare a domattina è l'errore più frequente in questi casi.", "s": { "phys": { "hematoma": 0.5, "icp": 0.5, "gcs": 12 }, "pat": { "eyes": 0 } }, "end": "Alle 5 risponde molto meno di prima" },
+        { "t": "Propongo di sospendere la prossima dose di apixaban e ricontrollare l'emocromo al mattino", "x": 1, "fb": "Saltare la dose successiva è giusto, ma non toglie il farmaco già in circolo e non dice se dentro il cranio si sta raccogliendo sangue. Serve vedere, non aspettare.", "s": { "phys": { "hematoma": 0.35, "icp": 0.4, "gcs": 13 } }, "end": "L'ematoma intanto cresce" },
+        { "t": "Ghiaccio sulla fronte e paracetamolo per il dolore, poi lo rivaluto tra due ore", "x": 1, "fb": "Il ghiaccio aiuta il livido, il paracetamolo il dolore: nessuno dei due risponde alla vera domanda, cioè se sta sanguinando sotto il cranio. Due ore senza controlli sono troppe.", "s": { "phys": { "hematoma": 0.35, "icp": 0.4, "gcs": 13 } }, "end": "Due ore senza controlli" }
+      ],
+      "out": { "phys": { "hematoma": 0.2 } },
+      "learn": "Trauma cranico in un paziente in anticoagulante: TC entro 8 ore, anche se sembra stare bene. Nelle prime ore il GCS si controlla ogni 30 minuti: è il primo dato a cambiare.",
+      "phy": [
+        "L'apixaban blocca il fattore X, un ingranaggio centrale della coagulazione. Il sangue che esce da una vena strappata non riesce a fermarsi da solo e l'ematoma continua a crescere lentamente.",
+        "È come un rubinetto che gocciola in una stanza chiusa: per ore non te ne accorgi, poi l'acqua arriva sotto la porta tutta insieme."
+      ]
+    },
+    {
+      "tag": "Rivalutazione",
+      "text": "Alle 4:20, in attesa del trasporto in radiologia, si agita: vuole alzarsi, tira il lenzuolo, chiama la moglie. Dice che la testa gli fa sempre più male e ha vomitato una volta. Apre gli occhi solo se lo chiami: GCS 13.",
+      "seq": [
+        { "d": 1.4, "cap": "Si agita e vomita", "s": { "pat": { "tremor": 0.3, "sweat": 0.4 }, "vit": { "hr": 78, "sys": 164, "dia": 88 }, "phys": { "hematoma": 0.4, "icp": 0.45, "gcs": 13 } } }
+      ],
+      "q": "Il collega ti suggerisce il lorazepam al bisogno. Cosa fai?",
+      "win": "Allarme riconosciuto",
+      "opts": [
+        { "t": "Niente sedativi: agitazione, cefalea che aumenta e vomito sono segni neurologici. Testa sollevata a 30°, resto con lui, avviso subito il medico del peggioramento e chiedo di anticipare la TC", "ok": 1, "fb": "Agitazione, cefalea che peggiora e vomito dopo un trauma cranico dicono che la pressione nel cranio sta salendo. Un sedativo li spegne, e con loro il tuo unico strumento di controllo: la coscienza." },
+        { "t": "Gli do il lorazepam: l'agitazione aumenta il rischio di un'altra caduta", "x": 2, "fb": "Il rischio di caduta è reale, ma il lorazepam lo rende soporoso: non saprai più se dorme o se sta peggiorando, e in più rallenta il respiro. Il peggioramento resta nascosto finché diventa grave.", "s": { "pat": { "eyes": 0, "tremor": 0 }, "vit": { "rr": 10, "spo2": 90 }, "phys": { "gcs": 9, "icp": 0.6, "hematoma": 0.55 } }, "end": "Dorme… o non risponde più?" },
+        { "t": "Alzo le spondine e lo contengo con le fasce, così non si fa male", "x": 1, "fb": "La contenzione lo agita ancora di più, fa salire la pressione nel torace e nel cranio e non tratta la causa. Le spondine possono servire, le fasce no.", "s": { "vit": { "sys": 178, "hr": 72 }, "phys": { "icp": 0.55 } }, "end": "Si agita ancora di più" },
+        { "t": "Antiemetico e paracetamolo per vomito e cefalea, poi lo rivaluto tra un'ora", "x": 1, "fb": "Trattare i sintomi senza riconoscerli fa perdere un'ora decisiva: qui vomito e cefalea sono segnali d'allarme, non fastidi.", "s": { "phys": { "icp": 0.55, "hematoma": 0.5, "gcs": 12 } }, "end": "Un'ora persa" }
+      ],
+      "out": { "pat": { "pose": 1, "tremor": 0 }, "phys": { "elevation": 1 } },
+      "learn": "Dopo un trauma cranico, agitazione nuova, mal di testa che aumenta e vomito sono segni neurologici fino a prova contraria. Niente sedativi senza il medico: la coscienza è il tuo monitor.",
+      "phy": [
+        "Il cranio è una scatola rigida con dentro cervello, sangue e liquor. Quando un ematoma cresce, all'inizio liquor e sangue venoso escono per fargli spazio. Finito lo spazio di compenso, la pressione sale di colpo.",
+        "È come una valigia già piena: le prime magliette le infili schiacciando, poi basta un calzino in più e la valigia non si chiude."
+      ]
+    },
+    {
+      "tag": "Decisione",
+      "text": "Alle 4:50, mentre lo prepari per la TC, non risponde più alla voce: al dolore apre gli occhi, emette solo suoni e localizza lo stimolo. GCS 9. La pupilla destra è più grande e reagisce lenta. PA 196/92, FC 52, respiro irregolare.",
+      "seq": [
+        { "d": 1.4, "cap": "Risponde solo al dolore", "s": { "pat": { "eyes": 0, "sweat": 0, "tremor": 0 }, "vit": { "hr": 58, "sys": 184, "dia": 90, "rr": 12 }, "phys": { "hematoma": 0.7, "icp": 0.78, "gcs": 9 } } },
+        { "d": 1.6, "cap": "La pupilla destra si allarga", "s": { "pat": { "eyes": 1, "anisocoria": 1 }, "vit": { "hr": 52, "sys": 196, "dia": 92, "rr": 10 }, "phys": { "icp": 0.85 } } }
+      ],
+      "q": "Come leggi questi segni, e cosa fai?",
+      "win": "Team chiamato, cervello protetto",
+      "opts": [
+        { "t": "Triade di Cushing con pupilla dilatata: il cervello sta per erniare. Chiamo l'emergenza intraospedaliera, testa a 30° in asse, ossigeno, preparo il materiale per le vie aeree e porto l'antidoto dell'anticoagulante prescritto", "ok": 1, "fb": "Pressione che sale, cuore che rallenta e respiro irregolare sono l'ultimo tentativo del corpo di spingere sangue in un cervello schiacciato. La pupilla grande dal lato dell'ematoma dice che il cervello sta scivolando verso il tronco. Servono subito il team, le vie aeree, l'antidoto e il neurochirurgo." },
+        { "t": "Somministro l'antipertensivo al bisogno per riportare la pressione sotto i 160", "x": 2, "fb": "Qui la pressione alta è un compenso: serve a far arrivare sangue a un cervello compresso. Abbassarla senza il team, proprio ora, riduce il flusso al cervello quando è più critico.", "s": { "vit": { "sys": 118, "dia": 64, "hr": 46 }, "phys": { "gcs": 6, "icp": 0.95 } }, "end": "Il flusso al cervello crolla" },
+        { "t": "FC 52: chiedo atropina e un ECG a 12 derivazioni per la bradicardia", "x": 2, "fb": "La bradicardia non nasce dal cuore ma dal cervello compresso: trattarla come un problema cardiaco fa perdere i minuti in cui si decide tutto.", "s": { "vit": { "rr": 8, "spo2": 88 }, "phys": { "icp": 0.95, "gcs": 6 } }, "end": "Intanto la pressione nel cranio sale" },
+        { "t": "Lo metto in piano con le gambe sollevate: con questi parametri rischia di svenire", "x": 2, "dead": 1, "fb": "In piano e con le gambe alzate torna più sangue verso la testa e la pressione nel cranio sale ancora. Per un cervello già al limite è la spinta finale verso l'erniazione.", "s": { "pat": { "pose": 0 }, "vit": { "rr": 4, "hr": 38 }, "phys": { "icp": 1, "gcs": 3, "elevation": 0 } }, "end": "Erniazione cerebrale" }
+      ],
+      "out": { "vit": { "spo2": 97 }, "phys": { "reversal": 0.8, "active": 0 } },
+      "learn": "Triade di Cushing (ipertensione, bradicardia, respiro irregolare) più una pupilla che si dilata vuol dire erniazione imminente. Non si abbassa la pressione e non si tratta la bradicardia come cardiaca: si chiama aiuto e si protegge il cervello.",
+      "phy": [
+        "Quando la pressione nel cranio si avvicina a quella del sangue, il cervello riceve meno ossigeno. Il tronco encefalico reagisce alzando la pressione arteriosa; i sensori dei vasi la vedono alta e rallentano il cuore. Il respiro diventa irregolare perché i suoi centri sono compressi.",
+        "È come spingere acqua in una spugna strizzata: devi aumentare la forza per farla entrare, e intanto tutto il resto rallenta."
+      ]
+    },
+    {
+      "tag": "Fisiologia",
+      "fis": 1,
+      "kn": 1,
+      "text": "Arriva il team: viene intubato e somministrato l'antidoto dell'apixaban. La TC mostra un ematoma subdurale acuto destro, con la linea mediana spostata. Il neurochirurgo lo porta in sala operatoria.",
+      "state": { "phys": { "reversal": 1, "active": 0 } },
+      "q": "Perché si è dilatata proprio la pupilla destra?",
+      "win": "Uncus e terzo nervo",
+      "opts": [
+        { "t": "L'ematoma destro spinge la parte interna del lobo temporale (uncus) contro il nervo oculomotore dello stesso lato, che stringe la pupilla", "ok": 1, "fb": "Il terzo nervo cranico passa proprio dove l'uncus erniato schiaccia. Le fibre che stringono la pupilla corrono all'esterno del nervo: soffrono per prime, per questo la pupilla si allarga prima che l'occhio smetta di muoversi." },
+        { "t": "Il sangue dell'ematoma arriva fino all'occhio destro e lo gonfia", "fb": "L'ematoma resta dentro il cranio, tra dura madre e cervello: la pupilla cambia perché un nervo è compresso, non perché il sangue arriva all'occhio." },
+        { "t": "La pressione arteriosa alta dilata i vasi dell'iride", "fb": "La grandezza della pupilla non dipende dalla pressione arteriosa ma dai nervi che la comandano: qui è il nervo oculomotore schiacciato." },
+        { "t": "È un effetto dell'apixaban, che rilassa i muscoli dell'occhio", "fb": "L'apixaban agisce sulla coagulazione, non sui muscoli dell'iride." }
+      ],
+      "learn": "Pupilla dilatata dallo stesso lato dell'ematoma: il nervo oculomotore è compresso dall'uncus che ernia. È un segno tardivo: il GCS peggiora prima.",
+      "phy": [
+        "La tenda del cervelletto è una membrana rigida che separa il cervello dal cervelletto, con un'apertura per il tronco. Se un lato del cervello viene spinto, la sua parte più interna scivola in quell'apertura e schiaccia ciò che trova: prima il nervo della pupilla, poi il tronco.",
+        "È come una folla che spinge verso un'uscita stretta: chi sta vicino alla porta viene schiacciato per primo."
+      ]
+    },
+    {
+      "tag": "Anatomia",
+      "ana": 1,
+      "kn": 1,
+      "text": "Il referto della TC: ematoma subdurale acuto a forma di mezzaluna, lungo tutto l'emisfero destro, con origine da una vena a ponte.",
+      "q": "Tra quali strati si raccoglie il sangue di un ematoma subdurale?",
+      "win": "Sotto la dura madre",
+      "opts": [
+        { "t": "Tra la dura madre e l'aracnoide: il sangue delle vene a ponte si allarga lungo l'emisfero, per questo ha la forma di una mezzaluna", "ok": 1, "fb": "Sotto la dura non ci sono confini che fermano il sangue, che scivola lungo tutto l'emisfero. È tipico degli anziani e di chi prende anticoagulanti, e può crescere lentamente." },
+        { "t": "Tra l'osso e la dura madre", "fb": "Quello è l'ematoma epidurale: di solito arterioso (arteria meningea media), ha la forma di una lente perché la dura è attaccata all'osso lungo le suture." },
+        { "t": "Dentro il cervello, nella sostanza bianca", "fb": "Quella è un'emorragia intraparenchimale, dentro il tessuto cerebrale." },
+        { "t": "Nei ventricoli, insieme al liquor", "fb": "Quella è un'emorragia intraventricolare." }
+      ],
+      "learn": "Subdurale: vene a ponte, tra dura e aracnoide, mezzaluna, anziani e anticoagulati, anche lento. Epidurale: arteria, tra osso e dura, lente, classico l'intervallo lucido nei giovani.",
+      "phy": [
+        "La dura madre è attaccata all'osso lungo le suture del cranio: un ematoma epidurale non può superarle e si gonfia a lente. Sotto la dura invece non ci sono confini, e il sangue scivola lungo tutto l'emisfero.",
+        "È la differenza tra l'acqua sotto una piastrella incollata ai bordi, che si gonfia al centro, e l'acqua sotto un tappeto libero, che si allarga dappertutto."
+      ]
+    }
+  ],
+  "src": [
+    "NICE NG232 (2023). Head injury: assessment and early management",
+    "NICE NG249 (2025). Falls: assessment and prevention in older people and in people 50 and over at higher risk",
+    "Christensen H. et al. European Stroke Organisation guideline on reversal of oral anticoagulants in acute intracerebral haemorrhage. Eur Stroke J 2019",
+    "Brain Trauma Foundation. Guidelines for the Management of Severe Traumatic Brain Injury, 4th edition (2016)"
+  ],
+  "notes": "Scena desiderata: paziente a terra accanto al letto (oggi è sempre disegnato a letto). In futuro: TC animata con la mezzaluna dell'ematoma, sala operatoria per la craniotomia, pupille ingrandite nella lente."
+}

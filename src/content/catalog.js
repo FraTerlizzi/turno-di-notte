@@ -36,6 +36,8 @@ export const PATIENT = {
   hives: { label: 'Orticaria', min: 0, max: 1, step: 0.1 },
   droop: { label: 'Bocca storta (deficit facciale)', min: 0, max: 1, step: 0.1 },
   collapsed: { label: 'Accasciato', min: 0, max: 1, step: 1 },
+  bruise: { label: 'Livido sulla fronte (dopo una caduta)', min: 0, max: 1, step: 0.1 },
+  anisocoria: { label: 'Pupilla destra dilatata (anisocoria)', min: 0, max: 1, step: 1, hint: 'si vede solo a occhi aperti' },
 };
 
 const p = (label, hint, min = 0, max = 1, step = 0.05) => ({ label, hint, min, max, step });
@@ -75,6 +77,17 @@ export const LENSES = {
   brainstem: {
     label: 'Centri respiratori del bulbo', where: 'Nel tronco encefalico', at: 'head',
     params: { opioid: p('Oppioide', '0 assente · 1 dose alta'), naloxone: p('Naloxone') },
+  },
+  skull: {
+    label: 'Cranio e pressione intracranica', where: 'Nel cranio', at: 'head',
+    params: {
+      hematoma: p('Ematoma subdurale destro', '0 assente · 1 molto grande'),
+      active: p('Sanguinamento attivo', 'la vena a ponte gocciola'),
+      icp: p('Pressione intracranica', '×40 = mmHg (0,5 = 20 mmHg, soglia di trattamento)'),
+      gcs: p('Glasgow Coma Scale', 'da 3 a 15', 3, 15, 1),
+      elevation: p('Testa sollevata', '1 = 30°: migliora il ritorno venoso'),
+      reversal: p("Antidoto dell'anticoagulante", 'si forma il coagulo e il sanguinamento si ferma'),
+    },
   },
 };
 

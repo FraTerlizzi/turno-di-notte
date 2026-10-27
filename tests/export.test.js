@@ -8,13 +8,15 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 
 describe('pubblicazione dei casi approvati', () => {
   it('un caso nuovo diventa un file e va nel capitolo scelto', () => {
-    const c = duplicateCase(CASE_FILES[0], 13);
+    const free = Math.max(...CASE_FILES.map((c) => c.id)) + 1;
+    const c = duplicateCase(CASE_FILES[0], free);
+    const before = CHAPTERS.find((ch) => ch.id === 'c2').cases.slice();
     const p = planExport({ drafts: [{ title: c.title, case_id: null, chapter: 'c2', data: c }], chapterDraft: null, files: current(), chapters: CHAPTERS });
     expect(p.problems).toEqual([]);
     expect(p.files.has(fileOf(c))).toBe(true);
     expect(p.files.size).toBe(CASE_FILES.length + 1);
-    expect(p.chapters.find((ch) => ch.id === 'c2').cases).toEqual([13]);
-    expect(CHAPTERS.find((ch) => ch.id === 'c2').cases).toEqual([]); // l'originale non viene toccato
+    expect(p.chapters.find((ch) => ch.id === 'c2').cases).toEqual([...before, free]);
+    expect(CHAPTERS.find((ch) => ch.id === 'c2').cases).toEqual(before); // l'originale non viene toccato
   });
 
   it('la modifica di un caso lo sostituisce anche se cambia nome breve', () => {
