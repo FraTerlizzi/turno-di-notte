@@ -1,5 +1,5 @@
 /* Motore del gioco: scena, display, audio, glossario, Neuro, eventi fuori turno. */
-import { SKIN, DEATH, CASES, ROAD, GL, SKINS, GOWN, HAIR, EVENTS, ABC_L, ABC_ACT } from './data/index.js';
+import { SKIN, DEATH, CASES, CHAPTERS, GL, SKINS, GOWN, HAIR, EVENTS, ABC_L, ABC_ACT } from './data/index.js';
 import { hudValue } from './content/compile.js';
 
 let curSkin=null;
@@ -817,16 +817,32 @@ let curCase=null,stepI=0,hearts=3,errors=0,answered=false,busy=false,preSeq=null
 const SECTIONS=['home','game','result','glossary','street','auth','account','tutor','privacy'];
 function show(id){SECTIONS.forEach(s=>{const el=$(s);if(el)el.hidden=s!==id});window.scrollTo(0,0)}
 const pad=n=>String(n).padStart(2,'0');
+/* capitoli: in home e nel gioco ci sono solo i casi dei capitoli aperti, nell'ordine dei capitoli;
+   il numero dell'episodio è la posizione in quell'ordine (l'id del caso resta fisso per i progressi) */
+const BYID=new Map(CASES.map(c=>[c.id,c]));
+const OPEN=CHAPTERS.filter(ch=>ch.status==='aperto').map(ch=>({...ch,list:ch.cases.map(id=>BYID.get(id)).filter(Boolean)}));
+const PLAY=OPEN.flatMap(ch=>ch.list);
+const TOTAL=Math.max(PLAY.length,...CHAPTERS.map(ch=>ch.planned?ch.planned[1]:0));
+const epNum=c=>PLAY.indexOf(c)+1||c.id;
 function renderHome(){if(typeof setMusicContext==='function'&&AU.ctx)setMusicContext('home');
-  const lv=$('levels');lv.innerHTML='';let done=0,st=0;
-  CASES.forEach((c,i)=>{const b=prog.best[c.id]||0;if(b)done++;st+=b;
-    const el=document.createElement('button');el.className='lvl'+(b?' done':' next');
-    el.innerHTML=`<span class="num">${pad(c.id)}</span><span><span class="t">${c.title}</span><span class="a">${c.area} · <span class="d d-${c.diff}">${c.diff}</span></span><span class="a">${c.hook}</span><span class="stars">${b?'★'.repeat(b)+'☆'.repeat(3-b):'▶ Da giocare'}</span></span>`;
-    el.onclick=()=>startCase(i);lv.appendChild(el)});
+  const box=$('chapters');box.innerHTML='';let done=0,st=0;
+  OPEN.forEach(ch=>{
+    const sec=document.createElement('div');sec.className='chapter';sec.style.marginTop='22px';
+    const first=epNum(ch.list[0]),last=epNum(ch.list[ch.list.length-1]);
+    sec.innerHTML=`<div class="chapter-head"><h2>Stagione ${ch.season} · ${ch.title}</h2><span class="eyebrow">Episodi ${first}–${last} · tutti aperti</span></div><div class="levels"></div>`;
+    const lv=sec.querySelector('.levels');
+    ch.list.forEach(c=>{const b=prog.best[c.id]||0;if(b)done++;st+=b;
+      const el=document.createElement('button');el.className='lvl'+(b?' done':' next');
+      el.innerHTML=`<span class="num">${pad(epNum(c))}</span><span><span class="t">${c.title}</span><span class="a">${c.area} · <span class="d d-${c.diff}">${c.diff}</span></span><span class="a">${c.hook}</span><span class="stars">${b?'★'.repeat(b)+'☆'.repeat(3-b):'▶ Da giocare'}</span></span>`;
+      el.onclick=()=>startCase(CASES.indexOf(c));lv.appendChild(el)});
+    box.appendChild(sec)});
   prog.ev=prog.ev||{};$('evList').innerHTML=EVENTS.map((e,i)=>{const b=prog.ev[e.id]||0;return `<button class="lvl evl${b?' done':' next'}" data-ev="${i}"><span class="num">!</span><span><span class="t">${e.title}</span><span class="a">${e.place} · <span class="d d-${e.diff}">${e.diff}</span></span><span class="stars">${b?'★'.repeat(b)+'☆'.repeat(3-b):'▶ Da giocare'}</span></span></button>`}).join('');
   document.querySelectorAll('#evList .evl').forEach(b=>b.onclick=()=>startEvent(+b.dataset.ev));
-  $('road').innerHTML=ROAD.map(r=>`<div><span>EP. ${r[2]}–${r[3]}</span><b>${r[1]}</b>In preparazione</div>`).join('');
-  $('stXp').textContent=prog.xp;$('stDone').textContent=done+'/100';$('stStars').textContent=st+'/'+CASES.length*3;
+  const road=CHAPTERS.filter(ch=>ch.status==='in-arrivo');
+  $('roadBlock').hidden=!road.length;
+  $('road').innerHTML=road.map(ch=>`<div><span>${ch.planned?`EP. ${ch.planned[0]}–${ch.planned[1]}`:`Stagione ${ch.season}`}</span><b>${ch.title}</b>In preparazione</div>`).join('');
+  const pl=road.filter(ch=>ch.planned);$('roadRange').textContent=pl.length?`Episodi ${Math.min(...pl.map(ch=>ch.planned[0]))}–${Math.max(...pl.map(ch=>ch.planned[1]))}`:'';
+  $('stXp').textContent=prog.xp;$('stDone').textContent=done+'/'+TOTAL;$('stStars').textContent=st+'/'+PLAY.length*3;
 }
 function renderHearts(){$('hearts').innerHTML=[0,1,2].map(i=>`<span class="${i<hearts?'':'off'}">♥</span>`).join('')}
 function startCase(i,drawn){
@@ -835,8 +851,8 @@ function startCase(i,drawn){
   PAT_MODE='bed';NURSE_TGT=null;curSkin=pickSkin();
   setState(curCase.base,true);skinRGB=skinTarget();physInit();lensPop=0;
   nurse.x=-70;nurse.y=520;nurse.tx=66;nurse.ty=268;nurse.treach=0;nurse.reach=0;
-  $('gLevel').textContent='Episodio '+pad(curCase.id)+' · '+curCase.area+' · '+curCase.diff;$('gTitle').textContent=curCase.title;
-  $('hBrand').textContent='TURNO DI NOTTE · EP. '+pad(curCase.id);
+  $('gLevel').textContent='Episodio '+pad(epNum(curCase))+' · '+curCase.area+' · '+curCase.diff;$('gTitle').textContent=curCase.title;
+  $('hBrand').textContent='TURNO DI NOTTE · EP. '+pad(epNum(curCase));
   $('h1l').textContent=curCase.hud[0].l;$('h2l').textContent=curCase.hud[1].l;
   $('introArea').textContent=curCase.area;$('introPt').textContent=curCase.pt;$('skinLine').textContent=curSkin?'Aspetto del paziente: '+curSkin.name+' · è solo un costume, il caso clinico è reale':'';$('skinLine').hidden=!curSkin;$('introText').innerHTML=linkify(curCase.intro);$('introScheda').innerHTML=(curCase.scheda||[]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${linkify(v)}</dd>`).join('');
   $('introCard').hidden=false;$('stepCard').hidden=true;$('introDraw').hidden=!drawn;$('btnReroll').hidden=!drawn;renderHearts();$('progBar').style.width='0%';
@@ -926,7 +942,7 @@ $('btnReplay').onclick=()=>{if(busy||!preSeq)return;setState(preSeq);setTimeout(
 $('btnRewind').onclick=rewind;
 function finish(win){
   clearOut();$('progBar').style.width='100%';caption('');
-  const c=curCase;$('rLevel').textContent='Episodio '+pad(c.id)+' · '+c.area;
+  const c=curCase;$('rLevel').textContent='Episodio '+pad(epNum(c))+' · '+c.area;
   emitAttempt({kind:'case',item:c.id,win,stars:win?(errors===0?3:errors===1?2:1):0,errors,deaths,wrongs});
   if(win){sfx('win');setMusicContext('win');const st=errors===0?3:errors===1?2:1;const xp=c.steps.length*100-errors*40+st*50;
     const prev=prog.best[c.id]||0;if(st>prev)prog.best[c.id]=st;prog.xp+=Math.max(0,xp);save();
@@ -935,14 +951,14 @@ function finish(win){
   }else{setMusicContext('loss');$('rTitle').textContent=deaths?'Il paziente non ce l\'ha fatta':'Il paziente è peggiorato';$('rStars').innerHTML='<span class="off">★★★</span>';$('rMsg').textContent='Hai finito i tre cuori. Rileggi le spiegazioni e riprova l\'episodio.';}
   $('rRecap').innerHTML=c.steps.map(s=>`<li>${linkify(s.learn)}</li>`).join('');
   $('rSrc').innerHTML=c.src.map(s=>`<li>${s}</li>`).join('');
-  $('btnNextLvl').hidden=!win||CASES.indexOf(c)===CASES.length-1;
+  $('btnNextLvl').hidden=!win||PLAY.indexOf(c)<0||PLAY.indexOf(c)===PLAY.length-1;
   if(Math.random()<.45){const ei=pickEvent(-1);$('evTeaseT').textContent='> '+EVENTS[ei].tease;$('evTeaseBtn').onclick=()=>{$('evTeaser').hidden=true;startEvent(ei)};$('evTeaser').hidden=false}else $('evTeaser').hidden=true;
   show('result');
 }
 $('btnBack').onclick=()=>{renderHome();show('home')};
 $('btnMap').onclick=()=>{renderHome();show('home')};
 $('btnRetry').onclick=()=>startCase(CASES.indexOf(curCase));
-$('btnNextLvl').onclick=()=>startCase(CASES.indexOf(curCase)+1);
+$('btnNextLvl').onclick=()=>startCase(CASES.indexOf(PLAY[PLAY.indexOf(curCase)+1]));
 function toggleLens(){const d=$('detail');d.hidden=!d.hidden;$('btnLens').textContent=d.hidden?'Ingrandisci la lente':'Chiudi la lente';if(!d.hidden)d.scrollIntoView({block:'nearest',behavior:'smooth'})}
 $('btnLens').onclick=toggleLens;
 $('cvScene').addEventListener('click',e=>{const r=e.target.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;if(Math.hypot(x-LENS.cx,y-LENS.cy)<LENS.R)toggleLens()});
@@ -1295,7 +1311,7 @@ function pickEvent(avoid){const all=EVENTS.map((e,i)=>i).filter(i=>i!==avoid);co
 stc=mkCanvas($('cvStreet'),SW,SH);
 scene=mkCanvas($('cvScene'),W,H);detail=mkCanvas($('cvPhys'),420,260);
 let lastDraw=-1;
-function drawRandom(){const pool=CASES.map((c,i)=>i).filter(i=>CASES[i].diff!=='Base');
+function drawRandom(){const pool=CASES.map((c,i)=>i).filter(i=>CASES[i].diff!=='Base'&&PLAY.includes(CASES[i]));
   const fresh=pool.filter(i=>!prog.best[CASES[i].id]&&i!==lastDraw);const src=fresh.length?fresh:pool.filter(i=>i!==lastDraw);
   const i=src[Math.floor(Math.random()*src.length)];lastDraw=i;startCase(i,true)}
 $('btnRandom').onclick=drawRandom;$('btnReroll').onclick=drawRandom;

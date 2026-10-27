@@ -12,8 +12,4 @@ const files = import.meta.glob('../../content/cases/*.json', { eager: true, impo
 export const CASE_FILES = Object.keys(files).sort().map((k) => files[k]);
 const CASES = CASE_FILES.map(compileCase).sort((a, b) => a.id - b.id);
 
-// capitoli in arrivo come li mostra oggi la home: [etichetta, titolo, primo episodio, ultimo episodio]
-const ROAD = CHAPTERS.filter((ch) => ch.status === 'in-arrivo' && ch.planned)
-  .map((ch) => [`Capitolo ${ch.season}`, ch.title, ch.planned[0], ch.planned[1]]);
-
-export { SKIN, DEATH, CASES, CHAPTERS, ROAD, GL, SKINS, GOWN, HAIR, EVENTS, ABC_L, ABC_PHY, ABC_ACT };
+export { SKIN, DEATH, CASES, CHAPTERS, GL, SKINS, GOWN, HAIR, EVENTS, ABC_L, ABC_PHY, ABC_ACT };

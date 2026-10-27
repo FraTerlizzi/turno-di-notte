@@ -25,18 +25,15 @@
         <div class="row" style="align-items:center"><button class="back au-m" aria-label="Musica"></button><button class="back au-next">Brano successivo</button><button class="back au-a"></button><button class="back au-c"></button><button class="back au-s" aria-label="Effetti sonori"></button><span class="np"></span></div>
       </div>
     </div>
-    <div class="chapter" style="margin-top:22px">
-      <div class="chapter-head"><h2>Stagione 1 · Primo turno</h2><span class="eyebrow">Episodi 1–12 · tutti aperti</span></div>
-      <div class="row"><button class="btn" id="btnRandom">Caso a sorpresa (media o difficile)</button><button class="btn ghost" id="btnGloss">Glossario</button></div>
-      <div class="levels" id="levels"></div>
-    </div>
+    <div class="row" style="margin-top:22px"><button class="btn" id="btnRandom">Caso a sorpresa (media o difficile)</button><button class="btn ghost" id="btnGloss">Glossario</button></div>
+    <div id="chapters"></div>
     <div class="chapter" style="margin-top:26px">
       <div class="chapter-head"><h2>Fuori turno · eventi rari</h2><span class="eyebrow">10 eventi</span></div>
       <p style="margin:0;color:var(--muted);max-width:62ch">A volte, finito il turno, l'emergenza ti trova per strada. Niente monitor, niente carrello: solo tu, il 112 e quello che sai fare. Compaiono a caso alla fine di un episodio, oppure li scegli da qui.</p>
       <div class="levels" id="evList"></div>
     </div>
-    <div class="chapter" style="margin-top:26px">
-      <div class="chapter-head"><h2>Prossime stagioni</h2><span class="eyebrow">Episodi 13–100</span></div>
+    <div class="chapter" id="roadBlock" style="margin-top:26px">
+      <div class="chapter-head"><h2>Prossime stagioni</h2><span class="eyebrow" id="roadRange"></span></div>
       <div class="road" id="road"></div>
     </div>
     <p class="note" style="margin-top:22px">Gioco didattico. Dosi e procedure seguono linee guida internazionali, ma in reparto valgono sempre la prescrizione medica e i protocolli della tua struttura. Le fonti di ogni episodio sono nel riepilogo finale.</p>
