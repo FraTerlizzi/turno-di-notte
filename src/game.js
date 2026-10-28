@@ -903,7 +903,7 @@ function renderHome(){if(typeof setMusicContext==='function'&&AU.ctx)setMusicCon
   OPEN.forEach(ch=>{
     const sec=document.createElement('div');sec.className='chapter';sec.style.marginTop='22px';
     const first=epNum(ch.list[0]),last=epNum(ch.list[ch.list.length-1]);
-    sec.innerHTML=`<div class="chapter-head"><h2>Stagione ${ch.season} · ${ch.title}</h2><span class="eyebrow">Episodi ${first}–${last} · tutti aperti</span></div><div class="levels"></div>`;
+    sec.innerHTML=`<div class="chapter-head"><h2>Stagione ${ch.season} · ${ch.title}</h2><span class="eyebrow">${first===last?`Episodio ${first}`:`Episodi ${first}–${last}`} · ${ch.planned&&ch.planned[1]>last?'altri in arrivo':'tutti aperti'}</span></div><div class="levels"></div>`;
     const lv=sec.querySelector('.levels');
     ch.list.forEach(c=>{const b=prog.best[c.id]||0;if(b)done++;st+=b;
       const el=document.createElement('button');el.className='lvl'+(b?' done':' next');
